@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 
 import '/index.dart';
+import '/services/auth_service.dart';
 
 export 'package:go_router/go_router.dart';
 export 'serialization_util.dart';
@@ -29,7 +30,7 @@ class AppStateNotifier extends ChangeNotifier {
 }
 
 GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
-      initialLocation: '/',
+      initialLocation: AuthService.isConfigured ? '/' : '/auth',
       debugLogDiagnostics: true,
       refreshListenable: appStateNotifier,
       navigatorKey: appNavigatorKey,
@@ -38,7 +39,20 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
         FFRoute(
           name: '_initialize',
           path: '/',
-          builder: (context, _) => HomePageWidget(),
+          builder: (context, _) => AuthService.isSignedIn
+              ? HomePageWidget()
+              : AuthPageWidget(),
+        ),
+        FFRoute(
+          name: AuthPageWidget.routeName,
+          path: AuthPageWidget.routePath,
+          builder: (context, _) => AuthPageWidget(),
+        ),
+        FFRoute(
+          name: ProfilePageWidget.routeName,
+          path: ProfilePageWidget.routePath,
+          requireAuth: true,
+          builder: (context, _) => ProfilePageWidget(),
         ),
         FFRoute(
           name: HomePageWidget.routeName,
@@ -156,6 +170,8 @@ class FFRoute {
   GoRoute toRoute(AppStateNotifier appStateNotifier) => GoRoute(
         name: name,
         path: path,
+        redirect: (context, state) =>
+            requireAuth && !AuthService.isSignedIn ? AuthPageWidget.routePath : null,
         pageBuilder: (context, state) {
           fixStatusBarOniOS16AndBelow(context);
           final ffParams = FFParameters(state, asyncParams);

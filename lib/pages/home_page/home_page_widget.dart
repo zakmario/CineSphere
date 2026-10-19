@@ -1,5 +1,7 @@
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
+import '/pages/profile/profile_page_widget.dart';
+import '/services/auth_service.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'home_page_model.dart';
@@ -64,7 +66,14 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                       FlutterFlowTheme.of(context).headlineMedium.fontStyle,
                 ),
           ),
-          actions: [],
+          actions: [
+            if (AuthService.isSignedIn)
+              IconButton(
+                onPressed: () => context.push(ProfilePageWidget.routePath),
+                tooltip: 'Mon profil',
+                icon: const Icon(Icons.person),
+              ),
+          ],
           centerTitle: false,
           elevation: 2.0,
         ),
