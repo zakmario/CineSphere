@@ -54,3 +54,4 @@ app.*.map.json
 !.env.example
 .claude/settings.local.json
 android/local.properties
+assets/environment_values/environment.json
