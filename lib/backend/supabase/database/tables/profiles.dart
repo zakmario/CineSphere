@@ -31,4 +31,16 @@ class ProfilesRow extends SupabaseDataRow {
 
   DateTime? get createdAt => getField<DateTime>('created_at');
   set createdAt(DateTime? value) => setField<DateTime>('created_at', value);
+
+  List<String> get favoriteGenres => getListField<String>('favorite_genres');
+  set favoriteGenres(List<String>? value) =>
+      setListField<String>('favorite_genres', value);
+
+  List<String> get favoritePlatforms =>
+      getListField<String>('favorite_platforms');
+  set favoritePlatforms(List<String>? value) =>
+      setListField<String>('favorite_platforms', value);
+
+  bool? get onboardingDone => getField<bool>('onboarding_done');
+  set onboardingDone(bool? value) => setField<bool>('onboarding_done', value);
 }

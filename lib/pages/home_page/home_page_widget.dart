@@ -1,12 +1,9 @@
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
-import '/custom_code/widgets/index.dart' as custom_widgets;
-import '/pages/actualites/actualites_page_widget.dart';
-import '/pages/onboarding/onboarding_page_widget.dart';
-import '/pages/shared/main_nav_bar.dart';
-import '/pages/profile/profile_page_widget.dart';
 import 'dart:ui';
+import '/custom_code/widgets/index.dart' as custom_widgets;
+import '/index.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
@@ -72,30 +69,34 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                       FlutterFlowTheme.of(context).headlineMedium.fontStyle,
                 ),
           ),
-          actions: [
-            IconButton(
-              tooltip: 'Actualités',
-              onPressed: () => context.push(ActualitesPageWidget.routePath),
-              icon: const Icon(Icons.newspaper_outlined, color: Colors.white),
-            ),
-            IconButton(
-              tooltip: 'Mon profil',
-              onPressed: () => context.push(ProfilePageWidget.routePath),
-              icon: const Icon(Icons.person_outline, color: Colors.white),
-            ),
-          ],
+          actions: [],
           centerTitle: false,
           elevation: 2.0,
         ),
-        bottomNavigationBar: const MainNavBar(currentIndex: 0),
         body: SafeArea(
           top: true,
-          child: custom_widgets.HomeFeed(
-            onItemTap: (tappedMediaId) =>
-                openMediaDetail(context, tappedMediaId),
-            onOnboardingRequired: () async {
-              if (context.mounted) context.go(OnboardingPageWidget.routePath);
-            },
+          child: Column(
+            mainAxisSize: MainAxisSize.max,
+            children: [
+              Expanded(
+                child: custom_widgets.HomeFeed(
+                  onItemTap: (tappedMediaId) async {
+                    context.pushNamed(
+                      MediaDetailWidget.routeName,
+                      queryParameters: {
+                        'mediaId': serializeParam(
+                          tappedMediaId,
+                          ParamType.String,
+                        ),
+                      }.withoutNulls,
+                    );
+                  },
+                  onOnboardingRequired: () async {
+                    context.goNamed(OnboardingWidget.routeName);
+                  },
+                ),
+              ),
+            ],
           ),
         ),
       ),

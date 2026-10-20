@@ -84,66 +84,76 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
       refreshListenable: appStateNotifier,
       navigatorKey: appNavigatorKey,
       errorBuilder: (context, state) =>
-          appStateNotifier.loggedIn ? HomePageWidget() : AuthPageWidget(),
+          appStateNotifier.loggedIn ? NavBarPage() : LoginWidget(),
       routes: [
         FFRoute(
           name: '_initialize',
           path: '/',
           builder: (context, _) =>
-              appStateNotifier.loggedIn ? HomePageWidget() : AuthPageWidget(),
+              appStateNotifier.loggedIn ? NavBarPage() : LoginWidget(),
         ),
         FFRoute(
-          name: AuthPageWidget.routeName,
-          path: AuthPageWidget.routePath,
-          builder: (context, params) => AuthPageWidget(),
+          name: LoginWidget.routeName,
+          path: LoginWidget.routePath,
+          builder: (context, params) => LoginWidget(),
         ),
         FFRoute(
           name: HomePageWidget.routeName,
           path: HomePageWidget.routePath,
-          builder: (context, params) => HomePageWidget(),
+          builder: (context, params) => params.isEmpty
+              ? NavBarPage(initialPage: 'HomePage')
+              : HomePageWidget(),
         ),
         FFRoute(
-          name: ProfilePageWidget.routeName,
-          path: ProfilePageWidget.routePath,
-          builder: (context, params) => ProfilePageWidget(),
+          name: OnboardingWidget.routeName,
+          path: OnboardingWidget.routePath,
+          builder: (context, params) => OnboardingWidget(),
         ),
         FFRoute(
-          name: OnboardingPageWidget.routeName,
-          path: OnboardingPageWidget.routePath,
-          builder: (context, params) => OnboardingPageWidget(),
-        ),
-        FFRoute(
-          name: CataloguePageWidget.routeName,
-          path: CataloguePageWidget.routePath,
-          builder: (context, params) => CataloguePageWidget(),
-        ),
-        FFRoute(
-          name: MediaDetailPageWidget.routeName,
-          path: MediaDetailPageWidget.routePath,
-          builder: (context, params) => MediaDetailPageWidget(
-            mediaId: params.getParam('mediaId', ParamType.String) ?? '',
+          name: MediaDetailWidget.routeName,
+          path: MediaDetailWidget.routePath,
+          builder: (context, params) => MediaDetailWidget(
+            mediaId: params.getParam(
+              'mediaId',
+              ParamType.String,
+            ),
           ),
         ),
         FFRoute(
-          name: CalendrierPageWidget.routeName,
-          path: CalendrierPageWidget.routePath,
-          builder: (context, params) => CalendrierPageWidget(),
+          name: CatalogueWidget.routeName,
+          path: CatalogueWidget.routePath,
+          builder: (context, params) => params.isEmpty
+              ? NavBarPage(initialPage: 'Catalogue')
+              : CatalogueWidget(),
         ),
         FFRoute(
-          name: FavorisPageWidget.routeName,
-          path: FavorisPageWidget.routePath,
-          builder: (context, params) => FavorisPageWidget(),
+          name: CalendrierWidget.routeName,
+          path: CalendrierWidget.routePath,
+          builder: (context, params) => params.isEmpty
+              ? NavBarPage(initialPage: 'Calendrier')
+              : CalendrierWidget(),
         ),
         FFRoute(
-          name: ActualitesPageWidget.routeName,
-          path: ActualitesPageWidget.routePath,
-          builder: (context, params) => ActualitesPageWidget(),
+          name: FavorisWidget.routeName,
+          path: FavorisWidget.routePath,
+          builder: (context, params) => params.isEmpty
+              ? NavBarPage(initialPage: 'Favoris')
+              : FavorisWidget(),
         ),
         FFRoute(
-          name: ParametresPageWidget.routeName,
-          path: ParametresPageWidget.routePath,
-          builder: (context, params) => ParametresPageWidget(),
+          name: ActualitesWidget.routeName,
+          path: ActualitesWidget.routePath,
+          builder: (context, params) => params.isEmpty
+              ? NavBarPage(initialPage: 'Actualites')
+              : ActualitesWidget(),
         ),
+        FFRoute(
+          name: ParametresWidget.routeName,
+          path: ParametresWidget.routePath,
+          builder: (context, params) => params.isEmpty
+              ? NavBarPage(initialPage: 'Parametres')
+              : ParametresWidget(),
+        )
       ].map((r) => r.toRoute(appStateNotifier)).toList(),
     );
 
@@ -311,7 +321,7 @@ class FFRoute {
 
           if (requireAuth && !appStateNotifier.loggedIn) {
             appStateNotifier.setRedirectLocationIfUnset(state.uri.toString());
-            return '/homePage';
+            return '/login';
           }
           return null;
         },
