@@ -23,6 +23,10 @@ const int kMinPasswordLength = 8;
 /// Délai avant de pouvoir renvoyer un code par e-mail.
 const Duration kResendCooldown = Duration(seconds: 60);
 
+/// Résultat des actions authSignIn / authSignUp quand le membre doit saisir
+/// le code reçu par e-mail (page ConfirmationEmail).
+const String kAuthNeedsCode = 'CONFIRM';
+
 // Validation des champs ------------------------------------------------------
 
 final _emailPattern = RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]{2,}$');

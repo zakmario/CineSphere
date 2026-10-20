@@ -12,8 +12,8 @@
     "new_identifier_name": "pubspec.yaml",
     "type": "D",
     "is_deleted": false,
-    "current_checksum": "ad08366a6d684c2447b2d2a28ce65d1c0e67ddf22461aa18fd1765df9acd7796",
-    "original_checksum": "ad08366a6d684c2447b2d2a28ce65d1c0e67ddf22461aa18fd1765df9acd7796"
+    "current_checksum": "40f6c18269deaf667edfba3ded73245bc05d5fab578355a6612169f0e494d8a9",
+    "original_checksum": "40f6c18269deaf667edfba3ded73245bc05d5fab578355a6612169f0e494d8a9"
   },
   "lib/custom_code/actions/init_local_notifications.dart": {
     "old_identifier_name": "initLocalNotifications",
@@ -180,39 +180,95 @@
     "new_identifier_name": "authService",
     "type": "A",
     "is_deleted": false,
-    "current_checksum": "54c114c0ea698e3e525dcb7e244784178d6c631bedc590151087e82a66649ea5",
-    "original_checksum": "54c114c0ea698e3e525dcb7e244784178d6c631bedc590151087e82a66649ea5"
+    "original_checksum": "f3519936b54a4d8b834396a98ddf67dabad68cb71658209f58cb25429b6ee3c9",
+    "current_checksum": "f3519936b54a4d8b834396a98ddf67dabad68cb71658209f58cb25429b6ee3c9"
   },
   "lib/custom_code/widgets/login_form.dart": {
     "old_identifier_name": "LoginForm",
     "new_identifier_name": "LoginForm",
     "type": "W",
     "is_deleted": false,
-    "current_checksum": "cc581c6a74dfaaa530b963864d3e73d26b679d697162d196337da736b9d60b94",
-    "original_checksum": "cc581c6a74dfaaa530b963864d3e73d26b679d697162d196337da736b9d60b94"
+    "original_checksum": "cc581c6a74dfaaa530b963864d3e73d26b679d697162d196337da736b9d60b94",
+    "current_checksum": "cc581c6a74dfaaa530b963864d3e73d26b679d697162d196337da736b9d60b94"
   },
   "lib/custom_code/widgets/sign_up_form.dart": {
     "old_identifier_name": "SignUpForm",
     "new_identifier_name": "SignUpForm",
     "type": "W",
     "is_deleted": false,
-    "current_checksum": "72b9b82a264285d6e7e47248793cc0a8f98fe639577a7bfad9f653cce2d8eff1",
-    "original_checksum": "72b9b82a264285d6e7e47248793cc0a8f98fe639577a7bfad9f653cce2d8eff1"
+    "original_checksum": "72b9b82a264285d6e7e47248793cc0a8f98fe639577a7bfad9f653cce2d8eff1",
+    "current_checksum": "72b9b82a264285d6e7e47248793cc0a8f98fe639577a7bfad9f653cce2d8eff1"
   },
   "lib/custom_code/widgets/forgot_password_form.dart": {
     "old_identifier_name": "ForgotPasswordForm",
     "new_identifier_name": "ForgotPasswordForm",
     "type": "W",
     "is_deleted": false,
-    "current_checksum": "5f02339c32d372b9f893b7f630276fc933bb917445298380076fe498ab9325cd",
-    "original_checksum": "5f02339c32d372b9f893b7f630276fc933bb917445298380076fe498ab9325cd"
+    "original_checksum": "5f02339c32d372b9f893b7f630276fc933bb917445298380076fe498ab9325cd",
+    "current_checksum": "5f02339c32d372b9f893b7f630276fc933bb917445298380076fe498ab9325cd"
   },
   "lib/custom_code/widgets/new_password_form.dart": {
     "old_identifier_name": "NewPasswordForm",
     "new_identifier_name": "NewPasswordForm",
     "type": "W",
     "is_deleted": false,
-    "current_checksum": "2b32b0a83afcfefe2b0c4ec8559d4195aab935c11a28ad1d8353dcb82f08b88c",
-    "original_checksum": "2b32b0a83afcfefe2b0c4ec8559d4195aab935c11a28ad1d8353dcb82f08b88c"
+    "original_checksum": "2b32b0a83afcfefe2b0c4ec8559d4195aab935c11a28ad1d8353dcb82f08b88c",
+    "current_checksum": "2b32b0a83afcfefe2b0c4ec8559d4195aab935c11a28ad1d8353dcb82f08b88c"
+  },
+  "lib/custom_code/actions/auth_sign_in.dart": {
+    "old_identifier_name": "authSignIn",
+    "new_identifier_name": "authSignIn",
+    "type": "A",
+    "is_deleted": false,
+    "current_checksum": "e89fcb344e2ce175b08a34e88f549ace4926147561880758432352d817fb3379",
+    "original_checksum": "e89fcb344e2ce175b08a34e88f549ace4926147561880758432352d817fb3379"
+  },
+  "lib/custom_code/actions/auth_confirm_sign_up.dart": {
+    "old_identifier_name": "authConfirmSignUp",
+    "new_identifier_name": "authConfirmSignUp",
+    "type": "A",
+    "is_deleted": false,
+    "original_checksum": "9f5eed2abb63430fd386b332ea2a493716a0597ce09c0e04148d398cfc765331",
+    "current_checksum": "9f5eed2abb63430fd386b332ea2a493716a0597ce09c0e04148d398cfc765331"
+  },
+  "lib/custom_code/actions/auth_resend_code.dart": {
+    "old_identifier_name": "authResendCode",
+    "new_identifier_name": "authResendCode",
+    "type": "A",
+    "is_deleted": false,
+    "original_checksum": "067999c12dabc2b33b47b0e67df4c31bf6ee26eb2a7c5c09d2be088fe8b45e37",
+    "current_checksum": "067999c12dabc2b33b47b0e67df4c31bf6ee26eb2a7c5c09d2be088fe8b45e37"
+  },
+  "lib/custom_code/actions/auth_reset_password.dart": {
+    "old_identifier_name": "authResetPassword",
+    "new_identifier_name": "authResetPassword",
+    "type": "A",
+    "is_deleted": false,
+    "original_checksum": "0283670770c6eb584c6d3de7aa2e3415102a4cf7fd89edb9183867be170353ec",
+    "current_checksum": "0283670770c6eb584c6d3de7aa2e3415102a4cf7fd89edb9183867be170353ec"
+  },
+  "lib/custom_code/actions/auth_send_reset_code.dart": {
+    "old_identifier_name": "authSendResetCode",
+    "new_identifier_name": "authSendResetCode",
+    "type": "A",
+    "is_deleted": false,
+    "original_checksum": "4abf0c24bf2cb09d97bbb0c00788580b4d7333275f69fe61ca8012494e74b279",
+    "current_checksum": "4abf0c24bf2cb09d97bbb0c00788580b4d7333275f69fe61ca8012494e74b279"
+  },
+  "lib/custom_code/actions/auth_sign_up.dart": {
+    "old_identifier_name": "authSignUp",
+    "new_identifier_name": "authSignUp",
+    "type": "A",
+    "is_deleted": false,
+    "original_checksum": "3877e4a40b6130cb1989059bfb01130e92371b44286ca5de4e89849abca60bda",
+    "current_checksum": "3877e4a40b6130cb1989059bfb01130e92371b44286ca5de4e89849abca60bda"
+  },
+  "lib/custom_code/actions/update_my_profile.dart": {
+    "old_identifier_name": "updateMyProfile",
+    "new_identifier_name": "updateMyProfile",
+    "type": "A",
+    "is_deleted": false,
+    "current_checksum": "a5193c43b166853014bf9aaa7db441ec3a654bebdd37d05e415ae0417a18257a",
+    "original_checksum": "a5193c43b166853014bf9aaa7db441ec3a654bebdd37d05e415ae0417a18257a"
   }
 }

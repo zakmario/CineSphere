@@ -18,6 +18,14 @@
     "lib/custom_code/actions/complete_onboarding.dart": true,
     "lib/custom_code/actions/cine_models.dart": true,
     "lib/custom_code/actions/supabase_service.dart": true,
+    "lib/custom_code/actions/auth_service.dart": true,
+    "lib/custom_code/actions/auth_sign_in.dart": true,
+    "lib/custom_code/actions/auth_confirm_sign_up.dart": true,
+    "lib/custom_code/actions/auth_resend_code.dart": true,
+    "lib/custom_code/actions/auth_reset_password.dart": true,
+    "lib/custom_code/actions/auth_send_reset_code.dart": true,
+    "lib/custom_code/actions/auth_sign_up.dart": true,
+    "lib/custom_code/actions/update_my_profile.dart": true,
     "lib/custom_code/widgets/media_card.dart": true,
     "lib/custom_code/widgets/favorite_button.dart": true,
     "lib/custom_code/widgets/catalog_browser.dart": true,
@@ -27,7 +35,11 @@
     "lib/custom_code/widgets/media_detail_view.dart": true,
     "lib/custom_code/widgets/favorites_grid.dart": true,
     "lib/custom_code/widgets/news_feed.dart": true,
-    "lib/custom_code/widgets/settings_panel.dart": true
+    "lib/custom_code/widgets/settings_panel.dart": true,
+    "lib/custom_code/widgets/login_form.dart": true,
+    "lib/custom_code/widgets/sign_up_form.dart": true,
+    "lib/custom_code/widgets/forgot_password_form.dart": true,
+    "lib/custom_code/widgets/new_password_form.dart": true
   },
-  "dart.flutterSdkPath": "c:\\Users\\user\\Desktop\\Flutter\\cine-sphere-vssfsg\\ff_flutter_sdk\\ff_flutter_sdk\\flutter"
+  "dart.flutterSdkPath": "C:\\Users\\user\\Desktop\\Flutter\\ff_flutter_sdk\\flutter"
 }
