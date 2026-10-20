@@ -12,7 +12,8 @@ rejouable) :
 3. `migrations/20261020000200_functions_triggers.sql` — triggers et fonctions
 4. `migrations/20261020000300_rls.sql` — Row Level Security
 5. `migrations/20261020000400_storage_avatars.sql` — bucket `avatars`
-6. `seed.sql` — genres TMDB et plateformes
+6. `migrations/20261020000500_security_hardening.sql` — corrections des audits Supabase
+7. `seed.sql` — genres TMDB et plateformes
 
 Puis dans FlutterFlow : *Settings → Integrations → Supabase → Get Schema*.
 
@@ -22,7 +23,7 @@ Avec la CLI Supabase : `supabase db push` puis `supabase db seed`.
 
 | Table | Contenu | Accès (RLS) |
 |---|---|---|
-| `profiles` | pseudo unique, e-mail, avatar, bio, rôle | propriétaire (lecture publique via la vue `public_profiles`, sans e-mail) |
+| `profiles` | pseudo unique, e-mail, avatar, bio, rôle | propriétaire ; profil public d'un autre membre via `get_public_profile()` (sans e-mail), pseudo libre via `username_available()` |
 | `user_preferences` | genres, plateformes, notifications, thème, onboarding | propriétaire |
 | `movies`, `series`, `movie_genres`, `series_genres` | copie légère des contenus TMDB utilisés | lecture connectés, écriture admin ou fonctions `upsert_*_from_tmdb` |
 | `genres`, `platforms` | référentiels TMDB | lecture connectés, écriture admin |
@@ -39,6 +40,14 @@ Automatismes :
 - un utilisateur ne peut pas modifier son propre `role` ;
 - Storage `avatars` : lecture publique, écriture dans `{user_id}/` uniquement,
   2 Mo maximum, JPEG / PNG / WebP.
+
+## Audits Supabase (advisors)
+
+Aucune erreur. Avertissements restants, volontaires : les fonctions
+`SECURITY DEFINER` appelables par l'application (`username_available`,
+`get_public_profile`, `upsert_*_from_tmdb`, `is_admin` pour la RLS) ; elles
+n'exposent que des champs contrôlés. `rls_auto_enable` est une fonction
+préexistante du projet.
 
 ## Transition « expand / contract »
 

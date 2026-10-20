@@ -16,6 +16,8 @@
     "lib/custom_code/actions/toggle_favorite.dart": true,
     "lib/custom_code/actions/has_completed_onboarding.dart": true,
     "lib/custom_code/actions/complete_onboarding.dart": true,
+    "lib/custom_code/actions/cine_models.dart": true,
+    "lib/custom_code/actions/supabase_service.dart": true,
     "lib/custom_code/widgets/media_card.dart": true,
     "lib/custom_code/widgets/favorite_button.dart": true,
     "lib/custom_code/widgets/catalog_browser.dart": true,
@@ -27,5 +29,5 @@
     "lib/custom_code/widgets/news_feed.dart": true,
     "lib/custom_code/widgets/settings_panel.dart": true
   },
-  "dart.flutterSdkPath": "c:\\Users\\user\\CineSphere\\ff_flutter_sdk\\flutter"
+  "dart.flutterSdkPath": "c:\\cine-sphere-vssfsg\\ff_flutter_sdk\\flutter"
 }

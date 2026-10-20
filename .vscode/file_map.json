@@ -12,7 +12,7 @@
     "new_identifier_name": "pubspec.yaml",
     "type": "D",
     "is_deleted": false,
-    "current_checksum": "2df0a4818484bc5e8aa8f2bb94eb12ab25930356a3010f7ec04a8d00b3065dc7",
+    "current_checksum": "bbf1ed2a09c92cf9965577fe95eee4ade1a815778ba802650f99ee025f566a33",
     "original_checksum": "d9fe8dc2deb74de36f5d73344e87a51fdd00a2bf8e8ee4d8ea984d8c4a3d467c"
   },
   "lib/custom_code/actions/init_local_notifications.dart": {
@@ -164,13 +164,13 @@
     "new_identifier_name": "cineModels",
     "type": "A",
     "is_deleted": false,
-    "current_checksum": "bcace249b2f6887bb67ee2f41c4f6c2bbf123285e21829e1d33b38cc7509e6bf"
+    "current_checksum": "aab7213b0140d3d583907c211a640a4f6f916245c8f7ea753b989ab27f113418"
   },
   "lib/custom_code/actions/supabase_service.dart": {
     "old_identifier_name": "supabaseService",
     "new_identifier_name": "supabaseService",
     "type": "A",
     "is_deleted": false,
-    "current_checksum": "3357f9ca665fdb13e3dc11adefdf5747c3ad83530249ef4b3d1026c4611136d9"
+    "current_checksum": "132f890344745a39912dc6553338a680b85e5badf1f7b4c372aae624f36b68d6"
   }
 }

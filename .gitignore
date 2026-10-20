@@ -56,3 +56,4 @@ app.*.map.json
 android/local.properties
 assets/environment_values/environment.json
 coverage/
+ff_flutter_sdk/

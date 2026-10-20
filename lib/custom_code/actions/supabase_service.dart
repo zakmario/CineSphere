@@ -209,22 +209,19 @@ class SupabaseService {
   /// Profil public d'un autre membre (sans e-mail).
   Future<UserProfile?> fetchPublicProfile(String userId) =>
       _guard('fetchPublicProfile', () async {
-        final row = await _client
-            .from('public_profiles')
-            .select()
-            .eq('id', userId)
-            .maybeSingle();
-        return row == null ? null : UserProfile.fromJson(row);
+        final rows = await _client
+            .rpc('get_public_profile', params: {'profile_id': userId});
+        final list = (rows as List).cast<Map<String, dynamic>>();
+        return list.isEmpty ? null : UserProfile.fromJson(list.first);
       });
 
+  /// Vrai si le pseudo est libre (ou déjà celui de l'utilisateur).
+  /// Utilisable avant l'inscription (fonction accessible à anon).
   Future<bool> isUsernameAvailable(String username) =>
       _guard('isUsernameAvailable', () async {
-        final rows = await _client
-            .from('public_profiles')
-            .select('id')
-            .ilike('username', username.trim().replaceAll('_', r'\_'))
-            .limit(1);
-        return rows.isEmpty || rows.first['id'] == currentUserId;
+        final available = await _client
+            .rpc('username_available', params: {'candidate': username.trim()});
+        return available == true;
       });
 
   Future<UserProfile> updateProfile({

@@ -237,21 +237,43 @@ void main() {
       );
     });
 
-    test('isUsernameAvailable interroge la vue publique', () async {
+    test('isUsernameAvailable appelle la fonction username_available',
+        () async {
       final requests = <http.Request>[];
-      final free = _service((r) => _rows(r, []), requests: requests);
-      expect(await free.isUsernameAvailable('nouveau'), isTrue);
-      expect(requests.single.url.path, '/rest/v1/public_profiles');
+      final free = _service(
+          (r) => http.Response('true', 200,
+              headers: {'content-type': 'application/json'}),
+          requests: requests);
+      expect(await free.isUsernameAvailable(' nouveau '), isTrue);
+      expect(requests.single.url.path, '/rest/v1/rpc/username_available');
+      expect(jsonDecode(requests.single.body), {'candidate': 'nouveau'});
 
-      final taken = _service((r) => _rows(r, [
-            {'id': 'autre'}
-          ]));
+      final taken = _service((r) => http.Response('false', 200,
+          headers: {'content-type': 'application/json'}));
       expect(await taken.isUsernameAvailable('zak'), isFalse);
+    });
 
-      final mine = _service((r) => _rows(r, [
-            {'id': _userId}
-          ]));
-      expect(await mine.isUsernameAvailable('zak'), isTrue);
+    test('fetchPublicProfile appelle get_public_profile (sans e-mail)',
+        () async {
+      final requests = <http.Request>[];
+      final service = _service(
+          (r) => http.Response(
+              jsonEncode([
+                {'id': 'u2', 'username': 'bob', 'avatar_url': null, 'bio': 'Hi'}
+              ]),
+              200,
+              headers: {'content-type': 'application/json'}),
+          requests: requests);
+
+      final profile = await service.fetchPublicProfile('u2');
+
+      expect(profile?.username, 'bob');
+      expect(profile?.email, isNull);
+      expect(requests.single.url.path, '/rest/v1/rpc/get_public_profile');
+
+      final none = _service((r) => http.Response('[]', 200,
+          headers: {'content-type': 'application/json'}));
+      expect(await none.fetchPublicProfile('x'), isNull);
     });
 
     test('fetchPreferences : valeurs par défaut si aucune ligne', () async {

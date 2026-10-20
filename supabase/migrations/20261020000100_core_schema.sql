@@ -21,17 +21,28 @@ update public.media
 set genres = array_replace(genres, 'Science-fiction', 'Science-Fiction')
 where 'Science-fiction' = any (genres);
 
-update public.genres g
-set id = m.tmdb_id, name = m.tmdb_name
-from (values
+drop table if exists pg_temp.genre_tmdb_map;
+create temporary table genre_tmdb_map (old_name text, tmdb_id int, tmdb_name text)
+  on commit drop;
+insert into genre_tmdb_map values
   ('Action', 28, 'Action'), ('Aventure', 12, 'Aventure'),
   ('Animation', 16, 'Animation'), ('Comédie', 35, 'Comédie'),
   ('Crime', 80, 'Crime'), ('Drame', 18, 'Drame'),
   ('Fantastique', 14, 'Fantastique'), ('Horreur', 27, 'Horreur'),
   ('Science-fiction', 878, 'Science-Fiction'), ('Thriller', 53, 'Thriller'),
-  ('Romance', 10749, 'Romance'), ('Documentaire', 99, 'Documentaire')
-) as m(old_name, tmdb_id, tmdb_name)
-where g.name = m.old_name and g.id <> m.tmdb_id;
+  ('Romance', 10749, 'Romance'), ('Documentaire', 99, 'Documentaire');
+
+-- En deux temps (ids négatifs puis TMDB) : les anciens ids 1..12
+-- recouvrent certains ids TMDB (12 = Aventure).
+update public.genres g
+set id = -g.id
+from genre_tmdb_map m
+where g.name = m.old_name and g.id > 0 and g.id <> m.tmdb_id;
+
+update public.genres g
+set id = m.tmdb_id, name = m.tmdb_name
+from genre_tmdb_map m
+where g.name = m.old_name and g.id < 0;
 
 -- ---------------------------------------------------------------------------
 -- Profils
@@ -146,7 +157,6 @@ alter table public.favorites
   add column if not exists id uuid not null default gen_random_uuid(),
   add column if not exists movie_id uuid references public.movies (id) on delete cascade,
   add column if not exists series_id uuid references public.series (id) on delete cascade;
-alter table public.favorites alter column media_id drop not null;
 
 do $$
 begin
@@ -166,6 +176,9 @@ begin
       check (num_nonnulls(media_id, movie_id, series_id) = 1);
   end if;
 end $$;
+
+-- Après le changement de clé primaire (media_id n'en fait plus partie).
+alter table public.favorites alter column media_id drop not null;
 
 create unique index if not exists favorites_user_media_key
   on public.favorites (user_id, media_id) where media_id is not null;

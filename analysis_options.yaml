@@ -10,6 +10,7 @@ analyzer:
     - android/**
     - ios/**
     - web/**
+    - ff_flutter_sdk/**
     # Code généré par FlutterFlow (régénéré à chaque export, non modifiable).
     - lib/main.dart
     - lib/index.dart
