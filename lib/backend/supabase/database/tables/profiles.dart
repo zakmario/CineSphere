@@ -43,4 +43,10 @@ class ProfilesRow extends SupabaseDataRow {
 
   bool? get onboardingDone => getField<bool>('onboarding_done');
   set onboardingDone(bool? value) => setField<bool>('onboarding_done', value);
+
+  String? get role => getField<String>('role');
+  set role(String? value) => setField<String>('role', value);
+
+  DateTime? get updatedAt => getField<DateTime>('updated_at');
+  set updatedAt(DateTime? value) => setField<DateTime>('updated_at', value);
 }

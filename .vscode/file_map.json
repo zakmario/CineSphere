@@ -13,7 +13,7 @@
     "type": "D",
     "is_deleted": false,
     "current_checksum": "bbf1ed2a09c92cf9965577fe95eee4ade1a815778ba802650f99ee025f566a33",
-    "original_checksum": "d9fe8dc2deb74de36f5d73344e87a51fdd00a2bf8e8ee4d8ea984d8c4a3d467c"
+    "original_checksum": "bbf1ed2a09c92cf9965577fe95eee4ade1a815778ba802650f99ee025f566a33"
   },
   "lib/custom_code/actions/init_local_notifications.dart": {
     "old_identifier_name": "initLocalNotifications",
@@ -101,7 +101,7 @@
     "type": "W",
     "is_deleted": false,
     "current_checksum": "9c7c4e6d50a2d6e795a8c8a88966063015a6e69d079627f1d173ab9143cfe8cf",
-    "original_checksum": "9de3038d3c35b5183955a8b1777ff3fdd0e37308185194044237e2ac5e4ca58b"
+    "original_checksum": "9c7c4e6d50a2d6e795a8c8a88966063015a6e69d079627f1d173ab9143cfe8cf"
   },
   "lib/custom_code/widgets/upcoming_releases_list.dart": {
     "old_identifier_name": "UpcomingReleasesList",
@@ -164,13 +164,15 @@
     "new_identifier_name": "cineModels",
     "type": "A",
     "is_deleted": false,
-    "current_checksum": "aab7213b0140d3d583907c211a640a4f6f916245c8f7ea753b989ab27f113418"
+    "current_checksum": "aab7213b0140d3d583907c211a640a4f6f916245c8f7ea753b989ab27f113418",
+    "original_checksum": "aab7213b0140d3d583907c211a640a4f6f916245c8f7ea753b989ab27f113418"
   },
   "lib/custom_code/actions/supabase_service.dart": {
     "old_identifier_name": "supabaseService",
     "new_identifier_name": "supabaseService",
     "type": "A",
     "is_deleted": false,
-    "current_checksum": "132f890344745a39912dc6553338a680b85e5badf1f7b4c372aae624f36b68d6"
+    "current_checksum": "132f890344745a39912dc6553338a680b85e5badf1f7b4c372aae624f36b68d6",
+    "original_checksum": "132f890344745a39912dc6553338a680b85e5badf1f7b4c372aae624f36b68d6"
   }
 }
