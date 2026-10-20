@@ -1,5 +1,4 @@
 // Export pages
-export '/membre1_auth_profil_supabase/login/login_widget.dart' show LoginWidget;
 export '/membre2_catalogue_recherche_pagination/home_page/home_page_widget.dart'
     show HomePageWidget;
 export '/membre3_ux_sqlite_notifications/onboarding/onboarding_widget.dart'
@@ -16,3 +15,10 @@ export '/membre2_catalogue_recherche_pagination/actualites/actualites_widget.dar
     show ActualitesWidget;
 export '/membre1_auth_profil_supabase/parametres/parametres_widget.dart'
     show ParametresWidget;
+export '/membre1_auth_profil_supabase/login/login_widget.dart' show LoginWidget;
+export '/membre1_auth_profil_supabase/inscription/inscription_widget.dart'
+    show InscriptionWidget;
+export '/membre1_auth_profil_supabase/mot_de_passe_oublie/mot_de_passe_oublie_widget.dart'
+    show MotDePasseOublieWidget;
+export '/membre1_auth_profil_supabase/nouveau_mot_de_passe/nouveau_mot_de_passe_widget.dart'
+    show NouveauMotDePasseWidget;

@@ -180,34 +180,39 @@
     "new_identifier_name": "authService",
     "type": "A",
     "is_deleted": false,
-    "current_checksum": "f044a31dc51412ac360a8cd750d9e5bad99938b6fd23de6c4a4f142404c5788c"
+    "current_checksum": "f044a31dc51412ac360a8cd750d9e5bad99938b6fd23de6c4a4f142404c5788c",
+    "original_checksum": "f044a31dc51412ac360a8cd750d9e5bad99938b6fd23de6c4a4f142404c5788c"
   },
   "lib/custom_code/widgets/login_form.dart": {
     "old_identifier_name": "LoginForm",
     "new_identifier_name": "LoginForm",
     "type": "W",
     "is_deleted": false,
-    "current_checksum": "cc581c6a74dfaaa530b963864d3e73d26b679d697162d196337da736b9d60b94"
+    "current_checksum": "cc581c6a74dfaaa530b963864d3e73d26b679d697162d196337da736b9d60b94",
+    "original_checksum": "cc581c6a74dfaaa530b963864d3e73d26b679d697162d196337da736b9d60b94"
   },
   "lib/custom_code/widgets/sign_up_form.dart": {
     "old_identifier_name": "SignUpForm",
     "new_identifier_name": "SignUpForm",
     "type": "W",
     "is_deleted": false,
-    "current_checksum": "72b9b82a264285d6e7e47248793cc0a8f98fe639577a7bfad9f653cce2d8eff1"
+    "current_checksum": "72b9b82a264285d6e7e47248793cc0a8f98fe639577a7bfad9f653cce2d8eff1",
+    "original_checksum": "72b9b82a264285d6e7e47248793cc0a8f98fe639577a7bfad9f653cce2d8eff1"
   },
   "lib/custom_code/widgets/forgot_password_form.dart": {
     "old_identifier_name": "ForgotPasswordForm",
     "new_identifier_name": "ForgotPasswordForm",
     "type": "W",
     "is_deleted": false,
-    "current_checksum": "5f02339c32d372b9f893b7f630276fc933bb917445298380076fe498ab9325cd"
+    "current_checksum": "5f02339c32d372b9f893b7f630276fc933bb917445298380076fe498ab9325cd",
+    "original_checksum": "5f02339c32d372b9f893b7f630276fc933bb917445298380076fe498ab9325cd"
   },
   "lib/custom_code/widgets/new_password_form.dart": {
     "old_identifier_name": "NewPasswordForm",
     "new_identifier_name": "NewPasswordForm",
     "type": "W",
     "is_deleted": false,
-    "current_checksum": "2b32b0a83afcfefe2b0c4ec8559d4195aab935c11a28ad1d8353dcb82f08b88c"
+    "current_checksum": "2b32b0a83afcfefe2b0c4ec8559d4195aab935c11a28ad1d8353dcb82f08b88c",
+    "original_checksum": "2b32b0a83afcfefe2b0c4ec8559d4195aab935c11a28ad1d8353dcb82f08b88c"
   }
 }

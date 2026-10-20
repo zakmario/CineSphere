@@ -93,11 +93,6 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
               appStateNotifier.loggedIn ? NavBarPage() : LoginWidget(),
         ),
         FFRoute(
-          name: LoginWidget.routeName,
-          path: LoginWidget.routePath,
-          builder: (context, params) => LoginWidget(),
-        ),
-        FFRoute(
           name: HomePageWidget.routeName,
           path: HomePageWidget.routePath,
           builder: (context, params) => params.isEmpty
@@ -153,6 +148,31 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
           builder: (context, params) => params.isEmpty
               ? NavBarPage(initialPage: 'Parametres')
               : ParametresWidget(),
+        ),
+        FFRoute(
+          name: LoginWidget.routeName,
+          path: LoginWidget.routePath,
+          builder: (context, params) => LoginWidget(),
+        ),
+        FFRoute(
+          name: InscriptionWidget.routeName,
+          path: InscriptionWidget.routePath,
+          builder: (context, params) => InscriptionWidget(),
+        ),
+        FFRoute(
+          name: MotDePasseOublieWidget.routeName,
+          path: MotDePasseOublieWidget.routePath,
+          builder: (context, params) => MotDePasseOublieWidget(),
+        ),
+        FFRoute(
+          name: NouveauMotDePasseWidget.routeName,
+          path: NouveauMotDePasseWidget.routePath,
+          builder: (context, params) => NouveauMotDePasseWidget(
+            email: params.getParam(
+              'email',
+              ParamType.String,
+            ),
+          ),
         )
       ].map((r) => r.toRoute(appStateNotifier)).toList(),
     );
