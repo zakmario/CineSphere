@@ -146,40 +146,44 @@ flutter test
 | 2 — Catalogue | `CatalogBrowser`, `MediaCard`, HomePage, MediaDetail, pagination |
 | 3 — UX & notifications | Onboarding + Walkthrough FlutterFlow, calendrier, notifications locales, tests |
 
-## Gestion des membres
+## Authentification (membre 1)
 
-La première tranche de gestion des membres est disponible dans l’application :
+Écrans dans le dossier FlutterFlow `membre1_auth_profil_supabase`, chacun avec
+**un seul custom widget** en *Expanded* :
 
-- inscription et connexion par e-mail avec Supabase Auth ;
-- création automatique d’une ligne `profiles` après inscription ;
-- consultation et modification du nom d’utilisateur et de la bio ;
-- déconnexion depuis l’accueil.
+| Page | Widget | Callbacks |
+|---|---|---|
+| `login` (Entry Page) | `LoginForm` | `onSignedIn` → HomePage (*Replace Route*) · `onCreateAccount` → Inscription · `onForgotPassword` → MotDePasseOublie |
+| `Inscription` | `SignUpForm` | `onSignedUp` → HomePage (*Replace Route*) · `onGoToLogin` → retour |
+| `MotDePasseOublie` | `ForgotPasswordForm` | `onCodeSent(email)` → NouveauMotDePasse (`email`) · `onBackToLogin` → retour |
+| `NouveauMotDePasse` (paramètre `email`, String) | `NewPasswordForm` | `onPasswordUpdated` → HomePage (*Replace Route*) · `onBack` → retour |
 
-La table `profiles` doit contenir au minimum `id`, `username`, `email`, `bio` et
-`avatar_url`. `id` doit correspondre à `auth.users.id`.
+La logique est dans `lib/custom_code/actions/auth_service.dart` (action
+`authService` = « un membre est-il connecté ? ») :
 
-Activez la RLS dans Supabase et utilisez des politiques équivalentes à celles-ci
-(à adapter si des politiques existent déjà) :
+- validation : e-mail, mot de passe ≥ 8 caractères, confirmation, pseudo
+  (3 à 24 caractères) dont l'**unicité est vérifiée pendant la saisie**
+  (fonction SQL `username_available`, appelable avant l'inscription) ;
+- le pseudo est envoyé dans les métadonnées d'inscription et le trigger
+  `on_auth_user_created` crée `profiles` + `user_preferences` ;
+- erreurs Supabase Auth traduites en français (`CineFailure`), état de
+  chargement sur les boutons, bouton afficher / masquer le mot de passe ;
+- **codes par e-mail plutôt que liens** : la confirmation d'inscription et le
+  mot de passe oublié utilisent le code à usage unique (`{{ .Token }}`) saisi
+  dans l'application. Les liens Supabase pointent vers le *Site URL*
+  (`localhost:3000`), inutilisable en Test Mode FlutterFlow ou sur téléphone ;
+- un e-mail non confirmé à la connexion renvoie un code et l'écran propose de
+  le saisir ;
+- session persistante gérée par `supabase_flutter`.
 
-```sql
-alter table public.profiles enable row level security;
+Réglages Supabase (*Authentication*) :
 
-create policy "members can read their profile"
-on public.profiles for select
-to authenticated
-using (auth.uid() = id);
+- *Email Templates* → **Confirm signup** et **Reset Password** : le corps doit
+  contenir `{{ .Token }}` ;
+- *Providers → Email* : longueur minimale du mot de passe **8** ;
+- le SMTP intégré de Supabase n'envoie que **2 e-mails par heure**. Pour les
+  tests, désactiver **Confirm email** ou configurer un SMTP (*Settings → SMTP*).
 
-create policy "members can create their profile"
-on public.profiles for insert
-to authenticated
-with check (auth.uid() = id);
-
-create policy "members can update their profile"
-on public.profiles for update
-to authenticated
-using (auth.uid() = id)
-with check (auth.uid() = id);
-```
-
-Si la confirmation d’e-mail est activée dans Supabase, l’utilisateur doit
-confirmer son adresse avant sa première connexion.
+Tests : `test/auth_service_test.dart` (validation, traduction des erreurs,
+service, appels HTTP Supabase simulés) et `test/auth_forms_test.dart` (les 4
+écrans).

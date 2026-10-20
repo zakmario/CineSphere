@@ -8,3 +8,7 @@ export 'media_detail_view.dart' show MediaDetailView;
 export 'favorites_grid.dart' show FavoritesGrid;
 export 'news_feed.dart' show NewsFeed;
 export 'settings_panel.dart' show SettingsPanel;
+export 'login_form.dart' show LoginForm;
+export 'sign_up_form.dart' show SignUpForm;
+export 'forgot_password_form.dart' show ForgotPasswordForm;
+export 'new_password_form.dart' show NewPasswordForm;
