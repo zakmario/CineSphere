@@ -129,13 +129,6 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
               : CalendrierWidget(),
         ),
         FFRoute(
-          name: FavorisWidget.routeName,
-          path: FavorisWidget.routePath,
-          builder: (context, params) => params.isEmpty
-              ? NavBarPage(initialPage: 'Favoris')
-              : FavorisWidget(),
-        ),
-        FFRoute(
           name: ActualitesWidget.routeName,
           path: ActualitesWidget.routePath,
           builder: (context, params) => params.isEmpty
@@ -143,16 +136,19 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
               : ActualitesWidget(),
         ),
         FFRoute(
-          name: ParametresWidget.routeName,
-          path: ParametresWidget.routePath,
-          builder: (context, params) => params.isEmpty
-              ? NavBarPage(initialPage: 'Parametres')
-              : ParametresWidget(),
-        ),
-        FFRoute(
           name: LoginWidget.routeName,
           path: LoginWidget.routePath,
           builder: (context, params) => LoginWidget(),
+        ),
+        FFRoute(
+          name: ConfirmationEmailWidget.routeName,
+          path: ConfirmationEmailWidget.routePath,
+          builder: (context, params) => ConfirmationEmailWidget(
+            email: params.getParam(
+              'email',
+              ParamType.String,
+            ),
+          ),
         ),
         FFRoute(
           name: InscriptionWidget.routeName,
@@ -173,6 +169,25 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
               ParamType.String,
             ),
           ),
+        ),
+        FFRoute(
+          name: ParametresWidget.routeName,
+          path: ParametresWidget.routePath,
+          builder: (context, params) => params.isEmpty
+              ? NavBarPage(initialPage: 'Parametres')
+              : ParametresWidget(),
+        ),
+        FFRoute(
+          name: ProfilWidget.routeName,
+          path: ProfilWidget.routePath,
+          builder: (context, params) => ProfilWidget(),
+        ),
+        FFRoute(
+          name: FavorisWidget.routeName,
+          path: FavorisWidget.routePath,
+          builder: (context, params) => params.isEmpty
+              ? NavBarPage(initialPage: 'Favoris')
+              : FavorisWidget(),
         )
       ].map((r) => r.toRoute(appStateNotifier)).toList(),
     );
