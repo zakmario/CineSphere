@@ -12,7 +12,7 @@
     "new_identifier_name": "pubspec.yaml",
     "type": "D",
     "is_deleted": false,
-    "current_checksum": "d9fe8dc2deb74de36f5d73344e87a51fdd00a2bf8e8ee4d8ea984d8c4a3d467c",
+    "current_checksum": "2df0a4818484bc5e8aa8f2bb94eb12ab25930356a3010f7ec04a8d00b3065dc7",
     "original_checksum": "d9fe8dc2deb74de36f5d73344e87a51fdd00a2bf8e8ee4d8ea984d8c4a3d467c"
   },
   "lib/custom_code/actions/init_local_notifications.dart": {
@@ -100,7 +100,7 @@
     "new_identifier_name": "CatalogBrowser",
     "type": "W",
     "is_deleted": false,
-    "current_checksum": "9de3038d3c35b5183955a8b1777ff3fdd0e37308185194044237e2ac5e4ca58b",
+    "current_checksum": "9c7c4e6d50a2d6e795a8c8a88966063015a6e69d079627f1d173ab9143cfe8cf",
     "original_checksum": "9de3038d3c35b5183955a8b1777ff3fdd0e37308185194044237e2ac5e4ca58b"
   },
   "lib/custom_code/widgets/upcoming_releases_list.dart": {
@@ -158,5 +158,19 @@
     "is_deleted": false,
     "original_checksum": "e15a7c4ab8911826310439178bbdb5e0f37886054a010dffbd733f75196aa516",
     "current_checksum": "e15a7c4ab8911826310439178bbdb5e0f37886054a010dffbd733f75196aa516"
+  },
+  "lib/custom_code/actions/cine_models.dart": {
+    "old_identifier_name": "cineModels",
+    "new_identifier_name": "cineModels",
+    "type": "A",
+    "is_deleted": false,
+    "current_checksum": "bcace249b2f6887bb67ee2f41c4f6c2bbf123285e21829e1d33b38cc7509e6bf"
+  },
+  "lib/custom_code/actions/supabase_service.dart": {
+    "old_identifier_name": "supabaseService",
+    "new_identifier_name": "supabaseService",
+    "type": "A",
+    "is_deleted": false,
+    "current_checksum": "3357f9ca665fdb13e3dc11adefdf5747c3ad83530249ef4b3d1026c4611136d9"
   }
 }

@@ -117,6 +117,7 @@ dev_dependencies:
     sdk: flutter
   integration_test:
     sdk: flutter
+  http: 1.4.0
   mocktail: 1.0.4
   sqflite_common_ffi: 2.3.5
 

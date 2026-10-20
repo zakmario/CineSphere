@@ -12,3 +12,5 @@ export '/custom_code/actions/toggle_favorite.dart' show toggleFavorite;
 export '/custom_code/actions/has_completed_onboarding.dart'
     show hasCompletedOnboarding;
 export '/custom_code/actions/complete_onboarding.dart' show completeOnboarding;
+export '/custom_code/actions/cine_models.dart' show cineModels;
+export '/custom_code/actions/supabase_service.dart' show supabaseService;
