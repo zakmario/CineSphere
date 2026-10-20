@@ -1,0 +1,162 @@
+{
+  "lib/flutter_flow/custom_functions.dart": {
+    "old_identifier_name": "CustomFunctions",
+    "new_identifier_name": "CustomFunctions",
+    "type": "F",
+    "is_deleted": false,
+    "current_checksum": "ef215af61ea6d4389e08493f9975cdd44fd4b6bd2252a5b520b488267028902c",
+    "original_checksum": "ef215af61ea6d4389e08493f9975cdd44fd4b6bd2252a5b520b488267028902c"
+  },
+  "pubspec.yaml": {
+    "old_identifier_name": "pubspec.yaml",
+    "new_identifier_name": "pubspec.yaml",
+    "type": "D",
+    "is_deleted": false,
+    "current_checksum": "d9fe8dc2deb74de36f5d73344e87a51fdd00a2bf8e8ee4d8ea984d8c4a3d467c",
+    "original_checksum": "d9fe8dc2deb74de36f5d73344e87a51fdd00a2bf8e8ee4d8ea984d8c4a3d467c"
+  },
+  "lib/custom_code/actions/init_local_notifications.dart": {
+    "old_identifier_name": "initLocalNotifications",
+    "new_identifier_name": "initLocalNotifications",
+    "type": "A",
+    "is_deleted": false,
+    "current_checksum": "2333841f9a3bae6b83695607ae701346a8456a8b64d209813776664332aedcfa",
+    "original_checksum": "2333841f9a3bae6b83695607ae701346a8456a8b64d209813776664332aedcfa"
+  },
+  "lib/custom_code/actions/cancel_release_notification.dart": {
+    "old_identifier_name": "cancelReleaseNotification",
+    "new_identifier_name": "cancelReleaseNotification",
+    "type": "A",
+    "is_deleted": false,
+    "current_checksum": "92f131b330bac31767f317cf5dfc9cd89ad67964020f3b99fb135bbee3125edd",
+    "original_checksum": "92f131b330bac31767f317cf5dfc9cd89ad67964020f3b99fb135bbee3125edd"
+  },
+  "lib/custom_code/actions/complete_onboarding.dart": {
+    "old_identifier_name": "completeOnboarding",
+    "new_identifier_name": "completeOnboarding",
+    "type": "A",
+    "is_deleted": false,
+    "current_checksum": "c304cae7db82ceb7f659adc142a0e237cf0c97abd2c9eb5a85690f83f7c7e1e3",
+    "original_checksum": "c304cae7db82ceb7f659adc142a0e237cf0c97abd2c9eb5a85690f83f7c7e1e3"
+  },
+  "lib/custom_code/actions/get_scheduled_reminders.dart": {
+    "old_identifier_name": "getScheduledReminders",
+    "new_identifier_name": "getScheduledReminders",
+    "type": "A",
+    "is_deleted": false,
+    "current_checksum": "d8494129b3f829ef0c2edb222a861cf1fbf6cb73338b9080ece68de45d08bfad",
+    "original_checksum": "d8494129b3f829ef0c2edb222a861cf1fbf6cb73338b9080ece68de45d08bfad"
+  },
+  "lib/custom_code/actions/has_completed_onboarding.dart": {
+    "old_identifier_name": "hasCompletedOnboarding",
+    "new_identifier_name": "hasCompletedOnboarding",
+    "type": "A",
+    "is_deleted": false,
+    "current_checksum": "623e8eb5209f6b06b1f4f35cd408959a271dae2fccbfbbbb7b7c37107336b1d3",
+    "original_checksum": "623e8eb5209f6b06b1f4f35cd408959a271dae2fccbfbbbb7b7c37107336b1d3"
+  },
+  "lib/custom_code/actions/schedule_release_notification.dart": {
+    "old_identifier_name": "scheduleReleaseNotification",
+    "new_identifier_name": "scheduleReleaseNotification",
+    "type": "A",
+    "is_deleted": false,
+    "current_checksum": "b3e35afbe0a60c61f9ef5dbe50bac2fdb4718970ee000518978713cc85767d61",
+    "original_checksum": "b3e35afbe0a60c61f9ef5dbe50bac2fdb4718970ee000518978713cc85767d61"
+  },
+  "lib/custom_code/actions/show_instant_notification.dart": {
+    "old_identifier_name": "showInstantNotification",
+    "new_identifier_name": "showInstantNotification",
+    "type": "A",
+    "is_deleted": false,
+    "current_checksum": "6b25b68b47a4636c69d4336196a7e3157d66d5023364ec14e4747d60ece29748",
+    "original_checksum": "6b25b68b47a4636c69d4336196a7e3157d66d5023364ec14e4747d60ece29748"
+  },
+  "lib/custom_code/actions/toggle_favorite.dart": {
+    "old_identifier_name": "toggleFavorite",
+    "new_identifier_name": "toggleFavorite",
+    "type": "A",
+    "is_deleted": false,
+    "current_checksum": "7569d997ca1a438a5b389f9598e0cb430b810ead881cecd6b4007e0f85736c4f",
+    "original_checksum": "7569d997ca1a438a5b389f9598e0cb430b810ead881cecd6b4007e0f85736c4f"
+  },
+  "lib/custom_code/widgets/media_card.dart": {
+    "old_identifier_name": "MediaCard",
+    "new_identifier_name": "MediaCard",
+    "type": "W",
+    "is_deleted": false,
+    "original_checksum": "651260b9875089f00ad543449afc37f9337b24fb6482e49096a4997ed3cb220c",
+    "current_checksum": "651260b9875089f00ad543449afc37f9337b24fb6482e49096a4997ed3cb220c"
+  },
+  "lib/custom_code/widgets/favorite_button.dart": {
+    "old_identifier_name": "FavoriteButton",
+    "new_identifier_name": "FavoriteButton",
+    "type": "W",
+    "is_deleted": false,
+    "current_checksum": "004a99aae89f721fcd11e43ecd3c14b9b367cca420e1c64bafe02895c1b45ec4",
+    "original_checksum": "004a99aae89f721fcd11e43ecd3c14b9b367cca420e1c64bafe02895c1b45ec4"
+  },
+  "lib/custom_code/widgets/catalog_browser.dart": {
+    "old_identifier_name": "CatalogBrowser",
+    "new_identifier_name": "CatalogBrowser",
+    "type": "W",
+    "is_deleted": false,
+    "current_checksum": "9de3038d3c35b5183955a8b1777ff3fdd0e37308185194044237e2ac5e4ca58b",
+    "original_checksum": "9de3038d3c35b5183955a8b1777ff3fdd0e37308185194044237e2ac5e4ca58b"
+  },
+  "lib/custom_code/widgets/upcoming_releases_list.dart": {
+    "old_identifier_name": "UpcomingReleasesList",
+    "new_identifier_name": "UpcomingReleasesList",
+    "type": "W",
+    "is_deleted": false,
+    "original_checksum": "6479b9e662c91722634151ac52d1209aea654ef7963ad1b8748168157aa7e71b",
+    "current_checksum": "6479b9e662c91722634151ac52d1209aea654ef7963ad1b8748168157aa7e71b"
+  },
+  "lib/custom_code/widgets/onboarding_walkthrough.dart": {
+    "old_identifier_name": "OnboardingWalkthrough",
+    "new_identifier_name": "OnboardingWalkthrough",
+    "type": "W",
+    "is_deleted": false,
+    "original_checksum": "11edb0cc18040b08184857598e16287b6b8549cda8d9f6fb990b822040b9f820",
+    "current_checksum": "11edb0cc18040b08184857598e16287b6b8549cda8d9f6fb990b822040b9f820"
+  },
+  "lib/custom_code/widgets/home_feed.dart": {
+    "old_identifier_name": "HomeFeed",
+    "new_identifier_name": "HomeFeed",
+    "type": "W",
+    "is_deleted": false,
+    "current_checksum": "dcfe3b4d4cb238df59c5a06072f82f3352a1ce3c26d9bc0ed119e59ee4302e22",
+    "original_checksum": "dcfe3b4d4cb238df59c5a06072f82f3352a1ce3c26d9bc0ed119e59ee4302e22"
+  },
+  "lib/custom_code/widgets/media_detail_view.dart": {
+    "old_identifier_name": "MediaDetailView",
+    "new_identifier_name": "MediaDetailView",
+    "type": "W",
+    "is_deleted": false,
+    "original_checksum": "207ec02ee11e389541cea72902b5a6b28410a4c63b2a7ae8650aac5c4fa229df",
+    "current_checksum": "207ec02ee11e389541cea72902b5a6b28410a4c63b2a7ae8650aac5c4fa229df"
+  },
+  "lib/custom_code/widgets/favorites_grid.dart": {
+    "old_identifier_name": "FavoritesGrid",
+    "new_identifier_name": "FavoritesGrid",
+    "type": "W",
+    "is_deleted": false,
+    "original_checksum": "57d5ad162008c0455f09483135832cf9cf4b95412352201f90d2d1afed4f35cb",
+    "current_checksum": "57d5ad162008c0455f09483135832cf9cf4b95412352201f90d2d1afed4f35cb"
+  },
+  "lib/custom_code/widgets/news_feed.dart": {
+    "old_identifier_name": "NewsFeed",
+    "new_identifier_name": "NewsFeed",
+    "type": "W",
+    "is_deleted": false,
+    "original_checksum": "df8fe8cf2d3dd6db2eac18a4c53cd2cab70b45fee46a3fd447eff58f26908c44",
+    "current_checksum": "df8fe8cf2d3dd6db2eac18a4c53cd2cab70b45fee46a3fd447eff58f26908c44"
+  },
+  "lib/custom_code/widgets/settings_panel.dart": {
+    "old_identifier_name": "SettingsPanel",
+    "new_identifier_name": "SettingsPanel",
+    "type": "W",
+    "is_deleted": false,
+    "original_checksum": "e15a7c4ab8911826310439178bbdb5e0f37886054a010dffbd733f75196aa516",
+    "current_checksum": "e15a7c4ab8911826310439178bbdb5e0f37886054a010dffbd733f75196aa516"
+  }
+}

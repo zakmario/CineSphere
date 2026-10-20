@@ -1,0 +1,31 @@
+{
+  "files.readonlyInclude": {
+    "**": true
+  },
+  "files.readonlyExclude": {
+    "lib/custom_code/**": true,
+    "lib/flutter_flow/custom_functions.dart": true,
+    "pubspec.yaml": true,
+    "lib/flutter_flow/function_changes.json": true,
+    ".vscode/settings.json": true,
+    "lib/custom_code/actions/init_local_notifications.dart": true,
+    "lib/custom_code/actions/schedule_release_notification.dart": true,
+    "lib/custom_code/actions/cancel_release_notification.dart": true,
+    "lib/custom_code/actions/get_scheduled_reminders.dart": true,
+    "lib/custom_code/actions/show_instant_notification.dart": true,
+    "lib/custom_code/actions/toggle_favorite.dart": true,
+    "lib/custom_code/actions/has_completed_onboarding.dart": true,
+    "lib/custom_code/actions/complete_onboarding.dart": true,
+    "lib/custom_code/widgets/media_card.dart": true,
+    "lib/custom_code/widgets/favorite_button.dart": true,
+    "lib/custom_code/widgets/catalog_browser.dart": true,
+    "lib/custom_code/widgets/upcoming_releases_list.dart": true,
+    "lib/custom_code/widgets/onboarding_walkthrough.dart": true,
+    "lib/custom_code/widgets/home_feed.dart": true,
+    "lib/custom_code/widgets/media_detail_view.dart": true,
+    "lib/custom_code/widgets/favorites_grid.dart": true,
+    "lib/custom_code/widgets/news_feed.dart": true,
+    "lib/custom_code/widgets/settings_panel.dart": true
+  },
+  "dart.flutterSdkPath": "c:\\Users\\user\\CineSphere\\ff_flutter_sdk\\flutter"
+}
