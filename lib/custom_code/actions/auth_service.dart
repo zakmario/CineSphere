@@ -11,8 +11,6 @@ import 'package:flutter/material.dart';
 import 'dart:async';
 import 'dart:developer' as developer;
 
-import 'package:flutter/services.dart';
-
 import '/custom_code/actions/supabase_service.dart';
 
 /// Vrai si un membre est connecté (session Supabase active).
@@ -519,7 +517,6 @@ class AuthTextField extends StatefulWidget {
     this.onChanged,
     this.suffix,
     this.helperText,
-    this.inputFormatters,
     this.maxLength,
     this.enabled = true,
   });
@@ -536,7 +533,6 @@ class AuthTextField extends StatefulWidget {
   final ValueChanged<String>? onChanged;
   final Widget? suffix;
   final String? helperText;
-  final List<TextInputFormatter>? inputFormatters;
   final int? maxLength;
   final bool enabled;
 
@@ -565,7 +561,6 @@ class _AuthTextFieldState extends State<AuthTextField> {
         keyboardType: widget.keyboardType,
         textInputAction: widget.textInputAction,
         autofillHints: widget.autofillHints,
-        inputFormatters: widget.inputFormatters,
         maxLength: widget.maxLength,
         validator: widget.validator,
         onChanged: widget.onChanged,
@@ -625,7 +620,6 @@ class AuthCodeField extends StatelessWidget {
         keyboardType: TextInputType.number,
         textInputAction: TextInputAction.done,
         autofillHints: const [AutofillHints.oneTimeCode],
-        inputFormatters: [FilteringTextInputFormatter.digitsOnly],
         maxLength: 8,
         validator: validateOtpCode,
         onSubmitted: onSubmitted,

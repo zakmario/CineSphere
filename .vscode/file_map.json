@@ -12,8 +12,8 @@
     "new_identifier_name": "pubspec.yaml",
     "type": "D",
     "is_deleted": false,
-    "current_checksum": "bbf1ed2a09c92cf9965577fe95eee4ade1a815778ba802650f99ee025f566a33",
-    "original_checksum": "bbf1ed2a09c92cf9965577fe95eee4ade1a815778ba802650f99ee025f566a33"
+    "current_checksum": "ad08366a6d684c2447b2d2a28ce65d1c0e67ddf22461aa18fd1765df9acd7796",
+    "original_checksum": "ad08366a6d684c2447b2d2a28ce65d1c0e67ddf22461aa18fd1765df9acd7796"
   },
   "lib/custom_code/actions/init_local_notifications.dart": {
     "old_identifier_name": "initLocalNotifications",
@@ -180,8 +180,8 @@
     "new_identifier_name": "authService",
     "type": "A",
     "is_deleted": false,
-    "current_checksum": "f044a31dc51412ac360a8cd750d9e5bad99938b6fd23de6c4a4f142404c5788c",
-    "original_checksum": "f044a31dc51412ac360a8cd750d9e5bad99938b6fd23de6c4a4f142404c5788c"
+    "current_checksum": "54c114c0ea698e3e525dcb7e244784178d6c631bedc590151087e82a66649ea5",
+    "original_checksum": "54c114c0ea698e3e525dcb7e244784178d6c631bedc590151087e82a66649ea5"
   },
   "lib/custom_code/widgets/login_form.dart": {
     "old_identifier_name": "LoginForm",
