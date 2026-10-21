@@ -54,7 +54,7 @@ class _ActualitesWidgetState extends State<ActualitesWidget> {
           title: Text(
             'Actualités',
             style: FlutterFlowTheme.of(context).headlineMedium.override(
-                  font: GoogleFonts.interTight(
+                  font: GoogleFonts.outfit(
                     fontWeight:
                         FlutterFlowTheme.of(context).headlineMedium.fontWeight,
                     fontStyle:

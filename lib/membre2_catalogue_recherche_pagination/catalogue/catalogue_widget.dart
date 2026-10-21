@@ -54,7 +54,7 @@ class _CatalogueWidgetState extends State<CatalogueWidget> {
           title: Text(
             'Catalogue',
             style: FlutterFlowTheme.of(context).headlineMedium.override(
-                  font: GoogleFonts.interTight(
+                  font: GoogleFonts.outfit(
                     fontWeight:
                         FlutterFlowTheme.of(context).headlineMedium.fontWeight,
                     fontStyle:

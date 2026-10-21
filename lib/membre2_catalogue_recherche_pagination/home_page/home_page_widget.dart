@@ -54,7 +54,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
           title: Text(
             'CineSphere',
             style: FlutterFlowTheme.of(context).headlineMedium.override(
-                  font: GoogleFonts.interTight(
+                  font: GoogleFonts.outfit(
                     fontWeight:
                         FlutterFlowTheme.of(context).headlineMedium.fontWeight,
                     fontStyle:
