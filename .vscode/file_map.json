@@ -12,8 +12,8 @@
     "new_identifier_name": "pubspec.yaml",
     "type": "D",
     "is_deleted": false,
-    "current_checksum": "40f6c18269deaf667edfba3ded73245bc05d5fab578355a6612169f0e494d8a9",
-    "original_checksum": "40f6c18269deaf667edfba3ded73245bc05d5fab578355a6612169f0e494d8a9"
+    "current_checksum": "12326b98477a46dd0ed5e8f46afe2adb663367fc5e51430a0294deae5c491727",
+    "original_checksum": "12326b98477a46dd0ed5e8f46afe2adb663367fc5e51430a0294deae5c491727"
   },
   "lib/custom_code/actions/init_local_notifications.dart": {
     "old_identifier_name": "initLocalNotifications",
@@ -334,5 +334,13 @@
     "is_deleted": false,
     "current_checksum": "ea78f57e9bb69bf1150a3f8bbf1d1c085a2b5c41889810c2b6738c1eb21a451f",
     "original_checksum": "ea78f57e9bb69bf1150a3f8bbf1d1c085a2b5c41889810c2b6738c1eb21a451f"
+  },
+  "lib/custom_code/widgets/avatar_picker.dart": {
+    "old_identifier_name": "AvatarPicker",
+    "new_identifier_name": "AvatarPicker",
+    "type": "W",
+    "is_deleted": false,
+    "current_checksum": "565b1d21ea5a0cd6cf7454ae95ae0ecbccb6df2cb0337aa73bb8244f2777d7a1",
+    "original_checksum": "565b1d21ea5a0cd6cf7454ae95ae0ecbccb6df2cb0337aa73bb8244f2777d7a1"
   }
 }

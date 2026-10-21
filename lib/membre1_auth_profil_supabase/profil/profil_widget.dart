@@ -6,6 +6,7 @@ import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
 import 'dart:ui';
 import '/custom_code/actions/index.dart' as actions;
+import '/custom_code/widgets/index.dart' as custom_widgets;
 import '/index.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -181,39 +182,9 @@ class _ProfilWidgetState extends State<ProfilWidget> {
                             mainAxisAlignment: MainAxisAlignment.start,
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
-                              Container(
-                                width: 100.0,
-                                height: 100.0,
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  border: Border.all(
-                                    color: Color(0xFFF5B841),
-                                    width: 2.0,
-                                  ),
-                                ),
-                                alignment: AlignmentDirectional(0.0, 0.0),
-                                child: Container(
-                                  width: 92.0,
-                                  height: 92.0,
-                                  decoration: BoxDecoration(
-                                    gradient: LinearGradient(
-                                      colors: [
-                                        Color(0xFFF5B841),
-                                        Color(0xFF7C5CFF)
-                                      ],
-                                      stops: [0.0, 1.0],
-                                      begin: AlignmentDirectional(-1.0, -1.0),
-                                      end: AlignmentDirectional(1.0, 1.0),
-                                    ),
-                                    shape: BoxShape.circle,
-                                  ),
-                                  alignment: AlignmentDirectional(0.0, 0.0),
-                                  child: Icon(
-                                    Icons.person_rounded,
-                                    color: Color(0xFF14110A),
-                                    size: 48.0,
-                                  ),
-                                ),
+                              custom_widgets.AvatarPicker(
+                                avatarUrl: columnProfilesRow?.avatarUrl,
+                                onChanged: (avatarUrl) async {},
                               ),
                               Text(
                                 columnProfilesRow!.username,
