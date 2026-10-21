@@ -141,6 +141,19 @@ String? validateUsername(String? value) {
   return null;
 }
 
+/// Nom de liste : 1 à 60 caractères (contrainte de la table watchlists).
+/// Renvoie un message d'erreur en français, ou null si valide.
+String? validateWatchlistName(String? value) {
+  final name = value?.trim() ?? '';
+  if (name.isEmpty) {
+    return 'Donnez un nom à la liste.';
+  }
+  if (name.length > 60) {
+    return 'Le nom ne doit pas dépasser 60 caractères.';
+  }
+  return null;
+}
+
 /// Chemin Storage de l'avatar : `{user_id}/avatar.{ext}` (politique RLS).
 String avatarStoragePath(String userId, String extension) {
   final ext = extension.toLowerCase().replaceAll('.', '');
@@ -268,6 +281,27 @@ class SupabaseService {
             '?v=${DateTime.now().millisecondsSinceEpoch}';
         await updateProfile(avatarUrl: url);
         return url;
+      });
+
+  // Listes ---------------------------------------------------------------
+
+  Future<Watchlist> createWatchlist(String name, {String? description}) =>
+      _guard('createWatchlist', () async {
+        final error = validateWatchlistName(name);
+        if (error != null) {
+          throw CineFailure(CineFailureKind.invalid, error);
+        }
+        final row = await _client
+            .from('watchlists')
+            .insert({
+              'user_id': _requireUserId,
+              'name': name.trim(),
+              if (description != null && description.trim().isNotEmpty)
+                'description': description.trim(),
+            })
+            .select()
+            .single();
+        return Watchlist.fromJson(row);
       });
 
   // Préférences ----------------------------------------------------------

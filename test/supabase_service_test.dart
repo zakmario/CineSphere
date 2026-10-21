@@ -89,6 +89,19 @@ void main() {
     });
   });
 
+  group('validateWatchlistName', () {
+    test('valides', () {
+      expect(validateWatchlistName('À voir ce week-end'), isNull);
+      expect(validateWatchlistName('x' * 60), isNull);
+    });
+    test('invalides', () {
+      expect(validateWatchlistName('   '), 'Donnez un nom à la liste.');
+      expect(validateWatchlistName(null), 'Donnez un nom à la liste.');
+      expect(validateWatchlistName('x' * 61),
+          'Le nom ne doit pas dépasser 60 caractères.');
+    });
+  });
+
   group('avatarStoragePath', () {
     test('dossier de l\'utilisateur et extension normalisée', () {
       expect(avatarStoragePath('u1', 'PNG'), 'u1/avatar.png');
@@ -110,15 +123,18 @@ void main() {
 
     test('autres doublons, droits, données invalides, introuvable', () {
       expect(
-          mapSupabaseError(const PostgrestException(message: 'x', code: '23505'))
+          mapSupabaseError(
+                  const PostgrestException(message: 'x', code: '23505'))
               .message,
           'Cet élément existe déjà.');
       expect(
-          mapSupabaseError(const PostgrestException(message: 'x', code: '42501'))
+          mapSupabaseError(
+                  const PostgrestException(message: 'x', code: '42501'))
               .kind,
           CineFailureKind.forbidden);
       expect(
-          mapSupabaseError(const PostgrestException(message: 'x', code: '23514'))
+          mapSupabaseError(
+                  const PostgrestException(message: 'x', code: '23514'))
               .kind,
           CineFailureKind.invalid);
       expect(
@@ -190,8 +206,8 @@ void main() {
 
       await expectLater(
         service.fetchPreferences(),
-        throwsA(isA<CineFailure>().having(
-            (f) => f.kind, 'kind', CineFailureKind.unauthenticated)),
+        throwsA(isA<CineFailure>()
+            .having((f) => f.kind, 'kind', CineFailureKind.unauthenticated)),
       );
       expect(requests, isEmpty);
     });
@@ -232,8 +248,8 @@ void main() {
 
       await expectLater(
         service.updateProfile(username: 'pris'),
-        throwsA(isA<CineFailure>()
-            .having((f) => f.message, 'message', 'Ce pseudo est déjà utilisé.')),
+        throwsA(isA<CineFailure>().having(
+            (f) => f.message, 'message', 'Ce pseudo est déjà utilisé.')),
       );
     });
 
@@ -298,7 +314,8 @@ void main() {
       final request = requests.single;
       expect(request.method, 'POST');
       expect(request.url.path, '/rest/v1/user_preferences');
-      expect(request.headers['Prefer'], contains('resolution=merge-duplicates'));
+      expect(
+          request.headers['Prefer'], contains('resolution=merge-duplicates'));
       final body = jsonDecode(request.body) as Map<String, dynamic>;
       expect(body['user_id'], _userId);
       expect(body.containsKey('updated_at'), isFalse);
@@ -316,7 +333,8 @@ void main() {
               : [
                   {'id': 8, 'name': 'Netflix', 'logo_url': null}
                 ]));
-      expect(await service.fetchGenres(), [const Genre(id: 28, name: 'Action')]);
+      expect(
+          await service.fetchGenres(), [const Genre(id: 28, name: 'Action')]);
       expect(await service.fetchPlatforms(),
           [const Platform(id: 8, name: 'Netflix')]);
     });
@@ -366,6 +384,42 @@ void main() {
       final update = requests.last;
       expect(update.url.path, '/rest/v1/profiles');
       expect(jsonDecode(update.body)['avatar_url'], url);
+    });
+
+    test("createWatchlist insère la liste de l'utilisateur courant", () async {
+      final requests = <http.Request>[];
+      final service = _service(
+          (r) => _rows(r, [
+                {
+                  'id': 'w1',
+                  'user_id': _userId,
+                  'name': 'Films cultes',
+                  'description': null,
+                  'is_public': false,
+                  'created_at': '2026-10-21T10:00:00Z',
+                }
+              ]),
+          requests: requests);
+
+      final list = await service.createWatchlist('  Films cultes ');
+
+      expect(list.name, 'Films cultes');
+      expect(requests.single.method, 'POST');
+      expect(requests.single.url.path, '/rest/v1/watchlists');
+      expect(jsonDecode(requests.single.body),
+          {'user_id': _userId, 'name': 'Films cultes'});
+    });
+
+    test('createWatchlist valide le nom avant tout appel réseau', () async {
+      final requests = <http.Request>[];
+      final service = _service((r) => _rows(r, []), requests: requests);
+
+      await expectLater(
+        service.createWatchlist('  '),
+        throwsA(isA<CineFailure>()
+            .having((f) => f.message, 'message', 'Donnez un nom à la liste.')),
+      );
+      expect(requests, isEmpty);
     });
 
     test('erreur réseau -> CineFailure network', () async {

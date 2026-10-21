@@ -22,3 +22,4 @@ export 'auth_reset_password.dart' show authResetPassword;
 export 'auth_send_reset_code.dart' show authSendResetCode;
 export 'auth_sign_up.dart' show authSignUp;
 export 'update_my_profile.dart' show updateMyProfile;
+export 'create_watchlist.dart' show createWatchlist;
