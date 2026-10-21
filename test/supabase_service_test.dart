@@ -505,6 +505,49 @@ void main() {
       expect(requests.single.url.queryParameters['id'], 'eq.i1');
     });
 
+    test('fetchMyWatchlists lit les listes du membre, récentes d\'abord',
+        () async {
+      final requests = <http.Request>[];
+      final service = _service(
+          (r) => _rows(r, [
+                {
+                  'id': 'w2',
+                  'user_id': _userId,
+                  'name': 'Week-end',
+                  'created_at': '2026-10-21T11:00:00Z',
+                },
+                {
+                  'id': 'w1',
+                  'user_id': _userId,
+                  'name': 'À voir',
+                  'created_at': '2026-10-21T10:00:00Z',
+                },
+              ]),
+          requests: requests);
+
+      final lists = await service.fetchMyWatchlists();
+
+      expect(lists.map((l) => l.name), ['Week-end', 'À voir']);
+      expect(requests.single.url.queryParameters['user_id'], 'eq.$_userId');
+      expect(requests.single.url.queryParameters['order'],
+          startsWith('created_at.desc'));
+    });
+
+    test('watchlistIdsWithMedia renvoie les listes contenant le titre',
+        () async {
+      final requests = <http.Request>[];
+      final service = _service(
+          (r) => _rows(r, [
+                {'watchlist_id': 'w1'},
+                {'watchlist_id': 'w3'},
+              ]),
+          requests: requests);
+
+      expect(await service.watchlistIdsWithMedia('m1'), {'w1', 'w3'});
+      expect(requests.single.url.path, '/rest/v1/watchlist_items');
+      expect(requests.single.url.queryParameters['media_id'], 'eq.m1');
+    });
+
     test('erreur réseau -> CineFailure network', () async {
       final service =
           _service((r) => throw http.ClientException('Network is unreachable'));

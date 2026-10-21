@@ -132,8 +132,8 @@
     "new_identifier_name": "MediaDetailView",
     "type": "W",
     "is_deleted": false,
-    "original_checksum": "207ec02ee11e389541cea72902b5a6b28410a4c63b2a7ae8650aac5c4fa229df",
-    "current_checksum": "207ec02ee11e389541cea72902b5a6b28410a4c63b2a7ae8650aac5c4fa229df"
+    "original_checksum": "a338a0421ad975a9df1d51cfa3cd5dcdee000d8baf7e1c3ec546c80e5b627232",
+    "current_checksum": "a338a0421ad975a9df1d51cfa3cd5dcdee000d8baf7e1c3ec546c80e5b627232"
   },
   "lib/custom_code/widgets/favorites_grid.dart": {
     "old_identifier_name": "FavoritesGrid",
@@ -172,8 +172,8 @@
     "new_identifier_name": "supabaseService",
     "type": "A",
     "is_deleted": false,
-    "current_checksum": "e1a8f4ddc8342a6c20335785ebb10a837f61124ca4c3659d18d163085284b73b",
-    "original_checksum": "e1a8f4ddc8342a6c20335785ebb10a837f61124ca4c3659d18d163085284b73b"
+    "current_checksum": "c83df45764cfcccff6613b8ce8bb109b0989fc03c6ca4a2e76d21629ed308447",
+    "original_checksum": "c83df45764cfcccff6613b8ce8bb109b0989fc03c6ca4a2e76d21629ed308447"
   },
   "lib/custom_code/actions/auth_service.dart": {
     "old_identifier_name": "authService",
@@ -308,5 +308,13 @@
     "is_deleted": false,
     "current_checksum": "29728d7c3bbcea473c69c6461d79f87e63ce0aec4d75d71d2d86d87c2884e045",
     "original_checksum": "29728d7c3bbcea473c69c6461d79f87e63ce0aec4d75d71d2d86d87c2884e045"
+  },
+  "lib/custom_code/widgets/add_to_watchlist_button.dart": {
+    "old_identifier_name": "AddToWatchlistButton",
+    "new_identifier_name": "AddToWatchlistButton",
+    "type": "W",
+    "is_deleted": false,
+    "current_checksum": "9d4006ee8610c8faeb40daaae332b0188e029dd9d98c311b56677af43937e011",
+    "original_checksum": "9d4006ee8610c8faeb40daaae332b0188e029dd9d98c311b56677af43937e011"
   }
 }

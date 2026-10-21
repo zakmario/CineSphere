@@ -263,6 +263,8 @@ class _MediaDetailViewState extends State<MediaDetailView> {
                     label: const Text('Bande-annonce'),
                   ),
                 ],
+                const SizedBox(height: 12),
+                AddToWatchlistButton(mediaId: widget.mediaId),
                 const SizedBox(height: 20),
                 Text('Synopsis', style: theme.titleMedium),
                 const SizedBox(height: 8),

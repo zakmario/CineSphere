@@ -285,6 +285,28 @@ class SupabaseService {
 
   // Listes ---------------------------------------------------------------
 
+  /// Listes du membre connecté, les plus récentes d'abord.
+  Future<List<Watchlist>> fetchMyWatchlists() =>
+      _guard('fetchMyWatchlists', () async {
+        final rows = await _client
+            .from('watchlists')
+            .select()
+            .eq('user_id', _requireUserId)
+            .order('created_at', ascending: false);
+        return rows.map(Watchlist.fromJson).toList();
+      });
+
+  /// Identifiants des listes (visibles) qui contiennent déjà ce titre.
+  Future<Set<String>> watchlistIdsWithMedia(String mediaId) =>
+      _guard('watchlistIdsWithMedia', () async {
+        _requireUserId;
+        final rows = await _client
+            .from('watchlist_items')
+            .select('watchlist_id')
+            .eq('media_id', mediaId);
+        return {for (final row in rows) row['watchlist_id'] as String};
+      });
+
   Future<Watchlist> createWatchlist(String name, {String? description}) =>
       _guard('createWatchlist', () async {
         final error = validateWatchlistName(name);

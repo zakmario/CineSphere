@@ -12,3 +12,4 @@ export 'login_form.dart' show LoginForm;
 export 'sign_up_form.dart' show SignUpForm;
 export 'forgot_password_form.dart' show ForgotPasswordForm;
 export 'new_password_form.dart' show NewPasswordForm;
+export 'add_to_watchlist_button.dart' show AddToWatchlistButton;
