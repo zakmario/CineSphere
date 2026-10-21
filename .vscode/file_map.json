@@ -172,8 +172,8 @@
     "new_identifier_name": "supabaseService",
     "type": "A",
     "is_deleted": false,
-    "current_checksum": "32a2f7c7a1103a389e7d0a10f92d18efd8587ae6effbb8610ff1a9691c7b2976",
-    "original_checksum": "32a2f7c7a1103a389e7d0a10f92d18efd8587ae6effbb8610ff1a9691c7b2976"
+    "current_checksum": "e1a8f4ddc8342a6c20335785ebb10a837f61124ca4c3659d18d163085284b73b",
+    "original_checksum": "e1a8f4ddc8342a6c20335785ebb10a837f61124ca4c3659d18d163085284b73b"
   },
   "lib/custom_code/actions/auth_service.dart": {
     "old_identifier_name": "authService",
@@ -275,8 +275,38 @@
     "old_identifier_name": "createWatchlist",
     "new_identifier_name": "createWatchlist",
     "type": "A",
+    "is_deleted": false
+  },
+  "lib/custom_code/actions/rename_watchlist.dart": {
+    "old_identifier_name": "renameWatchlist",
+    "new_identifier_name": "renameWatchlist",
+    "type": "A",
     "is_deleted": false,
-    "current_checksum": "96d51e0e037751e1b15288b7ae8c6ac7b5f52b6d98a49bd490feb868ce0681fe",
-    "original_checksum": "96d51e0e037751e1b15288b7ae8c6ac7b5f52b6d98a49bd490feb868ce0681fe"
+    "current_checksum": "2e487e86e91f596dbb51621a049a1b4cb8aeb1d1a492441fbc515ca1fd062f81",
+    "original_checksum": "2e487e86e91f596dbb51621a049a1b4cb8aeb1d1a492441fbc515ca1fd062f81"
+  },
+  "lib/custom_code/actions/add_to_watchlist.dart": {
+    "old_identifier_name": "addToWatchlist",
+    "new_identifier_name": "addToWatchlist",
+    "type": "A",
+    "is_deleted": false,
+    "current_checksum": "556f42a5005e71f3d53bcd38c1dffa39a5b00150815dcf357c54f70d6948ceb0",
+    "original_checksum": "556f42a5005e71f3d53bcd38c1dffa39a5b00150815dcf357c54f70d6948ceb0"
+  },
+  "lib/custom_code/actions/delete_watchlist.dart": {
+    "old_identifier_name": "deleteWatchlist",
+    "new_identifier_name": "deleteWatchlist",
+    "type": "A",
+    "is_deleted": false,
+    "current_checksum": "bc80085cdda80e1b0700fd12ac52b4af06adf7f77edebaa5f8ef96e5d78546f8",
+    "original_checksum": "bc80085cdda80e1b0700fd12ac52b4af06adf7f77edebaa5f8ef96e5d78546f8"
+  },
+  "lib/custom_code/actions/remove_watchlist_item.dart": {
+    "old_identifier_name": "removeWatchlistItem",
+    "new_identifier_name": "removeWatchlistItem",
+    "type": "A",
+    "is_deleted": false,
+    "current_checksum": "29728d7c3bbcea473c69c6461d79f87e63ce0aec4d75d71d2d86d87c2884e045",
+    "original_checksum": "29728d7c3bbcea473c69c6461d79f87e63ce0aec4d75d71d2d86d87c2884e045"
   }
 }

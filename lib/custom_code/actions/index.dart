@@ -23,3 +23,7 @@ export 'auth_send_reset_code.dart' show authSendResetCode;
 export 'auth_sign_up.dart' show authSignUp;
 export 'update_my_profile.dart' show updateMyProfile;
 export 'create_watchlist.dart' show createWatchlist;
+export 'rename_watchlist.dart' show renameWatchlist;
+export 'add_to_watchlist.dart' show addToWatchlist;
+export 'delete_watchlist.dart' show deleteWatchlist;
+export 'remove_watchlist_item.dart' show removeWatchlistItem;

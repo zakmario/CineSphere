@@ -187,7 +187,22 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
           path: FavorisWidget.routePath,
           builder: (context, params) => params.isEmpty
               ? NavBarPage(initialPage: 'Favoris')
-              : FavorisWidget(),
+              : FavorisWidget(
+                  onglet: params.getParam(
+                    'onglet',
+                    ParamType.int,
+                  ),
+                ),
+        ),
+        FFRoute(
+          name: DetailListeWidget.routeName,
+          path: DetailListeWidget.routePath,
+          builder: (context, params) => DetailListeWidget(
+            watchlistId: params.getParam(
+              'watchlistId',
+              ParamType.String,
+            ),
+          ),
         )
       ].map((r) => r.toRoute(appStateNotifier)).toList(),
     );

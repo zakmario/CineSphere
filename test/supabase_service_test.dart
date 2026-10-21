@@ -422,6 +422,89 @@ void main() {
       expect(requests, isEmpty);
     });
 
+    test("renameWatchlist met à jour la liste de l'utilisateur", () async {
+      final requests = <http.Request>[];
+      final service = _service(
+          (r) => _rows(r, [
+                {
+                  'id': 'w1',
+                  'user_id': _userId,
+                  'name': 'Soirées SF',
+                  'created_at': '2026-10-21T10:00:00Z',
+                }
+              ]),
+          requests: requests);
+
+      final list = await service.renameWatchlist('w1', ' Soirées SF ');
+
+      expect(list.name, 'Soirées SF');
+      expect(requests.single.method, 'PATCH');
+      expect(requests.single.url.queryParameters['id'], 'eq.w1');
+      expect(requests.single.url.queryParameters['user_id'], 'eq.$_userId');
+      expect(jsonDecode(requests.single.body), {'name': 'Soirées SF'});
+    });
+
+    test('renameWatchlist refuse un nom vide sans appel réseau', () async {
+      final requests = <http.Request>[];
+      final service = _service((r) => _rows(r, []), requests: requests);
+
+      await expectLater(
+        service.renameWatchlist('w1', ''),
+        throwsA(isA<CineFailure>()
+            .having((f) => f.kind, 'kind', CineFailureKind.invalid)),
+      );
+      expect(requests, isEmpty);
+    });
+
+    test("deleteWatchlist supprime la liste de l'utilisateur", () async {
+      final requests = <http.Request>[];
+      final service =
+          _service((r) => http.Response('', 204), requests: requests);
+
+      await service.deleteWatchlist('w1');
+
+      expect(requests.single.method, 'DELETE');
+      expect(requests.single.url.path, '/rest/v1/watchlists');
+      expect(requests.single.url.queryParameters['id'], 'eq.w1');
+      expect(requests.single.url.queryParameters['user_id'], 'eq.$_userId');
+    });
+
+    test('addMediaToWatchlist insère le titre du catalogue', () async {
+      final requests = <http.Request>[];
+      final service =
+          _service((r) => http.Response('', 201), requests: requests);
+
+      await service.addMediaToWatchlist('w1', 'm1');
+
+      expect(requests.single.method, 'POST');
+      expect(requests.single.url.path, '/rest/v1/watchlist_items');
+      expect(jsonDecode(requests.single.body),
+          {'watchlist_id': 'w1', 'media_id': 'm1'});
+    });
+
+    test('addMediaToWatchlist : titre déjà présent -> conflit', () async {
+      final service = _service((r) => _pgError('23505',
+          'duplicate key value violates unique constraint "watchlist_items_media_key"'));
+
+      await expectLater(
+        service.addMediaToWatchlist('w1', 'm1'),
+        throwsA(isA<CineFailure>()
+            .having((f) => f.kind, 'kind', CineFailureKind.conflict)),
+      );
+    });
+
+    test('removeWatchlistItem supprime la ligne demandée', () async {
+      final requests = <http.Request>[];
+      final service =
+          _service((r) => http.Response('', 204), requests: requests);
+
+      await service.removeWatchlistItem('i1');
+
+      expect(requests.single.method, 'DELETE');
+      expect(requests.single.url.path, '/rest/v1/watchlist_items');
+      expect(requests.single.url.queryParameters['id'], 'eq.i1');
+    });
+
     test('erreur réseau -> CineFailure network', () async {
       final service =
           _service((r) => throw http.ClientException('Network is unreachable'));

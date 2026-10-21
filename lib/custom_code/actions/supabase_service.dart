@@ -304,6 +304,48 @@ class SupabaseService {
         return Watchlist.fromJson(row);
       });
 
+  Future<Watchlist> renameWatchlist(String watchlistId, String name) =>
+      _guard('renameWatchlist', () async {
+        final error = validateWatchlistName(name);
+        if (error != null) {
+          throw CineFailure(CineFailureKind.invalid, error);
+        }
+        final row = await _client
+            .from('watchlists')
+            .update({'name': name.trim()})
+            .eq('id', watchlistId)
+            .eq('user_id', _requireUserId)
+            .select()
+            .single();
+        return Watchlist.fromJson(row);
+      });
+
+  /// Supprime la liste et ses titres (cascade).
+  Future<void> deleteWatchlist(String watchlistId) =>
+      _guard('deleteWatchlist', () async {
+        await _client
+            .from('watchlists')
+            .delete()
+            .eq('id', watchlistId)
+            .eq('user_id', _requireUserId);
+      });
+
+  /// Ajoute un titre du catalogue (table media) à une liste.
+  Future<void> addMediaToWatchlist(String watchlistId, String mediaId) =>
+      _guard('addMediaToWatchlist', () async {
+        _requireUserId;
+        await _client
+            .from('watchlist_items')
+            .insert({'watchlist_id': watchlistId, 'media_id': mediaId});
+      });
+
+  /// Retire un titre d'une liste (la RLS vérifie le propriétaire).
+  Future<void> removeWatchlistItem(String itemId) =>
+      _guard('removeWatchlistItem', () async {
+        _requireUserId;
+        await _client.from('watchlist_items').delete().eq('id', itemId);
+      });
+
   // Préférences ----------------------------------------------------------
 
   Future<UserPreferences> fetchPreferences() =>

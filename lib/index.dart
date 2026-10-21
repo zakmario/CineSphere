@@ -26,3 +26,5 @@ export '/membre1_auth_profil_supabase/profil/profil_widget.dart'
     show ProfilWidget;
 export '/membre1_auth_profil_supabase/favoris/favoris_widget.dart'
     show FavorisWidget;
+export '/membre1_auth_profil_supabase/detail_liste/detail_liste_widget.dart'
+    show DetailListeWidget;

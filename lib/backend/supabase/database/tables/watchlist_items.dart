@@ -27,6 +27,9 @@ class WatchlistItemsRow extends SupabaseDataRow {
   String? get seriesId => getField<String>('series_id');
   set seriesId(String? value) => setField<String>('series_id', value);
 
+  String? get mediaId => getField<String>('media_id');
+  set mediaId(String? value) => setField<String>('media_id', value);
+
   DateTime? get addedAt => getField<DateTime>('added_at');
   set addedAt(DateTime? value) => setField<DateTime>('added_at', value);
 }

@@ -26,6 +26,9 @@ class WatchedRow extends SupabaseDataRow {
   String? get seriesId => getField<String>('series_id');
   set seriesId(String? value) => setField<String>('series_id', value);
 
+  String? get mediaId => getField<String>('media_id');
+  set mediaId(String? value) => setField<String>('media_id', value);
+
   int? get episodeId => getField<int>('episode_id');
   set episodeId(int? value) => setField<int>('episode_id', value);
 
