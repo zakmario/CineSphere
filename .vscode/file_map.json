@@ -132,8 +132,8 @@
     "new_identifier_name": "MediaDetailView",
     "type": "W",
     "is_deleted": false,
-    "original_checksum": "a338a0421ad975a9df1d51cfa3cd5dcdee000d8baf7e1c3ec546c80e5b627232",
-    "current_checksum": "a338a0421ad975a9df1d51cfa3cd5dcdee000d8baf7e1c3ec546c80e5b627232"
+    "original_checksum": "fb388c44bdf6f61292a26e37fb76519f489459e84be179b2a209e823be29da7d",
+    "current_checksum": "fb388c44bdf6f61292a26e37fb76519f489459e84be179b2a209e823be29da7d"
   },
   "lib/custom_code/widgets/favorites_grid.dart": {
     "old_identifier_name": "FavoritesGrid",
@@ -275,7 +275,9 @@
     "old_identifier_name": "createWatchlist",
     "new_identifier_name": "createWatchlist",
     "type": "A",
-    "is_deleted": false
+    "is_deleted": false,
+    "original_checksum": "96d51e0e037751e1b15288b7ae8c6ac7b5f52b6d98a49bd490feb868ce0681fe",
+    "current_checksum": "96d51e0e037751e1b15288b7ae8c6ac7b5f52b6d98a49bd490feb868ce0681fe"
   },
   "lib/custom_code/actions/rename_watchlist.dart": {
     "old_identifier_name": "renameWatchlist",
@@ -316,5 +318,21 @@
     "is_deleted": false,
     "current_checksum": "9d4006ee8610c8faeb40daaae332b0188e029dd9d98c311b56677af43937e011",
     "original_checksum": "9d4006ee8610c8faeb40daaae332b0188e029dd9d98c311b56677af43937e011"
+  },
+  "lib/custom_code/actions/toggle_watched.dart": {
+    "old_identifier_name": "toggleWatched",
+    "new_identifier_name": "toggleWatched",
+    "type": "A",
+    "is_deleted": false,
+    "current_checksum": "7bebde08ffacaba08a7a4591cceb0a0f9e815bdf194b7c1ae415c2b63a8bec1b",
+    "original_checksum": "7bebde08ffacaba08a7a4591cceb0a0f9e815bdf194b7c1ae415c2b63a8bec1b"
+  },
+  "lib/custom_code/widgets/mark_watched_button.dart": {
+    "old_identifier_name": "MarkWatchedButton",
+    "new_identifier_name": "MarkWatchedButton",
+    "type": "W",
+    "is_deleted": false,
+    "current_checksum": "ea78f57e9bb69bf1150a3f8bbf1d1c085a2b5c41889810c2b6738c1eb21a451f",
+    "original_checksum": "ea78f57e9bb69bf1150a3f8bbf1d1c085a2b5c41889810c2b6738c1eb21a451f"
   }
 }

@@ -264,7 +264,15 @@ class _MediaDetailViewState extends State<MediaDetailView> {
                   ),
                 ],
                 const SizedBox(height: 12),
-                AddToWatchlistButton(mediaId: widget.mediaId),
+                Row(
+                  children: [
+                    Expanded(
+                        child: AddToWatchlistButton(mediaId: widget.mediaId)),
+                    const SizedBox(width: 8),
+                    Expanded(
+                        child: MarkWatchedButton(mediaId: widget.mediaId)),
+                  ],
+                ),
                 const SizedBox(height: 20),
                 Text('Synopsis', style: theme.titleMedium),
                 const SizedBox(height: 8),
