@@ -136,6 +136,48 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
               : ActualitesWidget(),
         ),
         FFRoute(
+          name: MotDePasseOublieWidget.routeName,
+          path: MotDePasseOublieWidget.routePath,
+          builder: (context, params) => MotDePasseOublieWidget(),
+        ),
+        FFRoute(
+          name: NouveauMotDePasseWidget.routeName,
+          path: NouveauMotDePasseWidget.routePath,
+          builder: (context, params) => NouveauMotDePasseWidget(
+            email: params.getParam(
+              'email',
+              ParamType.String,
+            ),
+          ),
+        ),
+        FFRoute(
+          name: DetailListeWidget.routeName,
+          path: DetailListeWidget.routePath,
+          builder: (context, params) => DetailListeWidget(
+            watchlistId: params.getParam(
+              'watchlistId',
+              ParamType.String,
+            ),
+          ),
+        ),
+        FFRoute(
+          name: FavorisWidget.routeName,
+          path: FavorisWidget.routePath,
+          builder: (context, params) => params.isEmpty
+              ? NavBarPage(initialPage: 'Favoris')
+              : FavorisWidget(
+                  onglet: params.getParam(
+                    'onglet',
+                    ParamType.int,
+                  ),
+                ),
+        ),
+        FFRoute(
+          name: ProfilWidget.routeName,
+          path: ProfilWidget.routePath,
+          builder: (context, params) => ProfilWidget(),
+        ),
+        FFRoute(
           name: LoginWidget.routeName,
           path: LoginWidget.routePath,
           builder: (context, params) => LoginWidget(),
@@ -156,21 +198,6 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
           builder: (context, params) => InscriptionWidget(),
         ),
         FFRoute(
-          name: MotDePasseOublieWidget.routeName,
-          path: MotDePasseOublieWidget.routePath,
-          builder: (context, params) => MotDePasseOublieWidget(),
-        ),
-        FFRoute(
-          name: NouveauMotDePasseWidget.routeName,
-          path: NouveauMotDePasseWidget.routePath,
-          builder: (context, params) => NouveauMotDePasseWidget(
-            email: params.getParam(
-              'email',
-              ParamType.String,
-            ),
-          ),
-        ),
-        FFRoute(
           name: ParametresWidget.routeName,
           path: ParametresWidget.routePath,
           builder: (context, params) => params.isEmpty
@@ -178,33 +205,17 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
               : ParametresWidget(),
         ),
         FFRoute(
-          name: ProfilWidget.routeName,
-          path: ProfilWidget.routePath,
-          builder: (context, params) => ProfilWidget(),
-        ),
-        FFRoute(
-          name: FavorisWidget.routeName,
-          path: FavorisWidget.routePath,
-          builder: (context, params) => params.isEmpty
-              ? NavBarPage(initialPage: 'Favoris')
-              : FavorisWidget(
-                  onglet: params.getParam(
-                    'onglet',
-                    ParamType.int,
-                  ),
-                ),
-        ),
-        FFRoute(
-          name: DetailListeWidget.routeName,
-          path: DetailListeWidget.routePath,
-          builder: (context, params) => DetailListeWidget(
-            watchlistId: params.getParam(
-              'watchlistId',
+          name: BandeAnnonceWidget.routeName,
+          path: BandeAnnonceWidget.routePath,
+          builder: (context, params) => BandeAnnonceWidget(
+            trailerUrl: params.getParam(
+              'trailerUrl',
               ParamType.String,
             ),
           ),
         )
       ].map((r) => r.toRoute(appStateNotifier)).toList(),
+      observers: ffNavigatorObservers,
     );
 
 extension NavParamExtensions on Map<String, String?> {

@@ -28,6 +28,13 @@ export 'package:intl/intl.dart';
 export 'package:page_transition/page_transition.dart';
 export 'nav/nav.dart';
 
+final RouteObserver<ModalRoute> routeObserver = RouteObserver<ModalRoute>();
+
+/// Observers notified of navigation on this app's navigator, in order.
+final List<NavigatorObserver> ffNavigatorObservers = <NavigatorObserver>[
+  routeObserver,
+];
+
 T valueOrDefault<T>(T? value, T defaultValue) =>
     (value is String && value.isEmpty) || value == null ? defaultValue : value;
 

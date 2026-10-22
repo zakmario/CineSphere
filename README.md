@@ -172,6 +172,7 @@ Schéma, RLS, triggers, Storage et audits : voir
 | `Parametres` | — | profil, favoris, changer de mot de passe, notifications, revoir l'onboarding, **actualiser le catalogue TMDB**, **supprimer mon compte** (avec confirmation), déconnexion | `initLocalNotifications`, `showInstantNotification`, `syncTmdbCatalog`, `deleteMyAccount`, *Log Out* |
 | `Favoris` | — | 3 onglets : **Favoris**, **Mes listes** (création), **Vus** | `createWatchlist` |
 | `DetailListe` | `watchlistId` | titres d'une liste, renommer, retirer un titre, supprimer la liste (avec confirmation) | `renameWatchlist`, `removeWatchlistItem`, `deleteWatchlist` |
+| `BandeAnnonce` | `trailerUrl` | widget natif *YouTube Player* de FlutterFlow (lecture automatique, plein écran) ; sa présence fait gérer le paquet du lecteur par FlutterFlow | — |
 
 Sur la fiche d'un titre (`MediaDetailView`, membre 2), avec son accord, le
 membre 1 a ajouté ces widgets :
@@ -180,7 +181,7 @@ membre 1 a ajouté ces widgets :
 |---|---|---|
 | `AddToWatchlistButton` | `mediaId` | feuille avec les listes du membre ; ajout à une liste existante ou création d'une liste avec le titre |
 | `MarkWatchedButton` | `mediaId`, `onChanged(isWatched)` | « Marquer comme vu » relié à la table `watched` (onglet Vus) |
-| `TrailerPlayer` | `trailerUrl`, `autoPlay` | lecteur YouTube intégré (`youtube_player_iframe` 5.2.1) : le bouton « Bande-annonce » ouvre la vidéo dans une fenêtre de l'application (`showTrailerDialog`) au lieu de YouTube |
+| `TrailerPlayer` | `trailerUrl`, `autoPlay` | lecteur YouTube intégré, basé sur le lecteur natif de FlutterFlow (`FlutterFlowYoutubePlayer`) : le bouton « Bande-annonce » ouvre la vidéo dans une fenêtre de l'application (`showTrailerDialog`) au lieu de YouTube |
 | `AvatarPicker` | `avatarUrl`, `onChanged(avatarUrl)` | photo choisie dans la galerie, réduite à 512 px, 2 Mo max, envoyée dans le bucket `avatars/{user_id}/` puis enregistrée dans `profiles.avatar_url` |
 
 Les actions qui modifient des données retournent `""` en cas de succès, sinon

@@ -13,7 +13,7 @@
     "type": "D",
     "is_deleted": false,
     "current_checksum": "16be983745cb8b0b777135b2cfbc1d4245521f7d4cf18bf7e80387f0bd4aa4d1",
-    "original_checksum": "064d704971d228d97d138cc12dcc28f1d181dd9c694988d4213576febc2ba2e5"
+    "original_checksum": "45ab9dc142a50b19be19337a3b1ea74e8b696b0961840475141b629585b4005f"
   },
   "lib/custom_code/actions/init_local_notifications.dart": {
     "old_identifier_name": "initLocalNotifications",
@@ -364,6 +364,7 @@
     "new_identifier_name": "TrailerPlayer",
     "type": "W",
     "is_deleted": false,
-    "current_checksum": "60c338d1911ef423d5d8af407dbf4205b208baf65dbe87b8c33afb4cd4369bb9"
+    "current_checksum": "355b5995d84047fc5920e43f055430a05e3eb8fc667774b6b68e35796a588d9e",
+    "original_checksum": "355b5995d84047fc5920e43f055430a05e3eb8fc667774b6b68e35796a588d9e"
   }
 }
