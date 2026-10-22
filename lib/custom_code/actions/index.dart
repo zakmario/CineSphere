@@ -28,3 +28,4 @@ export 'add_to_watchlist.dart' show addToWatchlist;
 export 'delete_watchlist.dart' show deleteWatchlist;
 export 'remove_watchlist_item.dart' show removeWatchlistItem;
 export 'toggle_watched.dart' show toggleWatched;
+export 'delete_my_account.dart' show deleteMyAccount;

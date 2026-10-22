@@ -386,6 +386,66 @@ void main() {
       expect(jsonDecode(update.body)['avatar_url'], url);
     });
 
+    test("deleteMyAccount retire l'avatar puis supprime le compte", () async {
+      final requests = <http.Request>[];
+      final service = _service((r) {
+        if (r.url.path == '/storage/v1/object/list/avatars') {
+          return http.Response(
+              jsonEncode([
+                {'name': 'avatar.png', 'id': 'f1'},
+              ]),
+              200,
+              headers: {'content-type': 'application/json'});
+        }
+        if (r.url.path.startsWith('/storage/')) {
+          return http.Response('[]', 200,
+              headers: {'content-type': 'application/json'});
+        }
+        return http.Response('', 204);
+      }, requests: requests);
+
+      await service.deleteMyAccount();
+
+      expect(requests.map((r) => r.url.path), [
+        '/storage/v1/object/list/avatars',
+        '/storage/v1/object/avatars',
+        '/rest/v1/rpc/delete_my_account',
+      ]);
+      expect(jsonDecode(requests[0].body)['prefix'], _userId);
+      expect(jsonDecode(requests[1].body)['prefixes'], ['$_userId/avatar.png']);
+    });
+
+    test('deleteMyAccount sans avatar appelle seulement la fonction SQL',
+        () async {
+      final requests = <http.Request>[];
+      final service = _service((r) {
+        if (r.url.path.startsWith('/storage/')) {
+          return http.Response('[]', 200,
+              headers: {'content-type': 'application/json'});
+        }
+        return http.Response('', 204);
+      }, requests: requests);
+
+      await service.deleteMyAccount();
+
+      expect(requests.map((r) => r.url.path), [
+        '/storage/v1/object/list/avatars',
+        '/rest/v1/rpc/delete_my_account',
+      ]);
+    });
+
+    test('deleteMyAccount sans session : erreur, aucune requête', () async {
+      final requests = <http.Request>[];
+      final service = _service((r) => http.Response('', 204),
+          requests: requests, userId: null);
+
+      await expectLater(
+          service.deleteMyAccount(),
+          throwsA(isA<CineFailure>()
+              .having((f) => f.kind, 'kind', CineFailureKind.unauthenticated)));
+      expect(requests, isEmpty);
+    });
+
     test("createWatchlist insère la liste de l'utilisateur courant", () async {
       final requests = <http.Request>[];
       final service = _service(
