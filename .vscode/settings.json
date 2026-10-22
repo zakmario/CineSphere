@@ -31,6 +31,7 @@
     "lib/custom_code/actions/add_to_watchlist.dart": true,
     "lib/custom_code/actions/delete_watchlist.dart": true,
     "lib/custom_code/actions/remove_watchlist_item.dart": true,
+    "lib/custom_code/actions/toggle_watched.dart": true,
     "lib/custom_code/widgets/media_card.dart": true,
     "lib/custom_code/widgets/favorite_button.dart": true,
     "lib/custom_code/widgets/catalog_browser.dart": true,
@@ -45,7 +46,9 @@
     "lib/custom_code/widgets/sign_up_form.dart": true,
     "lib/custom_code/widgets/forgot_password_form.dart": true,
     "lib/custom_code/widgets/new_password_form.dart": true,
-    "lib/custom_code/widgets/add_to_watchlist_button.dart": true
+    "lib/custom_code/widgets/add_to_watchlist_button.dart": true,
+    "lib/custom_code/widgets/mark_watched_button.dart": true,
+    "lib/custom_code/widgets/avatar_picker.dart": true
   },
   "dart.flutterSdkPath": "C:\\Users\\user\\Desktop\\Flutter\\ff_flutter_sdk\\flutter"
 }
