@@ -526,6 +526,7 @@ class DetailFilmCall {
         'api_key': apiKey,
         'language': language,
         'append_to_response': "videos,watch/providers",
+        'include_video_language': "fr,en,null",
       },
       returnBody: true,
       encodeBodyUtf8: false,
@@ -601,6 +602,7 @@ class DetailSerieCall {
         'api_key': apiKey,
         'language': language,
         'append_to_response': "videos,watch/providers",
+        'include_video_language': "fr,en,null",
       },
       returnBody: true,
       encodeBodyUtf8: false,
@@ -657,6 +659,15 @@ class DetailSerieCall {
         response,
         r'''$.next_episode_to_air''',
       );
+  String? statut(dynamic response) => castToType<String>(getJsonField(
+        response,
+        r'''$.status''',
+      ));
+  List? videos(dynamic response) => getJsonField(
+        response,
+        r'''$.videos.results''',
+        true,
+      ) as List?;
 }
 
 class GenresFilmsCall {

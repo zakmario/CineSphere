@@ -13,7 +13,7 @@
     "type": "D",
     "is_deleted": false,
     "current_checksum": "064d704971d228d97d138cc12dcc28f1d181dd9c694988d4213576febc2ba2e5",
-    "original_checksum": "12326b98477a46dd0ed5e8f46afe2adb663367fc5e51430a0294deae5c491727"
+    "original_checksum": "064d704971d228d97d138cc12dcc28f1d181dd9c694988d4213576febc2ba2e5"
   },
   "lib/custom_code/actions/init_local_notifications.dart": {
     "old_identifier_name": "initLocalNotifications",
@@ -356,6 +356,7 @@
     "new_identifier_name": "syncTmdbCatalog",
     "type": "A",
     "is_deleted": false,
-    "current_checksum": "68a08bd647a376d80eeea7ee4b4e8a093cbdb6ec246d58918ecfeb4d131f8147"
+    "current_checksum": "3e965c83b186cf3e195667bb88e67aa7de398ce403e4ed9f2900357f51dc7524",
+    "original_checksum": "3e965c83b186cf3e195667bb88e67aa7de398ce403e4ed9f2900357f51dc7524"
   }
 }

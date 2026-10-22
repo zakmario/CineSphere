@@ -156,7 +156,7 @@ thème CinéSphère) qui appellent des actions personnalisées, une par fichier.
 ### Base Supabase
 
 Schéma, RLS, triggers, Storage et audits : voir
-[supabase/README.md](supabase/README.md) (9 migrations dans
+[supabase/README.md](supabase/README.md) (10 migrations dans
 `supabase/migrations/`).
 
 ### Pages
@@ -206,8 +206,8 @@ notifications partent en cascade. La page enchaîne avec *Log Out*.
 | `SeriesPopulaires` | `/tv/popular` | idem |
 | `ProchainesSorties` | `/movie/upcoming` (région FR) | idem |
 | `SeriesEnCours` | `/tv/on_the_air` | idem |
-| `DetailFilm` (`movieId`) | `/movie/{id}` + vidéos et plateformes | `titre`, `synopsis`, `affiche`, `fond`, `dateSortie`, `duree`, `note`, `genres`, `videos` |
-| `DetailSerie` (`seriesId`) | `/tv/{id}` + vidéos et plateformes | `titre`, `synopsis`, `affiche`, `fond`, `premiereDiffusion`, `saisons`, `episodes`, `note`, `genres`, `prochainEpisode` |
+| `DetailFilm` (`movieId`) | `/movie/{id}` + vidéos (fr, en) et plateformes | `titre`, `synopsis`, `affiche`, `fond`, `dateSortie`, `duree`, `note`, `genres`, `videos` |
+| `DetailSerie` (`seriesId`) | `/tv/{id}` + vidéos (fr, en) et plateformes | `titre`, `synopsis`, `affiche`, `fond`, `premiereDiffusion`, `saisons`, `episodes`, `statut`, `note`, `genres`, `prochainEpisode`, `videos` |
 | `GenresFilms` | `/genre/movie/list` | `genres`, `noms` |
 
 Chaque appel peut être utilisé dans une page (*Backend Query → API Call*) ou une
@@ -221,6 +221,14 @@ de `media` (clé `media_type` + `tmdb_id`) : les widgets du catalogue affichent
 les vrais titres TMDB et favoris, listes et vus continuent de fonctionner.
 Un film à venir reçoit aussi un événement « Sortie au cinéma » dans
 `release_events` (calendrier).
+
+Les listes TMDB ne donnent ni durée, ni saisons, ni bande-annonce, ni
+plateformes : à chaque passage, l'action appelle ensuite `DetailFilm` ou
+`DetailSerie` pour les 40 titres incomplets les plus populaires (8 appels en
+parallèle) et envoie le résultat à `enrich_tmdb_media` : durée, saisons,
+épisodes, série terminée, bande-annonce YouTube (française d'abord) et
+plateformes d'abonnement en France. La fiche d'un titre (`MediaDetailView`)
+les affiche sans modification.
 
 - après connexion, inscription ou confirmation : `force = false`, en
   arrière-plan, au plus une fois toutes les 12 h ;
@@ -277,7 +285,7 @@ titres du catalogue de démonstration par `media_id`.
 | `test/cine_models_test.dart` | modèles (`fromJson`, `toJson`, SQLite, égalité) |
 | `test/avatar_picker_test.dart` | `AvatarPicker` (galerie et Supabase simulés) |
 | `test/mark_watched_button_test.dart` | `MarkWatchedButton` |
-| `test/sync_tmdb_catalog_test.dart` | conversion des résultats TMDB, fusion sans doublon, envoi par lots, TMDB injoignable |
+| `test/sync_tmdb_catalog_test.dart` | conversion des résultats TMDB, fusion sans doublon, envoi par lots, TMDB injoignable, détails (bande-annonce, plateformes, séries terminées) |
 
 Vérifié aussi sur la vraie base avec deux comptes de test : accès anonyme
 refusé, RLS des favoris, listes et vus (un membre ne voit ni ne modifie les

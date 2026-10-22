@@ -18,7 +18,8 @@ import '/custom_code/actions/supabase_service.dart';
 
 /// Met à jour le catalogue (table `media`) avec les listes TMDB du groupe
 /// d'appels FlutterFlow « TMDB » : tendances, films et séries populaires,
-/// prochaines sorties, séries en cours (membre 1).
+/// prochaines sorties, séries en cours ; puis complète les fiches
+/// incomplètes avec DetailFilm / DetailSerie (membre 1).
 ///
 /// [force] = false (connexion, ouverture des Paramètres) : au plus une fois
 /// toutes les 12 h, en arrière-plan ; retourne "" tout de suite.
@@ -91,18 +92,86 @@ Map<String, dynamic>? tmdbToMediaPayload(Map<String, dynamic> json,
   };
 }
 
+/// Un titre du catalogue : `kind` = 'movie' ou 'series' (comme media_type).
+typedef TmdbTitle = ({String kind, int tmdbId});
+
+/// Bande-annonce YouTube : française d'abord, puis bande-annonce dans une
+/// autre langue, puis teaser.
+String? pickTrailerUrl(Object? videos) {
+  if (videos is! List) {
+    return null;
+  }
+  int rank(Map<String, dynamic> v) =>
+      (v['type'] == 'Trailer'
+          ? 0
+          : v['type'] == 'Teaser'
+              ? 2
+              : 4) +
+      (v['iso_639_1'] == 'fr' ? 0 : 1);
+  final candidates = videos
+      .whereType<Map<String, dynamic>>()
+      .where((v) => v['site'] == 'YouTube' && v['key'] is String && rank(v) < 4)
+      .toList()
+    ..sort((a, b) => rank(a).compareTo(rank(b)));
+  return candidates.isEmpty
+      ? null
+      : 'https://www.youtube.com/watch?v=${candidates.first['key']}';
+}
+
+/// Réponse de DetailFilm / DetailSerie → ligne pour `enrich_tmdb_media`.
+/// Plateformes : abonnements disponibles en France (hors offres avec pub).
+Map<String, dynamic> tmdbDetailsPayload(
+    TmdbTitle title, Map<String, dynamic> json) {
+  final providers = json['watch/providers'];
+  final results = providers is Map ? providers['results'] : null;
+  final france = results is Map ? results['FR'] : null;
+  final flatrate = france is Map ? france['flatrate'] : null;
+  final videos = json['videos'];
+  return {
+    'media_type': title.kind,
+    'tmdb_id': title.tmdbId,
+    'runtime_minutes': json['runtime'],
+    'seasons': json['number_of_seasons'],
+    'episodes': json['number_of_episodes'],
+    'ended': json['status'] == 'Ended' || json['status'] == 'Canceled',
+    'trailer_url': pickTrailerUrl(videos is Map ? videos['results'] : null),
+    'providers': [
+      if (flatrate is List)
+        for (final p in flatrate.whereType<Map<String, dynamic>>())
+          // « Netflix Standard with Ads » … : doublon de l'offre principale.
+          if (!'${p['provider_name']}'.endsWith('with Ads'))
+            {'id': p['provider_id'], 'name': p['provider_name']},
+    ],
+  };
+}
+
 class TmdbCatalogImporter {
   TmdbCatalogImporter({
     List<TmdbSource>? sources,
     Future<int> Function(List<Map<String, dynamic>> items)? save,
+    Future<List<TmdbTitle>> Function()? loadIncomplete,
+    Future<ApiCallResponse> Function(TmdbTitle title)? fetchDetails,
+    Future<int> Function(List<Map<String, dynamic>> items)? saveDetails,
   })  : _sources = sources ?? defaultSources,
-        _save = save ?? _saveToSupabase;
+        _save = save ?? _rpc('import_tmdb_media'),
+        _loadIncomplete = loadIncomplete ?? _loadIncompleteFromSupabase,
+        _fetchDetails = fetchDetails ?? _fetchDetailsFromTmdb,
+        _saveDetails = saveDetails ?? _rpc('enrich_tmdb_media');
 
   final List<TmdbSource> _sources;
   final Future<int> Function(List<Map<String, dynamic>> items) _save;
+  final Future<List<TmdbTitle>> Function() _loadIncomplete;
+  final Future<ApiCallResponse> Function(TmdbTitle title) _fetchDetails;
+  final Future<int> Function(List<Map<String, dynamic>> items) _saveDetails;
 
   /// Taille maximale d'un envoi à `import_tmdb_media`.
   static const batchSize = 200;
+
+  /// Titres complétés par passage (un appel TMDB chacun).
+  static const detailsPerRun = 40;
+
+  /// Appels de détail TMDB lancés en même temps.
+  static const detailsInParallel = 8;
 
   static List<TmdbSource> get defaultSources => [
         (type: null, fetch: () => TmdbGroup.tendancesCall.call()),
@@ -113,15 +182,43 @@ class TmdbCatalogImporter {
         (type: 'tv', fetch: () => TmdbGroup.seriesEnCoursCall.call()),
       ];
 
-  static Future<int> _saveToSupabase(List<Map<String, dynamic>> items) async {
+  static Future<int> Function(List<Map<String, dynamic>> items) _rpc(
+          String function) =>
+      (items) async {
+        try {
+          final count =
+              await SupaFlow.client.rpc(function, params: {'items': items});
+          return (count as num?)?.toInt() ?? 0;
+        } catch (error) {
+          throw mapSupabaseError(error);
+        }
+      };
+
+  /// Titres TMDB du catalogue sans durée (films) ou sans saisons (séries),
+  /// les plus populaires d'abord.
+  static Future<List<TmdbTitle>> _loadIncompleteFromSupabase() async {
     try {
-      final count = await SupaFlow.client
-          .rpc('import_tmdb_media', params: {'items': items});
-      return (count as num?)?.toInt() ?? 0;
+      final rows = await SupaFlow.client
+          .from('media')
+          .select('media_type, tmdb_id')
+          .not('tmdb_id', 'is', null)
+          .or('and(media_type.eq.movie,runtime_minutes.is.null),'
+              'and(media_type.eq.series,seasons.is.null)')
+          .order('popularity', ascending: false)
+          .limit(detailsPerRun);
+      return [
+        for (final row in rows)
+          (kind: row['media_type'] as String, tmdbId: row['tmdb_id'] as int),
+      ];
     } catch (error) {
       throw mapSupabaseError(error);
     }
   }
+
+  static Future<ApiCallResponse> _fetchDetailsFromTmdb(TmdbTitle title) =>
+      title.kind == 'movie'
+          ? TmdbGroup.detailFilmCall.call(movieId: title.tmdbId)
+          : TmdbGroup.detailSerieCall.call(seriesId: title.tmdbId);
 
   /// Récupère toutes les listes (sans doublon) puis les enregistre.
   /// Retourne le nombre de titres créés ou mis à jour.
@@ -153,6 +250,37 @@ class TmdbCatalogImporter {
     for (var i = 0; i < all.length; i += batchSize) {
       saved += await _save(all.sublist(i, min(i + batchSize, all.length)));
     }
+    try {
+      await completeDetails();
+    } catch (error) {
+      // Les listes sont enregistrées ; les détails seront repris au prochain
+      // passage.
+      developer.log('détails non complétés',
+          name: 'TmdbCatalogImporter', error: error);
+    }
     return saved;
+  }
+
+  /// Complète durée, saisons, statut, bande-annonce et plateformes des titres
+  /// qui n'en ont pas encore ([detailsPerRun] au plus). Retourne le nombre de
+  /// titres mis à jour.
+  Future<int> completeDetails() async {
+    final titles = await _loadIncomplete();
+    final payloads = <Map<String, dynamic>>[];
+    for (var i = 0; i < titles.length; i += detailsInParallel) {
+      final batch =
+          titles.sublist(i, min(i + detailsInParallel, titles.length));
+      final responses = await Future.wait(batch.map(_fetchDetails));
+      for (var j = 0; j < batch.length; j++) {
+        final body = responses[j].jsonBody;
+        if (responses[j].succeeded && body is Map<String, dynamic>) {
+          payloads.add(tmdbDetailsPayload(batch[j], body));
+        }
+      }
+    }
+    if (payloads.isEmpty) {
+      return 0;
+    }
+    return _saveDetails(payloads);
   }
 }
