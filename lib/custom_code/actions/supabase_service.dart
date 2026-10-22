@@ -13,6 +13,7 @@ import 'dart:developer' as developer;
 import 'dart:typed_data';
 
 import '/custom_code/actions/cine_models.dart';
+import 'package:supabase_flutter/supabase_flutter.dart' as supa;
 
 /// Vérifie que Supabase répond et que le schéma CinéSphère est installé.
 /// Action FlutterFlow (et point d'ancrage de la synchronisation du service).
@@ -76,11 +77,11 @@ CineFailure mapSupabaseError(Object error) {
     return CineFailure(CineFailureKind.network,
         'Pas de connexion Internet. Réessayez plus tard.', error);
   }
-  if (error is AuthException) {
+  if (error is supa.AuthException) {
     return CineFailure(CineFailureKind.unauthenticated,
         'Votre session a expiré. Reconnectez-vous.', error);
   }
-  if (error is StorageException) {
+  if (error is supa.StorageException) {
     final status = error.statusCode ?? '';
     if (status == '413') {
       return CineFailure(CineFailureKind.invalid,
@@ -93,7 +94,7 @@ CineFailure mapSupabaseError(Object error) {
     return CineFailure(
         CineFailureKind.unknown, 'L\'envoi de l\'image a échoué.', error);
   }
-  if (error is PostgrestException) {
+  if (error is supa.PostgrestException) {
     switch (error.code) {
       case '23505':
         final detail = '${error.message} ${error.details ?? ''}';

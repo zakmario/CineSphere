@@ -12,6 +12,7 @@ import 'dart:async';
 import 'dart:developer' as developer;
 
 import '/custom_code/actions/supabase_service.dart';
+import 'package:supabase_flutter/supabase_flutter.dart' as supa;
 
 /// Vrai si un membre est connecté (session Supabase active).
 /// Action FlutterFlow, utilisable dans un *Conditional* ou un *On Page Load*.
@@ -143,7 +144,7 @@ const _legacyMessages = <String, String>{
 };
 
 /// Code d'erreur GoTrue de [error] (`invalid_credentials`…), ou null.
-String? authErrorCode(AuthException error) {
+String? authErrorCode(supa.AuthException error) {
   if (error is AuthWeakPasswordException) {
     return 'weak_password';
   }
@@ -173,7 +174,7 @@ CineFailure mapAuthError(Object error) {
     return CineFailure(CineFailureKind.unauthenticated,
         'Votre session a expiré. Reconnectez-vous.', error);
   }
-  if (error is AuthException) {
+  if (error is supa.AuthException) {
     final known = _authMessages[authErrorCode(error)];
     if (known != null) {
       return CineFailure(known.$1, known.$2, error);
@@ -252,7 +253,7 @@ class SupabaseAuthGateway implements AuthGateway {
     // Quand la confirmation est activée, Supabase ne signale pas un e-mail
     // déjà inscrit : il renvoie un utilisateur sans identité.
     if (response.user?.identities?.isEmpty ?? false) {
-      throw const AuthException('User already registered',
+      throw const supa.AuthException('User already registered',
           code: 'user_already_exists');
     }
     return SignUpOutcome.confirmationRequired;

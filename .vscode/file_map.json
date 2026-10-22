@@ -172,24 +172,24 @@
     "new_identifier_name": "supabaseService",
     "type": "A",
     "is_deleted": false,
-    "current_checksum": "c83df45764cfcccff6613b8ce8bb109b0989fc03c6ca4a2e76d21629ed308447",
-    "original_checksum": "c83df45764cfcccff6613b8ce8bb109b0989fc03c6ca4a2e76d21629ed308447"
+    "current_checksum": "f0d78440fa250ae189d349f36fa50df94ea40f57b50dcf6b3e88ae5fadf309a8",
+    "original_checksum": "f0d78440fa250ae189d349f36fa50df94ea40f57b50dcf6b3e88ae5fadf309a8"
   },
   "lib/custom_code/actions/auth_service.dart": {
     "old_identifier_name": "authService",
     "new_identifier_name": "authService",
     "type": "A",
     "is_deleted": false,
-    "original_checksum": "f3519936b54a4d8b834396a98ddf67dabad68cb71658209f58cb25429b6ee3c9",
-    "current_checksum": "f3519936b54a4d8b834396a98ddf67dabad68cb71658209f58cb25429b6ee3c9"
+    "original_checksum": "7bf9415beeee09ddcc7eeed19bc52a27d6fae6bd1a636e027c9209e8bb527ef0",
+    "current_checksum": "7bf9415beeee09ddcc7eeed19bc52a27d6fae6bd1a636e027c9209e8bb527ef0"
   },
   "lib/custom_code/widgets/login_form.dart": {
     "old_identifier_name": "LoginForm",
     "new_identifier_name": "LoginForm",
     "type": "W",
     "is_deleted": false,
-    "original_checksum": "cc581c6a74dfaaa530b963864d3e73d26b679d697162d196337da736b9d60b94",
-    "current_checksum": "cc581c6a74dfaaa530b963864d3e73d26b679d697162d196337da736b9d60b94"
+    "original_checksum": "67fa71bad2d59b19f8aaa57f9b8b0f352275110f3b5a633322c00ab0829783fd",
+    "current_checksum": "67fa71bad2d59b19f8aaa57f9b8b0f352275110f3b5a633322c00ab0829783fd"
   },
   "lib/custom_code/widgets/sign_up_form.dart": {
     "old_identifier_name": "SignUpForm",
@@ -220,8 +220,8 @@
     "new_identifier_name": "authSignIn",
     "type": "A",
     "is_deleted": false,
-    "current_checksum": "e89fcb344e2ce175b08a34e88f549ace4926147561880758432352d817fb3379",
-    "original_checksum": "e89fcb344e2ce175b08a34e88f549ace4926147561880758432352d817fb3379"
+    "current_checksum": "832fbb6d11f53e01667965e4fac85bf433bc200cf2daa1155928ffbdc0649cb0",
+    "original_checksum": "832fbb6d11f53e01667965e4fac85bf433bc200cf2daa1155928ffbdc0649cb0"
   },
   "lib/custom_code/actions/auth_confirm_sign_up.dart": {
     "old_identifier_name": "authConfirmSignUp",

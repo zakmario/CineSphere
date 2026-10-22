@@ -11,6 +11,7 @@ import 'package:flutter/material.dart';
 
 import '/custom_code/actions/auth_service.dart';
 import '/custom_code/actions/supabase_service.dart';
+import 'package:supabase_flutter/supabase_flutter.dart' as supa;
 
 /// Écran de connexion par e-mail et mot de passe (Supabase Auth).
 ///
@@ -84,7 +85,7 @@ class _LoginFormState extends State<LoginForm> {
             .signIn(email: _email.text, password: _password.text);
       } on CineFailure catch (failure) {
         final cause = failure.cause;
-        if (cause is AuthException &&
+        if (cause is supa.AuthException &&
             authErrorCode(cause) == 'email_not_confirmed') {
           await AuthService.instance.resendSignUpCode(_email.text);
           if (!mounted) {

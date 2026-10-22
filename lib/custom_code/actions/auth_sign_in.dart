@@ -10,6 +10,7 @@ import 'package:flutter/material.dart';
 
 import '/custom_code/actions/auth_service.dart';
 import '/custom_code/actions/supabase_service.dart';
+import 'package:supabase_flutter/supabase_flutter.dart' as supa;
 
 /// Connexion par e-mail et mot de passe, pour le bouton « Se connecter ».
 ///
@@ -22,7 +23,7 @@ Future<String> authSignIn(String email, String password) async {
     return '';
   } on CineFailure catch (failure) {
     final cause = failure.cause;
-    if (cause is AuthException &&
+    if (cause is supa.AuthException &&
         authErrorCode(cause) == 'email_not_confirmed') {
       try {
         await AuthService.instance.resendSignUpCode(email);
