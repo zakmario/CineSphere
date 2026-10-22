@@ -168,7 +168,10 @@ class TmdbCatalogImporter {
   static const batchSize = 200;
 
   /// Titres complétés par passage (un appel TMDB chacun).
-  static const detailsPerRun = 40;
+  static const detailsPerRun = 60;
+
+  /// Délai avant de redemander la bande-annonce d'un titre qui n'en a pas.
+  static const detailsRetryAfter = Duration(days: 7);
 
   /// Appels de détail TMDB lancés en même temps.
   static const detailsInParallel = 8;
@@ -194,16 +197,19 @@ class TmdbCatalogImporter {
         }
       };
 
-  /// Titres TMDB du catalogue sans durée (films) ou sans saisons (séries),
-  /// les plus populaires d'abord.
+  /// Titres TMDB jamais complétés, ou toujours sans bande-annonce
+  /// [detailsRetryAfter] après le dernier passage ; les plus populaires
+  /// d'abord.
   static Future<List<TmdbTitle>> _loadIncompleteFromSupabase() async {
+    final retryBefore =
+        DateTime.now().toUtc().subtract(detailsRetryAfter).toIso8601String();
     try {
       final rows = await SupaFlow.client
           .from('media')
           .select('media_type, tmdb_id')
           .not('tmdb_id', 'is', null)
-          .or('and(media_type.eq.movie,runtime_minutes.is.null),'
-              'and(media_type.eq.series,seasons.is.null)')
+          .or('details_synced_at.is.null,'
+              'and(trailer_url.is.null,details_synced_at.lt.$retryBefore)')
           .order('popularity', ascending: false)
           .limit(detailsPerRun);
       return [
@@ -262,7 +268,7 @@ class TmdbCatalogImporter {
   }
 
   /// Complète durée, saisons, statut, bande-annonce et plateformes des titres
-  /// qui n'en ont pas encore ([detailsPerRun] au plus). Retourne le nombre de
+  /// à reprendre ([detailsPerRun] au plus). Retourne le nombre de
   /// titres mis à jour.
   Future<int> completeDetails() async {
     final titles = await _loadIncomplete();

@@ -18,7 +18,8 @@ rejouable) :
 9. `migrations/20261022000100_delete_my_account.sql` — suppression de compte par le membre
 10. `migrations/20261022000200_media_tmdb_import.sql` — `media.tmdb_id` et import du catalogue TMDB
 11. `migrations/20261022000300_media_tmdb_details.sql` — détails TMDB (durée, saisons, bande-annonce, plateformes)
-12. `seed.sql` — genres TMDB et plateformes
+12. `migrations/20261022000400_media_details_synced.sql` — `media.details_synced_at` (bandes-annonces manquantes)
+13. `seed.sql` — genres TMDB et plateformes
 
 Puis dans FlutterFlow : *Settings → Integrations → Supabase → Get Schema*.
 
@@ -48,7 +49,8 @@ Automatismes :
   TMDB) et ajoute la sortie au cinéma des films à venir dans `release_events` ;
 - `enrich_tmdb_media(items)` (membres connectés, 100 titres au plus) complète
   durée, saisons, épisodes, statut « terminée », bande-annonce et plateformes
-  (noms de la table `platforms` pour les identifiants TMDB connus) ;
+  (noms de la table `platforms` pour les identifiants TMDB connus) et note
+  la date du passage dans `details_synced_at` ;
 - `delete_my_account()` (membres connectés uniquement) supprime le compte de
   l'appelant et toutes ses données en cascade ;
 - un utilisateur ne peut pas modifier son propre `role` ;

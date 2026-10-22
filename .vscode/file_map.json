@@ -12,7 +12,7 @@
     "new_identifier_name": "pubspec.yaml",
     "type": "D",
     "is_deleted": false,
-    "current_checksum": "064d704971d228d97d138cc12dcc28f1d181dd9c694988d4213576febc2ba2e5",
+    "current_checksum": "16be983745cb8b0b777135b2cfbc1d4245521f7d4cf18bf7e80387f0bd4aa4d1",
     "original_checksum": "064d704971d228d97d138cc12dcc28f1d181dd9c694988d4213576febc2ba2e5"
   },
   "lib/custom_code/actions/init_local_notifications.dart": {
@@ -132,8 +132,8 @@
     "new_identifier_name": "MediaDetailView",
     "type": "W",
     "is_deleted": false,
-    "original_checksum": "fb388c44bdf6f61292a26e37fb76519f489459e84be179b2a209e823be29da7d",
-    "current_checksum": "fb388c44bdf6f61292a26e37fb76519f489459e84be179b2a209e823be29da7d"
+    "original_checksum": "92430a4f5be3d008db2103871cfbb3a4e4c88ec8ab17321349b69b11036bb57e",
+    "current_checksum": "92430a4f5be3d008db2103871cfbb3a4e4c88ec8ab17321349b69b11036bb57e"
   },
   "lib/custom_code/widgets/favorites_grid.dart": {
     "old_identifier_name": "FavoritesGrid",
@@ -356,7 +356,14 @@
     "new_identifier_name": "syncTmdbCatalog",
     "type": "A",
     "is_deleted": false,
-    "current_checksum": "3e965c83b186cf3e195667bb88e67aa7de398ce403e4ed9f2900357f51dc7524",
-    "original_checksum": "3e965c83b186cf3e195667bb88e67aa7de398ce403e4ed9f2900357f51dc7524"
+    "current_checksum": "b6804111e8b82e6f672bc5d82ba8c30e9809605c270736e0fcb6340bb2bf18c7",
+    "original_checksum": "b6804111e8b82e6f672bc5d82ba8c30e9809605c270736e0fcb6340bb2bf18c7"
+  },
+  "lib/custom_code/widgets/trailer_player.dart": {
+    "old_identifier_name": "TrailerPlayer",
+    "new_identifier_name": "TrailerPlayer",
+    "type": "W",
+    "is_deleted": false,
+    "current_checksum": "60c338d1911ef423d5d8af407dbf4205b208baf65dbe87b8c33afb4cd4369bb9"
   }
 }

@@ -10,7 +10,7 @@ import 'package:flutter/material.dart';
 // DO NOT REMOVE OR MODIFY THE CODE ABOVE!
 
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:url_launcher/url_launcher.dart';
+import '/custom_code/widgets/trailer_player.dart';
 
 /// Contenu complet de la page détail d'un film ou d'une série :
 /// image de couverture, infos, genres, plateformes, synopsis, favori,
@@ -256,9 +256,11 @@ class _MediaDetailViewState extends State<MediaDetailView> {
                 if (trailer != null && trailer.isNotEmpty) ...[
                   const SizedBox(height: 16),
                   FilledButton.icon(
-                    style: FilledButton.styleFrom(
-                        backgroundColor: theme.primary),
-                    onPressed: () => launchUrl(Uri.parse(trailer)),
+                    style:
+                        FilledButton.styleFrom(backgroundColor: theme.primary),
+                    // Lecture dans l'application (TrailerPlayer, membre 1).
+                    onPressed: () => showTrailerDialog(context, trailer,
+                        title: m['title'] as String?),
                     icon: const Icon(Icons.play_arrow),
                     label: const Text('Bande-annonce'),
                   ),
@@ -269,8 +271,7 @@ class _MediaDetailViewState extends State<MediaDetailView> {
                     Expanded(
                         child: AddToWatchlistButton(mediaId: widget.mediaId)),
                     const SizedBox(width: 8),
-                    Expanded(
-                        child: MarkWatchedButton(mediaId: widget.mediaId)),
+                    Expanded(child: MarkWatchedButton(mediaId: widget.mediaId)),
                   ],
                 ),
                 const SizedBox(height: 20),

@@ -15,3 +15,4 @@ export 'new_password_form.dart' show NewPasswordForm;
 export 'add_to_watchlist_button.dart' show AddToWatchlistButton;
 export 'mark_watched_button.dart' show MarkWatchedButton;
 export 'avatar_picker.dart' show AvatarPicker;
+export 'trailer_player.dart' show TrailerPlayer;

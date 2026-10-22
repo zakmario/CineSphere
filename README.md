@@ -156,7 +156,7 @@ thème CinéSphère) qui appellent des actions personnalisées, une par fichier.
 ### Base Supabase
 
 Schéma, RLS, triggers, Storage et audits : voir
-[supabase/README.md](supabase/README.md) (10 migrations dans
+[supabase/README.md](supabase/README.md) (11 migrations dans
 `supabase/migrations/`).
 
 ### Pages
@@ -174,12 +174,13 @@ Schéma, RLS, triggers, Storage et audits : voir
 | `DetailListe` | `watchlistId` | titres d'une liste, renommer, retirer un titre, supprimer la liste (avec confirmation) | `renameWatchlist`, `removeWatchlistItem`, `deleteWatchlist` |
 
 Sur la fiche d'un titre (`MediaDetailView`, membre 2), avec son accord, le
-membre 1 a ajouté deux widgets :
+membre 1 a ajouté ces widgets :
 
 | Widget | Paramètres | Rôle |
 |---|---|---|
 | `AddToWatchlistButton` | `mediaId` | feuille avec les listes du membre ; ajout à une liste existante ou création d'une liste avec le titre |
 | `MarkWatchedButton` | `mediaId`, `onChanged(isWatched)` | « Marquer comme vu » relié à la table `watched` (onglet Vus) |
+| `TrailerPlayer` | `trailerUrl`, `autoPlay` | lecteur YouTube intégré (`youtube_player_iframe` 5.2.1) : le bouton « Bande-annonce » ouvre la vidéo dans une fenêtre de l'application (`showTrailerDialog`) au lieu de YouTube |
 | `AvatarPicker` | `avatarUrl`, `onChanged(avatarUrl)` | photo choisie dans la galerie, réduite à 512 px, 2 Mo max, envoyée dans le bucket `avatars/{user_id}/` puis enregistrée dans `profiles.avatar_url` |
 
 Les actions qui modifient des données retournent `""` en cas de succès, sinon
@@ -224,11 +225,13 @@ Un film à venir reçoit aussi un événement « Sortie au cinéma » dans
 
 Les listes TMDB ne donnent ni durée, ni saisons, ni bande-annonce, ni
 plateformes : à chaque passage, l'action appelle ensuite `DetailFilm` ou
-`DetailSerie` pour les 40 titres incomplets les plus populaires (8 appels en
+`DetailSerie` pour les 60 titres à reprendre les plus populaires (8 appels en
 parallèle) et envoie le résultat à `enrich_tmdb_media` : durée, saisons,
 épisodes, série terminée, bande-annonce YouTube (française d'abord) et
 plateformes d'abonnement en France. La fiche d'un titre (`MediaDetailView`)
-les affiche sans modification.
+les affiche. Un titre est repris s'il n'a jamais été complété
+(`media.details_synced_at` vide) ou s'il n'a toujours pas de bande-annonce
+7 jours après le dernier passage.
 
 - après connexion, inscription ou confirmation : `force = false`, en
   arrière-plan, au plus une fois toutes les 12 h ;
@@ -285,6 +288,7 @@ titres du catalogue de démonstration par `media_id`.
 | `test/cine_models_test.dart` | modèles (`fromJson`, `toJson`, SQLite, égalité) |
 | `test/avatar_picker_test.dart` | `AvatarPicker` (galerie et Supabase simulés) |
 | `test/mark_watched_button_test.dart` | `MarkWatchedButton` |
+| `test/trailer_player_test.dart` | adresses YouTube, `TrailerPlayer` sans vidéo valide |
 | `test/sync_tmdb_catalog_test.dart` | conversion des résultats TMDB, fusion sans doublon, envoi par lots, TMDB injoignable, détails (bande-annonce, plateformes, séries terminées) |
 
 Vérifié aussi sur la vraie base avec deux comptes de test : accès anonyme
