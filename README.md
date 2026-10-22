@@ -28,8 +28,9 @@ sont en lecture seule et régénérés par FlutterFlow) :
 
 ## 1. Supabase
 
-1. Supabase → *SQL Editor* → exécuter [supabase/schema.sql](supabase/schema.sql)
-   (tables, RLS, données de démo ; le script peut être relancé).
+1. Supabase → *SQL Editor* → exécuter les scripts dans l'ordre indiqué dans
+   [supabase/README.md](supabase/README.md) (`schema.sql`, les migrations,
+   `seed.sql` ; chaque script peut être relancé).
 2. FlutterFlow → *Settings → Integrations → Supabase* → **Get Schema**.
 
 Tables : `profiles`, `genres`, `media` (films **et** séries, colonne
@@ -142,38 +143,66 @@ flutter test
 
 | Membre | Responsabilités |
 |---|---|
-| 1 — Supabase & compte | `schema.sql`, RLS, auth, profil, favoris (`toggleFavorite`, `FavoriteButton`, page Favoris) |
+| 1 — Supabase & compte | schéma, migrations, RLS, Storage, auth, profil et avatar, favoris, listes, vus (voir ci-dessous) |
 | 2 — Catalogue | `CatalogBrowser`, `MediaCard`, HomePage, MediaDetail, pagination |
 | 3 — UX & notifications | Onboarding + Walkthrough FlutterFlow, calendrier, notifications locales, tests |
 
-## Authentification (membre 1)
+## Membre 1 — Authentification, profil et Supabase
 
-Écrans dans le dossier FlutterFlow `membre1_auth_profil_supabase`, chacun avec
-**un seul custom widget** en *Expanded* :
+Pages dans le dossier FlutterFlow `membre1_auth_profil_supabase`. Ce sont des
+pages FlutterFlow **natives** (widgets FlutterFlow, requêtes Supabase,
+thème CinéSphère) qui appellent des actions personnalisées, une par fichier.
 
-| Page | Widget | Callbacks |
+### Base Supabase
+
+Schéma, RLS, triggers, Storage et audits : voir
+[supabase/README.md](supabase/README.md) (7 migrations dans
+`supabase/migrations/`).
+
+### Pages
+
+| Page | Paramètre | Contenu | Actions |
+|---|---|---|---|
+| `login` (Entry Page) | — | connexion, liens vers Inscription et MotDePasseOublie | `authSignIn` |
+| `Inscription` | — | e-mail, pseudo (unicité vérifiée pendant la saisie), mot de passe + confirmation | `authSignUp` |
+| `ConfirmationEmail` | `email` | saisie du code reçu par e-mail, renvoi du code | `authConfirmSignUp`, `authResendCode` |
+| `MotDePasseOublie` | — | envoi d'un code de réinitialisation | `authSendResetCode` |
+| `NouveauMotDePasse` | `email` | code + nouveau mot de passe (seulement le mot de passe si déjà connecté) | `authResetPassword`, `authSendResetCode` |
+| `Profil` | — | photo de profil (`AvatarPicker`), pseudo et bio modifiables, nombre d'avis publiés | `updateMyProfile` |
+| `Parametres` | — | profil, favoris, changer de mot de passe, notifications, revoir l'onboarding, déconnexion | `initLocalNotifications`, `showInstantNotification`, *Log Out* |
+| `Favoris` | — | 3 onglets : **Favoris**, **Mes listes** (création), **Vus** | `createWatchlist` |
+| `DetailListe` | `watchlistId` | titres d'une liste, renommer, retirer un titre, supprimer la liste (avec confirmation) | `renameWatchlist`, `removeWatchlistItem`, `deleteWatchlist` |
+
+Sur la fiche d'un titre (`MediaDetailView`, membre 2), avec son accord, le
+membre 1 a ajouté deux widgets :
+
+| Widget | Paramètres | Rôle |
 |---|---|---|
-| `login` (Entry Page) | `LoginForm` | `onSignedIn` → HomePage (*Replace Route*) · `onCreateAccount` → Inscription · `onForgotPassword` → MotDePasseOublie |
-| `Inscription` | `SignUpForm` | `onSignedUp` → HomePage (*Replace Route*) · `onGoToLogin` → retour |
-| `MotDePasseOublie` | `ForgotPasswordForm` | `onCodeSent(email)` → NouveauMotDePasse (`email`) · `onBackToLogin` → retour |
-| `NouveauMotDePasse` (paramètre `email`, String) | `NewPasswordForm` | `onPasswordUpdated` → HomePage (*Replace Route*) · `onBack` → retour |
+| `AddToWatchlistButton` | `mediaId` | feuille avec les listes du membre ; ajout à une liste existante ou création d'une liste avec le titre |
+| `MarkWatchedButton` | `mediaId`, `onChanged(isWatched)` | « Marquer comme vu » relié à la table `watched` (onglet Vus) |
+| `AvatarPicker` | `avatarUrl`, `onChanged(avatarUrl)` | photo choisie dans la galerie, réduite à 512 px, 2 Mo max, envoyée dans le bucket `avatars/{user_id}/` puis enregistrée dans `profiles.avatar_url` |
 
-La logique est dans `lib/custom_code/actions/auth_service.dart` (action
-`authService` = « un membre est-il connecté ? ») :
+Les actions qui modifient des données retournent `""` en cas de succès, sinon
+le message d'erreur en français à afficher (*SnackBar*). `toggleFavorite` et
+`toggleWatched` retournent le nouvel état.
+
+### Authentification
+
+La logique est dans `lib/custom_code/actions/auth_service.dart` ; les actions
+`auth*` ne font que l'appeler :
 
 - validation : e-mail, mot de passe ≥ 8 caractères, confirmation, pseudo
-  (3 à 24 caractères) dont l'**unicité est vérifiée pendant la saisie**
-  (fonction SQL `username_available`, appelable avant l'inscription) ;
+  (3 à 24 caractères) dont l'unicité est vérifiée avant l'inscription
+  (fonction SQL `username_available`) ;
 - le pseudo est envoyé dans les métadonnées d'inscription et le trigger
   `on_auth_user_created` crée `profiles` + `user_preferences` ;
-- erreurs Supabase Auth traduites en français (`CineFailure`), état de
-  chargement sur les boutons, bouton afficher / masquer le mot de passe ;
+- erreurs Supabase Auth traduites en français (`CineFailure`) ;
 - **codes par e-mail plutôt que liens** : la confirmation d'inscription et le
   mot de passe oublié utilisent le code à usage unique (`{{ .Token }}`) saisi
   dans l'application. Les liens Supabase pointent vers le *Site URL*
   (`localhost:3000`), inutilisable en Test Mode FlutterFlow ou sur téléphone ;
-- un e-mail non confirmé à la connexion renvoie un code et l'écran propose de
-  le saisir ;
+- un e-mail non confirmé à la connexion renvoie un code et ouvre
+  ConfirmationEmail ;
 - session persistante gérée par `supabase_flutter`.
 
 Réglages Supabase (*Authentication*) :
@@ -181,9 +210,33 @@ Réglages Supabase (*Authentication*) :
 - *Email Templates* → **Confirm signup** et **Reset Password** : le corps doit
   contenir `{{ .Token }}` ;
 - *Providers → Email* : longueur minimale du mot de passe **8** ;
-- le SMTP intégré de Supabase n'envoie que **2 e-mails par heure**. Pour les
-  tests, désactiver **Confirm email** ou configurer un SMTP (*Settings → SMTP*).
+- SMTP : le SMTP intégré de Supabase n'envoie que 2 e-mails par heure et ne
+  permet pas de modifier les modèles ; le projet utilise un **SMTP Gmail**
+  (*Settings → SMTP*).
 
-Tests : `test/auth_service_test.dart` (validation, traduction des erreurs,
-service, appels HTTP Supabase simulés) et `test/auth_forms_test.dart` (les 4
-écrans).
+### Données
+
+`lib/custom_code/actions/supabase_service.dart` (`SupabaseService`) regroupe
+l'accès aux données du membre 1 : profil, pseudo, avatar, préférences, listes
+(créer, renommer, supprimer, ajouter / retirer un titre), genres,
+plateformes, cache TMDB. Les modèles sont dans `cine_models.dart`.
+
+Pendant la transition « expand / contract » (voir
+[supabase/README.md](supabase/README.md)), favoris, listes et vus visent les
+titres du catalogue de démonstration par `media_id`.
+
+### Tests
+
+| Fichier | Contenu |
+|---|---|
+| `test/auth_service_test.dart` | validation, traduction des erreurs, appels Supabase Auth simulés |
+| `test/auth_actions_test.dart` | actions `auth*` |
+| `test/auth_forms_test.dart` | écrans connexion, inscription, mot de passe oublié, nouveau mot de passe |
+| `test/supabase_service_test.dart` | `SupabaseService` (réponses HTTP Supabase simulées) |
+| `test/cine_models_test.dart` | modèles (`fromJson`, `toJson`, SQLite, égalité) |
+| `test/avatar_picker_test.dart` | `AvatarPicker` (galerie et Supabase simulés) |
+| `test/mark_watched_button_test.dart` | `MarkWatchedButton` |
+
+Vérifié aussi sur la vraie base avec deux comptes de test : accès anonyme
+refusé, RLS des favoris, listes et vus (un membre ne voit ni ne modifie les
+données de l'autre), envoi d'avatar dans son seul dossier.

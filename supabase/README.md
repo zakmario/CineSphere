@@ -13,7 +13,9 @@ rejouable) :
 4. `migrations/20261020000300_rls.sql` — Row Level Security
 5. `migrations/20261020000400_storage_avatars.sql` — bucket `avatars`
 6. `migrations/20261020000500_security_hardening.sql` — corrections des audits Supabase
-7. `seed.sql` — genres TMDB et plateformes
+7. `migrations/20261021000100_media_tmdb_images.sql` — vraies affiches TMDB du catalogue de démonstration
+8. `migrations/20261021000200_media_targets.sql` — listes et vus visent aussi `media`
+9. `seed.sql` — genres TMDB et plateformes
 
 Puis dans FlutterFlow : *Settings → Integrations → Supabase → Get Schema*.
 
@@ -55,7 +57,9 @@ Les widgets actuels des membres 2 et 3 lisent encore la table `media`
 (`favorites.media_id`, `release_events.media_id`, `news`). La migration 1
 ajoute le nouveau schéma **sans** supprimer ces colonnes : pendant la
 transition, une ligne de `favorites` / `release_events` vise exactement un
-de `media_id`, `movie_id` ou `series_id`.
+de `media_id`, `movie_id` ou `series_id`. La migration 7 fait de même pour
+`watchlist_items` et `watched` (un titre au plus une fois par liste, un seul
+« vu » par membre).
 
 Quand plus aucun widget n'utilise `media`, une migration « contract »
 supprimera `media`, `news`, les colonnes `media_id` et
