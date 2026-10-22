@@ -156,7 +156,7 @@ thème CinéSphère) qui appellent des actions personnalisées, une par fichier.
 ### Base Supabase
 
 Schéma, RLS, triggers, Storage et audits : voir
-[supabase/README.md](supabase/README.md) (7 migrations dans
+[supabase/README.md](supabase/README.md) (8 migrations dans
 `supabase/migrations/`).
 
 ### Pages
@@ -169,7 +169,7 @@ Schéma, RLS, triggers, Storage et audits : voir
 | `MotDePasseOublie` | — | envoi d'un code de réinitialisation | `authSendResetCode` |
 | `NouveauMotDePasse` | `email` | code + nouveau mot de passe (seulement le mot de passe si déjà connecté) | `authResetPassword`, `authSendResetCode` |
 | `Profil` | — | photo de profil (`AvatarPicker`), pseudo et bio modifiables, nombre d'avis publiés | `updateMyProfile` |
-| `Parametres` | — | profil, favoris, changer de mot de passe, notifications, revoir l'onboarding, déconnexion | `initLocalNotifications`, `showInstantNotification`, *Log Out* |
+| `Parametres` | — | profil, favoris, changer de mot de passe, notifications, revoir l'onboarding, **supprimer mon compte** (avec confirmation), déconnexion | `initLocalNotifications`, `showInstantNotification`, `deleteMyAccount`, *Log Out* |
 | `Favoris` | — | 3 onglets : **Favoris**, **Mes listes** (création), **Vus** | `createWatchlist` |
 | `DetailListe` | `watchlistId` | titres d'une liste, renommer, retirer un titre, supprimer la liste (avec confirmation) | `renameWatchlist`, `removeWatchlistItem`, `deleteWatchlist` |
 
@@ -185,6 +185,12 @@ membre 1 a ajouté deux widgets :
 Les actions qui modifient des données retournent `""` en cas de succès, sinon
 le message d'erreur en français à afficher (*SnackBar*). `toggleFavorite` et
 `toggleWatched` retournent le nouvel état.
+
+**Suppression de compte** : `deleteMyAccount` retire les fichiers de
+`avatars/{user_id}/` (Supabase interdit de les supprimer en SQL), puis appelle
+la fonction SQL `delete_my_account()` qui supprime la ligne `auth.users` du
+membre connecté ; profil, préférences, favoris, listes, vus, avis et
+notifications partent en cascade. La page enchaîne avec *Log Out*.
 
 ### Authentification
 
@@ -232,7 +238,7 @@ titres du catalogue de démonstration par `media_id`.
 | `test/auth_service_test.dart` | validation, traduction des erreurs, appels Supabase Auth simulés |
 | `test/auth_actions_test.dart` | actions `auth*` |
 | `test/auth_forms_test.dart` | écrans connexion, inscription, mot de passe oublié, nouveau mot de passe |
-| `test/supabase_service_test.dart` | `SupabaseService` (réponses HTTP Supabase simulées) |
+| `test/supabase_service_test.dart` | `SupabaseService`, dont la suppression de compte (réponses HTTP Supabase simulées) |
 | `test/cine_models_test.dart` | modèles (`fromJson`, `toJson`, SQLite, égalité) |
 | `test/avatar_picker_test.dart` | `AvatarPicker` (galerie et Supabase simulés) |
 | `test/mark_watched_button_test.dart` | `MarkWatchedButton` |

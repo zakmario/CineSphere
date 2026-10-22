@@ -15,7 +15,8 @@ rejouable) :
 6. `migrations/20261020000500_security_hardening.sql` — corrections des audits Supabase
 7. `migrations/20261021000100_media_tmdb_images.sql` — vraies affiches TMDB du catalogue de démonstration
 8. `migrations/20261021000200_media_targets.sql` — listes et vus visent aussi `media`
-9. `seed.sql` — genres TMDB et plateformes
+9. `migrations/20261022000100_delete_my_account.sql` — suppression de compte par le membre
+10. `seed.sql` — genres TMDB et plateformes
 
 Puis dans FlutterFlow : *Settings → Integrations → Supabase → Get Schema*.
 
@@ -39,6 +40,8 @@ Automatismes :
 - `on_auth_user_created` crée `profiles` + `user_preferences` à l'inscription
   (pseudo tiré de `raw_user_meta_data.username` ou de l'e-mail, rendu unique) ;
 - `updated_at` mis à jour automatiquement ;
+- `delete_my_account()` (membres connectés uniquement) supprime le compte de
+  l'appelant et toutes ses données en cascade ;
 - un utilisateur ne peut pas modifier son propre `role` ;
 - Storage `avatars` : lecture publique, écriture dans `{user_id}/` uniquement,
   2 Mo maximum, JPEG / PNG / WebP.

@@ -11,7 +11,7 @@ import 'package:flutter/material.dart';
 import '/custom_code/actions/supabase_service.dart';
 
 /// Supprime définitivement le compte du membre connecté et toutes ses
-/// données (page Paramètres), puis le déconnecte.
+/// données (page Paramètres). La page enchaîne avec *Log Out*.
 /// Retourne "" en cas de succès, sinon le message d'erreur à afficher.
 Future<String> deleteMyAccount() async {
   try {

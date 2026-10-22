@@ -286,7 +286,8 @@ class SupabaseService {
 
   /// Supprime définitivement le compte du membre connecté : fichiers de
   /// `avatars/{user_id}/`, puis le compte (fonction SQL `delete_my_account`,
-  /// qui efface toutes ses données en cascade), puis la session locale.
+  /// qui efface toutes ses données en cascade). La déconnexion est faite
+  /// ensuite par la page (action *Log Out* de FlutterFlow).
   Future<void> deleteMyAccount() => _guard('deleteMyAccount', () async {
         final userId = _requireUserId;
         final bucket = _client.storage.from('avatars');
@@ -295,7 +296,6 @@ class SupabaseService {
           await bucket.remove([for (final f in files) '$userId/${f.name}']);
         }
         await _client.rpc('delete_my_account');
-        await _client.auth.signOut(scope: SignOutScope.local);
       });
 
   // Listes ---------------------------------------------------------------
