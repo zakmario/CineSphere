@@ -378,6 +378,9 @@ class _ConfirmationEmailWidgetState extends State<ConfirmationEmailWidget> {
                                     backgroundColor: Color(0xFF2ECC71),
                                   ),
                                 );
+                                _model.syncTmdb = await actions.syncTmdbCatalog(
+                                  false,
+                                );
 
                                 context.goNamed(HomePageWidget.routeName);
                               } else {

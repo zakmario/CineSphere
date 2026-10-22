@@ -17,6 +17,8 @@ class ParametresModel extends FlutterFlowModel<ParametresWidget> {
   bool? notifications;
   // Stores action output result for [Custom Action - showInstantNotification] action in Container widget.
   bool? test;
+  // Stores action output result for [Custom Action - syncTmdbCatalog] action in Container widget.
+  String? syncTmdbForce;
   // Stores action output result for [Custom Action - deleteMyAccount] action in Container widget.
   String? suppressionCompte;
 

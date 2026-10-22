@@ -32,6 +32,8 @@ class ConfirmationEmailModel extends FlutterFlowModel<ConfirmationEmailWidget> {
 
   // Stores action output result for [Custom Action - authConfirmSignUp] action in Button widget.
   String? verification;
+  // Stores action output result for [Custom Action - syncTmdbCatalog] action in Button widget.
+  String? syncTmdb;
   // Stores action output result for [Custom Action - authResendCode] action in Text widget.
   String? renvoi;
 

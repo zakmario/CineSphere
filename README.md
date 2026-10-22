@@ -156,20 +156,20 @@ thème CinéSphère) qui appellent des actions personnalisées, une par fichier.
 ### Base Supabase
 
 Schéma, RLS, triggers, Storage et audits : voir
-[supabase/README.md](supabase/README.md) (8 migrations dans
+[supabase/README.md](supabase/README.md) (9 migrations dans
 `supabase/migrations/`).
 
 ### Pages
 
 | Page | Paramètre | Contenu | Actions |
 |---|---|---|---|
-| `login` (Entry Page) | — | connexion, liens vers Inscription et MotDePasseOublie | `authSignIn` |
-| `Inscription` | — | e-mail, pseudo (unicité vérifiée pendant la saisie), mot de passe + confirmation | `authSignUp` |
-| `ConfirmationEmail` | `email` | saisie du code reçu par e-mail, renvoi du code | `authConfirmSignUp`, `authResendCode` |
+| `login` (Entry Page) | — | connexion, liens vers Inscription et MotDePasseOublie | `authSignIn`, `syncTmdbCatalog` |
+| `Inscription` | — | e-mail, pseudo (unicité vérifiée pendant la saisie), mot de passe + confirmation | `authSignUp`, `syncTmdbCatalog` |
+| `ConfirmationEmail` | `email` | saisie du code reçu par e-mail, renvoi du code | `authConfirmSignUp`, `authResendCode`, `syncTmdbCatalog` |
 | `MotDePasseOublie` | — | envoi d'un code de réinitialisation | `authSendResetCode` |
 | `NouveauMotDePasse` | `email` | code + nouveau mot de passe (seulement le mot de passe si déjà connecté) | `authResetPassword`, `authSendResetCode` |
 | `Profil` | — | photo de profil (`AvatarPicker`), pseudo et bio modifiables, nombre d'avis publiés | `updateMyProfile` |
-| `Parametres` | — | profil, favoris, changer de mot de passe, notifications, revoir l'onboarding, **supprimer mon compte** (avec confirmation), déconnexion | `initLocalNotifications`, `showInstantNotification`, `deleteMyAccount`, *Log Out* |
+| `Parametres` | — | profil, favoris, changer de mot de passe, notifications, revoir l'onboarding, **actualiser le catalogue TMDB**, **supprimer mon compte** (avec confirmation), déconnexion | `initLocalNotifications`, `showInstantNotification`, `syncTmdbCatalog`, `deleteMyAccount`, *Log Out* |
 | `Favoris` | — | 3 onglets : **Favoris**, **Mes listes** (création), **Vus** | `createWatchlist` |
 | `DetailListe` | `watchlistId` | titres d'une liste, renommer, retirer un titre, supprimer la liste (avec confirmation) | `renameWatchlist`, `removeWatchlistItem`, `deleteWatchlist` |
 
@@ -191,6 +191,41 @@ le message d'erreur en français à afficher (*SnackBar*). `toggleFavorite` et
 la fonction SQL `delete_my_account()` qui supprime la ligne `auth.users` du
 membre connecté ; profil, préférences, favoris, listes, vus, avis et
 notifications partent en cascade. La page enchaîne avec *Log Out*.
+
+### API TMDB
+
+**API Manager FlutterFlow** → groupe **TMDB** (base
+`https://api.themoviedb.org/3`). La clé vient de la valeur d'environnement
+`tmdbApiKey` (*Settings → Dev Environments*), la langue est `fr-FR` par défaut.
+
+| Appel | Point d'accès | Chemins JSON |
+|---|---|---|
+| `Tendances` | `/trending/all/week` | `resultats`, `ids`, `titres`, `affiches`, `notes`, `totalPages` |
+| `Recherche` (`query`) | `/search/multi` | idem |
+| `FilmsPopulaires` | `/movie/popular` (région FR) | idem |
+| `SeriesPopulaires` | `/tv/popular` | idem |
+| `ProchainesSorties` | `/movie/upcoming` (région FR) | idem |
+| `SeriesEnCours` | `/tv/on_the_air` | idem |
+| `DetailFilm` (`movieId`) | `/movie/{id}` + vidéos et plateformes | `titre`, `synopsis`, `affiche`, `fond`, `dateSortie`, `duree`, `note`, `genres`, `videos` |
+| `DetailSerie` (`seriesId`) | `/tv/{id}` + vidéos et plateformes | `titre`, `synopsis`, `affiche`, `fond`, `premiereDiffusion`, `saisons`, `episodes`, `note`, `genres`, `prochainEpisode` |
+| `GenresFilms` | `/genre/movie/list` | `genres`, `noms` |
+
+Chaque appel peut être utilisé dans une page (*Backend Query → API Call*) ou une
+action (*API Call*). Code généré : `lib/backend/api_requests/api_calls.dart`.
+
+**Import dans le catalogue** : l'action `syncTmdbCatalog(force)` appelle
+`Tendances` (2 pages), `FilmsPopulaires`, `SeriesPopulaires`,
+`ProchainesSorties` et `SeriesEnCours`, puis envoie les titres (sans doublon)
+à la fonction SQL `import_tmdb_media`. Celle-ci crée ou met à jour les lignes
+de `media` (clé `media_type` + `tmdb_id`) : les widgets du catalogue affichent
+les vrais titres TMDB et favoris, listes et vus continuent de fonctionner.
+Un film à venir reçoit aussi un événement « Sortie au cinéma » dans
+`release_events` (calendrier).
+
+- après connexion, inscription ou confirmation : `force = false`, en
+  arrière-plan, au plus une fois toutes les 12 h ;
+- Paramètres → **Actualiser le catalogue** : `force = true`, message de
+  réussite ou d'erreur.
 
 ### Authentification
 
@@ -242,6 +277,7 @@ titres du catalogue de démonstration par `media_id`.
 | `test/cine_models_test.dart` | modèles (`fromJson`, `toJson`, SQLite, égalité) |
 | `test/avatar_picker_test.dart` | `AvatarPicker` (galerie et Supabase simulés) |
 | `test/mark_watched_button_test.dart` | `MarkWatchedButton` |
+| `test/sync_tmdb_catalog_test.dart` | conversion des résultats TMDB, fusion sans doublon, envoi par lots, TMDB injoignable |
 
 Vérifié aussi sur la vraie base avec deux comptes de test : accès anonyme
 refusé, RLS des favoris, listes et vus (un membre ne voit ni ne modifie les

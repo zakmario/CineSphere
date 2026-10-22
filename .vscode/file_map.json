@@ -12,7 +12,7 @@
     "new_identifier_name": "pubspec.yaml",
     "type": "D",
     "is_deleted": false,
-    "current_checksum": "12326b98477a46dd0ed5e8f46afe2adb663367fc5e51430a0294deae5c491727",
+    "current_checksum": "064d704971d228d97d138cc12dcc28f1d181dd9c694988d4213576febc2ba2e5",
     "original_checksum": "12326b98477a46dd0ed5e8f46afe2adb663367fc5e51430a0294deae5c491727"
   },
   "lib/custom_code/actions/init_local_notifications.dart": {
@@ -350,5 +350,12 @@
     "is_deleted": false,
     "current_checksum": "0063433c7d19dcebd084f070c5da30fd5b344db09f1bc4224cce8ee96dec47e5",
     "original_checksum": "0063433c7d19dcebd084f070c5da30fd5b344db09f1bc4224cce8ee96dec47e5"
+  },
+  "lib/custom_code/actions/sync_tmdb_catalog.dart": {
+    "old_identifier_name": "syncTmdbCatalog",
+    "new_identifier_name": "syncTmdbCatalog",
+    "type": "A",
+    "is_deleted": false,
+    "current_checksum": "68a08bd647a376d80eeea7ee4b4e8a093cbdb6ec246d58918ecfeb4d131f8147"
   }
 }

@@ -83,6 +83,8 @@ class InscriptionModel extends FlutterFlowModel<InscriptionWidget> {
 
   // Stores action output result for [Custom Action - authSignUp] action in SignUpButton widget.
   String? inscription;
+  // Stores action output result for [Custom Action - syncTmdbCatalog] action in SignUpButton widget.
+  String? syncTmdb;
 
   @override
   void initState(BuildContext context) {

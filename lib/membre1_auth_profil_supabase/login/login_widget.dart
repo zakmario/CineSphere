@@ -609,6 +609,10 @@ class _LoginWidgetState extends State<LoginWidget> {
                                 _model.passwordFieldTextController.text,
                               );
                               if (_model.connexion == '') {
+                                _model.syncTmdb = await actions.syncTmdbCatalog(
+                                  false,
+                                );
+
                                 context.goNamed(HomePageWidget.routeName);
                               } else if (_model.connexion == 'CONFIRM') {
                                 context.pushNamed(

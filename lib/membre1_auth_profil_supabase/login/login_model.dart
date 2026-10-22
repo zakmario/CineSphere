@@ -46,6 +46,8 @@ class LoginModel extends FlutterFlowModel<LoginWidget> {
 
   // Stores action output result for [Custom Action - authSignIn] action in LoginButton widget.
   String? connexion;
+  // Stores action output result for [Custom Action - syncTmdbCatalog] action in LoginButton widget.
+  String? syncTmdb;
 
   @override
   void initState(BuildContext context) {

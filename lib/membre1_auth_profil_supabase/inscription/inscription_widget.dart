@@ -898,6 +898,9 @@ class _InscriptionWidgetState extends State<InscriptionWidget> {
                                     backgroundColor: Color(0xFF2ECC71),
                                   ),
                                 );
+                                _model.syncTmdb = await actions.syncTmdbCatalog(
+                                  false,
+                                );
 
                                 context.goNamed(HomePageWidget.routeName);
                               } else if (_model.inscription == 'CONFIRM') {

@@ -16,7 +16,8 @@ rejouable) :
 7. `migrations/20261021000100_media_tmdb_images.sql` — vraies affiches TMDB du catalogue de démonstration
 8. `migrations/20261021000200_media_targets.sql` — listes et vus visent aussi `media`
 9. `migrations/20261022000100_delete_my_account.sql` — suppression de compte par le membre
-10. `seed.sql` — genres TMDB et plateformes
+10. `migrations/20261022000200_media_tmdb_import.sql` — `media.tmdb_id` et import du catalogue TMDB
+11. `seed.sql` — genres TMDB et plateformes
 
 Puis dans FlutterFlow : *Settings → Integrations → Supabase → Get Schema*.
 
@@ -40,6 +41,10 @@ Automatismes :
 - `on_auth_user_created` crée `profiles` + `user_preferences` à l'inscription
   (pseudo tiré de `raw_user_meta_data.username` ou de l'e-mail, rendu unique) ;
 - `updated_at` mis à jour automatiquement ;
+- `import_tmdb_media(items)` (membres connectés, 200 titres au plus par appel)
+  crée ou met à jour les titres de `media` à partir des listes TMDB (clé
+  `media_type` + `tmdb_id`, genres retrouvés dans `genres` par leur identifiant
+  TMDB) et ajoute la sortie au cinéma des films à venir dans `release_events` ;
 - `delete_my_account()` (membres connectés uniquement) supprime le compte de
   l'appelant et toutes ses données en cascade ;
 - un utilisateur ne peut pas modifier son propre `role` ;
@@ -50,7 +55,7 @@ Automatismes :
 
 Aucune erreur. Avertissements restants, volontaires : les fonctions
 `SECURITY DEFINER` appelables par l'application (`username_available`,
-`get_public_profile`, `upsert_*_from_tmdb`, `is_admin` pour la RLS) ; elles
+`get_public_profile`, `upsert_*_from_tmdb`, `import_tmdb_media`, `is_admin` pour la RLS) ; elles
 n'exposent que des champs contrôlés. `rls_auto_enable` est une fonction
 préexistante du projet.
 
