@@ -1,0 +1,137 @@
+rules_version = '2';
+
+// CinéSphère — règles Firestore (équivalent des politiques RLS Supabase).
+//
+// Les collections reprennent les tables Supabase. Les documents personnels
+// portent un champ `userId` ; les identifiants déterministes garantissent
+// l'unicité (favorites/{uid}_{mediaId}, watched/{uid}_{mediaId},
+// watchlist_items/{watchlistId}_{mediaId}, usernames/{pseudo en minuscules}).
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function isMe(uid) {
+      return signedIn() && request.auth.uid == uid;
+    }
+
+    function isAdmin() {
+      return signedIn()
+          && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+    }
+
+    // Le document créé appartient à l'utilisateur connecté.
+    function createsOwn() {
+      return isMe(request.resource.data.userId);
+    }
+
+    // Le document existant appartient à l'utilisateur et le reste.
+    function updatesOwn() {
+      return isMe(resource.data.userId)
+          && request.resource.data.userId == resource.data.userId;
+    }
+
+    // Profils ----------------------------------------------------------------
+    // users/{uid} : pseudo, e-mail, avatar, bio, rôle et préférences.
+    match /users/{uid} {
+      allow read: if isMe(uid) || isAdmin();
+      allow create: if isMe(uid)
+          && request.resource.data.get('role', 'user') == 'user';
+      // Le rôle ne se change pas depuis l'application.
+      allow update: if (isMe(uid)
+          && request.resource.data.get('role', 'user') == resource.data.get('role', 'user'))
+          || isAdmin();
+      allow delete: if isMe(uid);
+    }
+
+    // Réservation des pseudos (unicité insensible à la casse).
+    // Lecture publique : l'inscription vérifie la disponibilité avant le compte.
+    match /usernames/{name} {
+      allow read: if true;
+      allow create: if createsOwn();
+      allow delete: if isMe(resource.data.userId);
+    }
+
+    // Catalogue ---------------------------------------------------------------
+    // Lecture publique. L'import TMDB tourne dans l'application (forfait
+    // Spark, pas de Cloud Functions) : un membre connecté peut l'alimenter.
+    match /media/{id} {
+      allow read: if true;
+      allow create, update: if signedIn()
+          && request.resource.data.title is string
+          && request.resource.data.mediaType in ['movie', 'series'];
+      allow delete: if isAdmin();
+    }
+
+    match /genres/{id} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    match /platforms/{id} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    match /release_events/{id} {
+      allow read: if true;
+      allow create, update: if signedIn();
+      allow delete: if isAdmin();
+    }
+
+    match /news/{id} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // Données personnelles -----------------------------------------------------
+    match /favorites/{id} {
+      allow read, delete: if isMe(resource.data.userId);
+      allow create: if createsOwn() && id == request.auth.uid + '_' + request.resource.data.mediaId;
+    }
+
+    match /watched/{id} {
+      allow read, delete: if isMe(resource.data.userId);
+      allow create: if createsOwn() && id == request.auth.uid + '_' + request.resource.data.mediaId;
+      allow update: if updatesOwn();
+    }
+
+    match /watchlists/{id} {
+      allow read: if resource.data.isPublic == true || isMe(resource.data.userId);
+      allow create: if createsOwn()
+          && request.resource.data.name is string
+          && request.resource.data.name.size() >= 1
+          && request.resource.data.name.size() <= 60;
+      allow update: if updatesOwn()
+          && request.resource.data.name.size() >= 1
+          && request.resource.data.name.size() <= 60;
+      allow delete: if isMe(resource.data.userId);
+    }
+
+    // Un titre de liste : lisible avec sa liste, modifiable par son propriétaire.
+    match /watchlist_items/{id} {
+      function list(listId) {
+        return get(/databases/$(database)/documents/watchlists/$(listId)).data;
+      }
+      allow read: if isMe(resource.data.userId)
+          || list(resource.data.watchlistId).isPublic == true;
+      allow create: if createsOwn()
+          && list(request.resource.data.watchlistId).userId == request.auth.uid
+          && id == request.resource.data.watchlistId + '_' + request.resource.data.mediaId;
+      allow delete: if isMe(resource.data.userId);
+    }
+
+    match /notifications/{id} {
+      allow read, delete: if isMe(resource.data.userId);
+      allow create: if createsOwn();
+      allow update: if updatesOwn();
+    }
+
+    match /search_history/{id} {
+      allow read, delete: if isMe(resource.data.userId);
+      allow create: if createsOwn();
+    }
+  }
+}
