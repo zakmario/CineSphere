@@ -27,6 +27,8 @@ dependencies:
     sdk: flutter
   flutter_web_plugins:
     sdk: flutter
+  app_links: 6.3.2
+  app_links_platform_interface: 2.0.2
   auto_size_text: 3.0.0
   cached_network_image: 3.4.1
   cached_network_image_platform_interface: 4.1.1
@@ -54,6 +56,7 @@ dependencies:
   flutter_timezone: 4.1.1
   font_awesome_flutter: 11.0.0
   from_css_color: 2.0.0
+  functions_client: 2.4.2
   go_router: 12.1.3
   google_fonts: 6.3.3
   google_sign_in: 6.3.0
@@ -61,6 +64,8 @@ dependencies:
   google_sign_in_ios: 5.9.0
   google_sign_in_platform_interface: 2.5.0
   google_sign_in_web: 0.12.4+4
+  gotrue: 2.12.0
+  hive: 2.2.3
   http: 1.4.0
   image_picker: 1.1.2
   intl: 0.20.3
@@ -78,7 +83,9 @@ dependencies:
   pointer_interceptor_ios: 0.10.1
   pointer_interceptor_platform_interface: 0.10.0+1
   pointer_interceptor_web: 0.10.2+1
+  postgrest: 2.4.2
   provider: 6.1.5
+  realtime_client: 2.5.0
   rxdart: 0.27.7
   shared_preferences: 2.5.3
   shared_preferences_android: 2.4.10
@@ -93,7 +100,10 @@ dependencies:
   sign_in_with_apple_web: 3.0.0
   sqflite: 2.3.3+1
   sqflite_common: 2.5.4+3
+  storage_client: 2.4.0
   stream_transform: 2.1.0
+  supabase: 2.7.0
+  supabase_flutter: 2.9.0
   table_calendar: 3.2.0
   timeago: 3.7.1
   timezone: 0.11.2
@@ -125,6 +135,7 @@ dependency_overrides:
   http: 1.4.0
   intl: 0.20.3
   page_transition: 2.2.2
+  rxdart: 0.27.7
   uuid: ^4.0.0
   webview_flutter: 4.13.0
   webview_flutter_android: 4.10.13

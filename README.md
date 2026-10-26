@@ -34,6 +34,14 @@ du cahier des charges. Le backend est passé de Supabase à Firebase le
 26/10/2026 (décision d'équipe) ; le dossier `supabase/` est conservé comme
 archive de l'ancien schéma SQL.
 
+L'intégration **Supabase reste reliée** dans FlutterFlow (*Settings →
+Integrations → Supabase*, projet `absnwvzofvjrbexeskif`) : l'application
+initialise les deux (`initFirebase()` puis `SupaFlow.initialize()` dans
+`main.dart`) et le code Supabase généré est disponible dans
+`lib/backend/supabase/`. L'authentification et toutes les données de
+l'application passent par Firebase ; les tables Supabase contiennent
+l'état au 26/10/2026 et ne sont plus synchronisées.
+
 - **Authentication** : e-mail / mot de passe, lien de réinitialisation.
 - **Firestore** (`europe-west3`, persistance hors ligne activée) :
 

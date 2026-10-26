@@ -12,6 +12,7 @@ import '/flutter_flow/uploaded_file.dart';
 import '/backend/backend.dart';
 import 'package:cloud_firestore/cloud_firestore.dart' hide Type;
 import '/backend/schema/structs/index.dart';
+import '/backend/supabase/supabase.dart';
 import '/auth/firebase_auth/auth_util.dart';
 
 /// Note sur 10 affichée avec une décimale, ou "—" si pas encore notée.
