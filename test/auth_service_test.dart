@@ -1,84 +1,14 @@
-import 'dart:async';
-import 'dart:convert';
-
 import 'package:cine_sphere/custom_code/actions/auth_service.dart';
-import 'package:cine_sphere/custom_code/actions/supabase_service.dart';
+import 'package:cine_sphere/custom_code/actions/firestore_service.dart';
+import 'package:firebase_auth/firebase_auth.dart' as fb;
 import 'package:flutter_test/flutter_test.dart';
-import 'package:http/http.dart' as http;
-import 'package:http/testing.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'fake_auth_gateway.dart';
 
-const _url = 'https://test.supabase.co';
-
-/// Passerelle Supabase dont les réponses HTTP sont simulées par [handler].
-SupabaseAuthGateway _gateway(
-  FutureOr<http.Response> Function(http.Request request) handler, {
-  List<http.Request>? requests,
-}) {
-  final client = SupabaseClient(
-    _url,
-    'anon-key',
-    authOptions: const AuthClientOptions(
-      autoRefreshToken: false,
-      authFlowType: AuthFlowType.implicit,
-    ),
-    httpClient: MockClient((request) async {
-      requests?.add(request);
-      final response = await handler(request);
-      return http.Response.bytes(response.bodyBytes, response.statusCode,
-          headers: response.headers, request: request);
-    }),
-  );
-  return SupabaseAuthGateway(client);
-}
-
-http.Response _json(Object body, [int status = 200]) => http.Response(
-      jsonEncode(body),
-      status,
-      headers: {'content-type': 'application/json'},
-    );
-
-http.Response _authError(String code, String message, {int status = 400}) =>
-    _json({'code': status, 'error_code': code, 'msg': message}, status);
-
-Map<String, dynamic> _user({List<Map<String, dynamic>>? identities}) => {
-      'id': '11111111-1111-1111-1111-111111111111',
-      'aud': 'authenticated',
-      'email': 'zak@example.com',
-      'created_at': '2026-10-20T09:30:00Z',
-      'app_metadata': <String, dynamic>{},
-      'user_metadata': {'username': 'zak'},
-      'identities': identities ??
-          [
-            {
-              'id': '11111111-1111-1111-1111-111111111111',
-              'identity_id': '22222222-2222-2222-2222-222222222222',
-              'user_id': '11111111-1111-1111-1111-111111111111',
-              'provider': 'email',
-              'identity_data': <String, dynamic>{},
-              'created_at': '2026-10-20T09:30:00Z',
-              'last_sign_in_at': '2026-10-20T09:30:00Z',
-              'updated_at': '2026-10-20T09:30:00Z',
-            }
-          ],
-    };
-
-Map<String, dynamic> _session() => {
-      'access_token': 'access',
-      'token_type': 'bearer',
-      'expires_in': 3600,
-      'refresh_token': 'refresh',
-      'user': _user(),
-    };
-
-Map<String, dynamic> _body(http.Request request) =>
-    jsonDecode(request.body) as Map<String, dynamic>;
-
-Matcher _failure(CineFailureKind kind, [String? message]) => isA<CineFailure>()
-    .having((f) => f.kind, 'kind', kind)
-    .having((f) => f.message, 'message', message ?? anything);
+/// Échec attendu : [CineFailure] de type [kind].
+Matcher _failure(CineFailureKind kind, [Object? message]) =>
+    isA<CineFailure>().having((f) => f.kind, 'kind', kind).having(
+        (f) => f.message, 'message', message ?? anything);
 
 void main() {
   group('validation', () {
@@ -111,64 +41,43 @@ void main() {
       expect(validatePasswordConfirmation('motdepasse', 'autre'),
           'Les mots de passe ne correspondent pas.');
     });
-
-    test('code reçu par e-mail : 6 à 8 chiffres', () {
-      expect(validateOtpCode('123456'), isNull);
-      expect(validateOtpCode(' 12345678 '), isNull);
-      for (final code in ['', '12345', '123456789', '12a456']) {
-        expect(validateOtpCode(code), isNotNull, reason: code);
-      }
-    });
   });
 
   group('mapAuthError', () {
-    test('codes GoTrue traduits en français', () {
-      expect(
-          mapAuthError(const AuthException('x', code: 'invalid_credentials')),
-          _failure(CineFailureKind.unauthenticated,
-              'E-mail ou mot de passe incorrect.'));
-      expect(mapAuthError(const AuthException('x', code: 'email_exists')),
-          _failure(CineFailureKind.conflict));
-      expect(mapAuthError(const AuthException('x', code: 'otp_expired')),
-          _failure(CineFailureKind.invalid, 'Code incorrect ou expiré.'));
-      expect(
-          mapAuthError(
-              const AuthException('x', code: 'over_email_send_rate_limit')),
-          _failure(CineFailureKind.forbidden));
+    test('codes Firebase traduits en français', () {
+      final cases = {
+        'invalid-credential': (
+          CineFailureKind.unauthenticated,
+          'E-mail ou mot de passe incorrect.'
+        ),
+        'email-already-in-use': (
+          CineFailureKind.conflict,
+          'Un compte existe déjà avec cette adresse e-mail.'
+        ),
+        'weak-password': (CineFailureKind.invalid, null),
+        'too-many-requests': (CineFailureKind.forbidden, null),
+        'requires-recent-login': (CineFailureKind.unauthenticated, null),
+        'network-request-failed': (CineFailureKind.network, null),
+        'email-not-verified': (CineFailureKind.unauthenticated, null),
+      };
+      cases.forEach((code, expected) {
+        final failure = mapAuthError(fb.FirebaseAuthException(code: code));
+        expect(failure.kind, expected.$1, reason: code);
+        if (expected.$2 != null) {
+          expect(failure.message, expected.$2, reason: code);
+        }
+      });
     });
 
-    test('anciens messages sans code', () {
-      expect(mapAuthError(const AuthException('Invalid login credentials')),
-          _failure(CineFailureKind.unauthenticated));
-      expect(
-          mapAuthError(const AuthException('Email not confirmed')),
-          _failure(CineFailureKind.unauthenticated,
-              'Confirmez votre adresse e-mail avant de vous connecter.'));
-      expect(
-          authErrorCode(const AuthException('Token has expired or is invalid')),
-          'otp_expired');
+    test('code inconnu', () {
+      expect(mapAuthError(fb.FirebaseAuthException(code: 'quoi')).kind,
+          CineFailureKind.unknown);
     });
 
-    test('mot de passe faible, réseau, 429, inconnu', () {
-      expect(
-          mapAuthError(AuthWeakPasswordException(
-              message: 'weak', statusCode: '422', reasons: const ['length'])),
-          _failure(CineFailureKind.invalid));
-      expect(mapAuthError(AuthRetryableFetchException(message: 'offline')),
-          _failure(CineFailureKind.network));
-      expect(mapAuthError(const AuthException('slow down', statusCode: '429')),
-          _failure(CineFailureKind.forbidden));
-      expect(mapAuthError(const AuthException('???')),
-          _failure(CineFailureKind.unknown));
-      expect(mapAuthError(AuthSessionMissingException()),
-          _failure(CineFailureKind.unauthenticated));
-    });
-
-    test('les autres erreurs passent par mapSupabaseError', () {
-      expect(mapAuthError(TimeoutException('t')),
-          _failure(CineFailureKind.network));
-      const failure = CineFailure(CineFailureKind.invalid, 'déjà typée');
+    test('les autres erreurs passent par mapFirestoreError', () {
+      const failure = CineFailure(CineFailureKind.conflict, 'déjà');
       expect(mapAuthError(failure), same(failure));
+      expect(mapAuthError(StateError('x')).kind, CineFailureKind.unknown);
     });
   });
 
@@ -181,24 +90,42 @@ void main() {
       service = AuthService(gateway);
     });
 
-    test('signIn nettoie l\'e-mail et refuse les champs vides', () async {
-      await service.signIn(email: ' zak@example.com ', password: 'secret123');
-      expect(gateway.calls, ['signIn zak@example.com']);
+    test('hasSession exige une adresse confirmée', () async {
+      expect(service.hasSession, isFalse);
+      gateway
+        ..signedIn = true
+        ..emailVerified = false;
+      expect(service.hasSession, isFalse);
+      gateway.emailVerified = true;
       expect(service.hasSession, isTrue);
-
-      await expectLater(service.signIn(email: 'zak', password: 'x'),
-          throwsA(_failure(CineFailureKind.invalid)));
-      await expectLater(
-          service.signIn(email: 'zak@example.com', password: ''),
-          throwsA(_failure(
-              CineFailureKind.invalid, 'Saisissez votre mot de passe.')));
     });
 
-    test('signIn traduit les erreurs Supabase', () async {
-      gateway.error =
-          const AuthException('Invalid login credentials', statusCode: '400');
+    test('signIn nettoie l\'e-mail et refuse les champs vides', () async {
+      await service.signIn(email: ' zak@example.com ', password: 'secret12');
+      expect(gateway.calls, ['signIn zak@example.com']);
+      await expectLater(service.signIn(email: 'zak@example.com', password: ''),
+          throwsA(_failure(CineFailureKind.invalid)));
+      await expectLater(service.signIn(email: 'zak', password: 'secret12'),
+          throwsA(_failure(CineFailureKind.invalid)));
+      expect(gateway.calls, hasLength(1));
+    });
+
+    test('signIn : adresse non confirmée -> email-not-verified', () async {
+      gateway.emailVerified = false;
       await expectLater(
-          service.signIn(email: 'zak@example.com', password: 'secret123'),
+          service.signIn(email: 'zak@example.com', password: 'secret12'),
+          throwsA(isA<CineFailure>().having(
+              (f) => (f.cause as fb.FirebaseAuthException).code,
+              'code',
+              'email-not-verified')));
+      expect(gateway.signedIn, isTrue, reason: 'reste connecté pour renvoyer');
+    });
+
+    test('signIn traduit les erreurs Firebase', () async {
+      gateway.errors['signIn'] =
+          fb.FirebaseAuthException(code: 'invalid-credential');
+      await expectLater(
+          service.signIn(email: 'zak@example.com', password: 'mauvais1'),
           throwsA(_failure(CineFailureKind.unauthenticated,
               'E-mail ou mot de passe incorrect.')));
     });
@@ -206,200 +133,106 @@ void main() {
     test('signUp vérifie le pseudo avant de créer le compte', () async {
       gateway.takenUsernames.add('zak');
       await expectLater(
-        service.signUp(
-            username: 'zak', email: 'zak@example.com', password: 'secret123'),
-        throwsA(
-            _failure(CineFailureKind.conflict, 'Ce pseudo est déjà utilisé.')),
-      );
+          service.signUp(
+              username: 'zak', email: 'zak@example.com', password: 'secret12'),
+          throwsA(_failure(
+              CineFailureKind.conflict, 'Ce pseudo est déjà utilisé.')));
       expect(gateway.calls, ['isUsernameAvailable zak']);
     });
 
-    test('signUp valide les champs sans appeler Supabase', () async {
-      await expectLater(
-          service.signUp(
-              username: 'z', email: 'zak@example.com', password: 'secret123'),
-          throwsA(_failure(CineFailureKind.invalid)));
-      await expectLater(
-          service.signUp(username: 'zak', email: 'zak', password: 'secret123'),
-          throwsA(_failure(CineFailureKind.invalid)));
-      await expectLater(
-          service.signUp(
-              username: 'zak', email: 'zak@example.com', password: 'court'),
-          throwsA(_failure(CineFailureKind.invalid)));
+    test('signUp valide les champs sans appeler Firebase', () async {
+      for (final (username, email, password) in [
+        ('za', 'zak@example.com', 'secret12'),
+        ('zak', 'zak', 'secret12'),
+        ('zak', 'zak@example.com', 'court'),
+      ]) {
+        await expectLater(
+            service.signUp(username: username, email: email, password: password),
+            throwsA(_failure(CineFailureKind.invalid)));
+      }
       expect(gateway.calls, isEmpty);
     });
 
     test('signUp transmet pseudo et e-mail nettoyés', () async {
-      gateway.signUpOutcome = SignUpOutcome.confirmationRequired;
       final outcome = await service.signUp(
-          username: ' zak ', email: ' zak@example.com', password: 'secret123');
+          username: ' zak ', email: ' zak@example.com ', password: 'secret12');
       expect(outcome, SignUpOutcome.confirmationRequired);
-      expect(gateway.calls,
-          ['isUsernameAvailable zak', 'signUp zak@example.com zak']);
+      expect(gateway.calls.last, 'signUp zak@example.com zak');
     });
 
     test('checkUsername : format, disponibilité, erreur réseau ignorée',
         () async {
+      expect(await service.checkUsername('z'), isNotNull);
+      expect(await service.checkUsername('zak'), isNull);
       gateway.takenUsernames.add('zak');
-      expect(await service.checkUsername('z'), contains('au moins 3'));
       expect(await service.checkUsername('zak'), 'Ce pseudo est déjà utilisé.');
-      expect(await service.checkUsername('nouveau'), isNull);
-      gateway.error = AuthRetryableFetchException(message: 'offline');
-      expect(await service.checkUsername('autre'), isNull);
+      gateway.errors['isUsernameAvailable'] = StateError('réseau');
+      expect(await service.checkUsername('zak'), isNull);
     });
 
-    test('confirmSignUp et resendSignUpCode', () async {
-      await expectLater(
-          service.confirmSignUp(email: 'zak@example.com', code: '12'),
-          throwsA(_failure(CineFailureKind.invalid)));
-      await service.confirmSignUp(email: 'zak@example.com', code: ' 123456 ');
-      await service.resendSignUpCode(' zak@example.com ');
-      expect(gateway.calls, [
-        'verifySignUpCode zak@example.com 123456',
-        'resendSignUpCode zak@example.com',
-      ]);
-    });
-
-    test('resetPassword avec code : vérifie puis change le mot de passe',
-        () async {
-      await service.sendPasswordResetCode('zak@example.com');
-      await service.resetPassword(
-          email: 'zak@example.com',
-          code: '12345678',
-          newPassword: 'nouveau123');
-      expect(gateway.calls, [
-        'sendPasswordResetCode zak@example.com',
-        'verifyRecoveryCode zak@example.com 12345678',
-        'updatePassword nouveau123',
-      ]);
-    });
-
-    test('resetPassword sans code exige une session', () async {
-      await expectLater(service.resetPassword(newPassword: 'nouveau123'),
+    test('confirmSignUp : lien cliqué ou non', () async {
+      await expectLater(service.confirmSignUp(),
           throwsA(_failure(CineFailureKind.unauthenticated)));
-      gateway.session = true;
-      await service.resetPassword(newPassword: 'nouveau123');
-      expect(gateway.calls, ['updatePassword nouveau123']);
+      gateway
+        ..signedIn = true
+        ..verifiedAfterRefresh = false;
+      await expectLater(service.confirmSignUp(),
+          throwsA(_failure(CineFailureKind.invalid, contains('lien'))));
+      gateway.verifiedAfterRefresh = true;
+      await service.confirmSignUp();
+      expect(service.hasSession, isTrue);
     });
 
-    test('resetPassword refuse un mot de passe trop court', () async {
-      gateway.session = true;
-      await expectLater(service.resetPassword(newPassword: 'court'),
+    test('resendConfirmation exige un compte connecté', () async {
+      await expectLater(service.resendConfirmation(),
+          throwsA(_failure(CineFailureKind.unauthenticated)));
+      gateway.signedIn = true;
+      await service.resendConfirmation();
+      expect(gateway.calls, ['sendEmailVerification']);
+    });
+
+    test('sendPasswordReset valide puis envoie le lien', () async {
+      await expectLater(service.sendPasswordReset('zak'),
           throwsA(_failure(CineFailureKind.invalid)));
-      expect(gateway.calls, isEmpty);
+      await service.sendPasswordReset(' zak@example.com ');
+      expect(gateway.calls, ['sendPasswordResetEmail zak@example.com']);
+    });
+
+    test('changePassword : session et longueur exigées', () async {
+      await expectLater(service.changePassword('nouveau12'),
+          throwsA(_failure(CineFailureKind.unauthenticated)));
+      gateway.signedIn = true;
+      await expectLater(service.changePassword('court'),
+          throwsA(_failure(CineFailureKind.invalid)));
+      await service.changePassword('nouveau12');
+      expect(gateway.calls, ['updatePassword nouveau12']);
+    });
+
+    test('deleteAccount exige une connexion récente', () async {
+      gateway
+        ..signedIn = true
+        ..recentLogin = false;
+      await expectLater(
+          service.deleteAccount(),
+          throwsA(_failure(CineFailureKind.unauthenticated,
+              contains('reconnectez-vous'))));
+      expect(gateway.calls, ['signedInRecently']);
+      gateway.recentLogin = true;
+      await service.deleteAccount();
+      expect(gateway.calls.last, 'deleteAccount');
+      expect(gateway.signedIn, isFalse);
     });
 
     test('signOut', () async {
-      gateway.session = true;
+      gateway.signedIn = true;
       await service.signOut();
-      expect(service.hasSession, isFalse);
+      expect(gateway.signedIn, isFalse);
     });
 
     test('debugInstance remplace le service partagé', () {
       AuthService.debugInstance = service;
-      addTearDown(() => AuthService.debugInstance = null);
       expect(AuthService.instance, same(service));
-    });
-  });
-
-  group('SupabaseAuthGateway', () {
-    test('inscription avec session : connecté, pseudo dans les métadonnées',
-        () async {
-      final requests = <http.Request>[];
-      final gateway = _gateway((_) => _json(_session()), requests: requests);
-      final outcome =
-          await gateway.signUp('zak@example.com', 'secret123', username: 'zak');
-      expect(outcome, SignUpOutcome.signedIn);
-      expect(gateway.hasSession, isTrue);
-      expect(requests.single.url.path, '/auth/v1/signup');
-      expect(_body(requests.single)['data'], {'username': 'zak'});
-    });
-
-    test('inscription à confirmer', () async {
-      final gateway = _gateway((_) => _json(_user()));
-      expect(
-          await gateway.signUp('zak@example.com', 'secret123', username: 'zak'),
-          SignUpOutcome.confirmationRequired);
-      expect(gateway.hasSession, isFalse);
-    });
-
-    test('e-mail déjà inscrit (utilisateur sans identité)', () async {
-      final service = AuthService(_gateway((request) =>
-          request.url.path.contains('rpc')
-              ? _json(true)
-              : _json(_user(identities: []))));
-      await expectLater(
-        service.signUp(
-            username: 'zak', email: 'zak@example.com', password: 'secret123'),
-        throwsA(_failure(CineFailureKind.conflict,
-            'Un compte existe déjà avec cette adresse e-mail.')),
-      );
-    });
-
-    test('connexion refusée', () async {
-      final service = AuthService(_gateway((_) =>
-          _authError('invalid_credentials', 'Invalid login credentials')));
-      await expectLater(
-          service.signIn(email: 'zak@example.com', password: 'mauvais'),
-          throwsA(_failure(CineFailureKind.unauthenticated,
-              'E-mail ou mot de passe incorrect.')));
-    });
-
-    test('connexion réussie', () async {
-      final requests = <http.Request>[];
-      final gateway = _gateway((_) => _json(_session()), requests: requests);
-      await gateway.signIn('zak@example.com', 'secret123');
-      expect(gateway.hasSession, isTrue);
-      expect(requests.single.url.path, '/auth/v1/token');
-      expect(requests.single.url.queryParameters['grant_type'], 'password');
-    });
-
-    test('disponibilité du pseudo par RPC', () async {
-      final requests = <http.Request>[];
-      final gateway = _gateway((_) => _json(false), requests: requests);
-      expect(await gateway.isUsernameAvailable('zak'), isFalse);
-      expect(requests.single.url.path, '/rest/v1/rpc/username_available');
-      expect(_body(requests.single), {'candidate': 'zak'});
-    });
-
-    test('codes e-mail : vérification, renvoi, récupération', () async {
-      final requests = <http.Request>[];
-      final gateway = _gateway(
-          (request) => request.url.path.endsWith('/verify')
-              ? _json(_session())
-              : request.url.path.endsWith('/user')
-                  ? _json(_user())
-                  : _json(<String, dynamic>{}),
-          requests: requests);
-
-      await gateway.verifySignUpCode('zak@example.com', '123456');
-      await gateway.resendSignUpCode('zak@example.com');
-      await gateway.sendPasswordResetCode('zak@example.com');
-      await gateway.verifyRecoveryCode('zak@example.com', '654321');
-      await gateway.updatePassword('nouveau123');
-
-      expect(requests.map((r) => r.url.path), [
-        '/auth/v1/verify',
-        '/auth/v1/resend',
-        '/auth/v1/recover',
-        '/auth/v1/verify',
-        '/auth/v1/user',
-      ]);
-      expect(_body(requests[0]), containsPair('type', 'signup'));
-      expect(_body(requests[0]), containsPair('token', '123456'));
-      expect(_body(requests[1]), containsPair('type', 'signup'));
-      expect(_body(requests[2]), containsPair('email', 'zak@example.com'));
-      expect(_body(requests[3]), containsPair('type', 'recovery'));
-      expect(_body(requests[4]), containsPair('password', 'nouveau123'));
-    });
-
-    test('déconnexion', () async {
-      final gateway = _gateway((request) => request.url.path.endsWith('/logout')
-          ? http.Response('', 204)
-          : _json(_session()));
-      await gateway.signIn('zak@example.com', 'secret123');
-      await gateway.signOut();
-      expect(gateway.hasSession, isFalse);
+      AuthService.debugInstance = null;
     });
   });
 }

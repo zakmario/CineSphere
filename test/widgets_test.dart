@@ -85,7 +85,7 @@ void main() {
       expect(find.text('Vos genres préférés'), findsOneWidget);
       expect(find.text('Commencer'), findsOneWidget);
 
-      // Supabase n'est pas initialisé dans les tests : la liste par défaut
+      // Firebase n'est pas initialisé dans les tests : la liste par défaut
       // des genres est utilisée.
       await tester.tap(find.text('Comédie'));
       await tester.pump();

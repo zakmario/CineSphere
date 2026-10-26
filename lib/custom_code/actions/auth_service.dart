@@ -181,6 +181,7 @@ abstract class AuthGateway {
   /// l'exige pour supprimer un compte).
   Future<bool> signedInRecently();
 
+  /// Supprime les données Firestore du membre puis son compte.
   Future<void> deleteAccount();
 
   Future<void> signOut();
@@ -259,7 +260,10 @@ class FirebaseAuthGateway implements AuthGateway {
   }
 
   @override
-  Future<void> deleteAccount() => _user.delete();
+  Future<void> deleteAccount() async {
+    await _data.deleteMyData();
+    await _user.delete();
+  }
 
   @override
   Future<void> signOut() => _auth.signOut();
@@ -394,14 +398,13 @@ class AuthService {
         await _gateway.updatePassword(newPassword);
       });
 
-  /// Supprime les données Firestore du membre puis son compte. Vérifie
-  /// d'abord la connexion récente : sans elle, Firebase refuserait de
-  /// supprimer le compte après l'effacement des données.
+  /// Supprime les données du membre puis son compte. Vérifie d'abord la
+  /// connexion récente : sans elle, Firebase refuserait de supprimer le
+  /// compte après l'effacement des données.
   Future<void> deleteAccount() => _guard('deleteAccount', () async {
         if (!await _gateway.signedInRecently()) {
           throw fb.FirebaseAuthException(code: 'requires-recent-login');
         }
-        await FirestoreService.instance.deleteMyData();
         await _gateway.deleteAccount();
       });
 

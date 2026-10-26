@@ -206,8 +206,15 @@ class FirestoreService {
   FirestoreService(this._db, {String? Function()? currentUserId})
       : _currentUserId = currentUserId;
 
-  static final FirestoreService instance =
-      FirestoreService(FirebaseFirestore.instance);
+  static FirestoreService? _instance;
+  static FirestoreService? _override;
+
+  static FirestoreService get instance =>
+      _override ?? (_instance ??= FirestoreService(FirebaseFirestore.instance));
+
+  /// Remplace le service partagé (tests). `null` rétablit Firestore.
+  @visibleForTesting
+  static set debugInstance(FirestoreService? service) => _override = service;
 
   final FirebaseFirestore _db;
   final String? Function()? _currentUserId;

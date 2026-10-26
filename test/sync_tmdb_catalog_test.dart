@@ -1,5 +1,5 @@
 import 'package:cine_sphere/backend/api_requests/api_calls.dart';
-import 'package:cine_sphere/custom_code/actions/supabase_service.dart';
+import 'package:cine_sphere/custom_code/actions/firestore_service.dart';
 import 'package:cine_sphere/custom_code/actions/sync_tmdb_catalog.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -307,7 +307,7 @@ void main() {
         ],
         save: (items) async => items.length,
         loadIncomplete: () async => throw const CineFailure(
-            CineFailureKind.network, 'Supabase injoignable'),
+            CineFailureKind.network, 'Firestore injoignable'),
       );
 
       expect(await importer.run(), 1);

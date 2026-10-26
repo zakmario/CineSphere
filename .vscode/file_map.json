@@ -172,8 +172,8 @@
     "new_identifier_name": "authService",
     "type": "A",
     "is_deleted": false,
-    "original_checksum": "5abe4c563dca43bb7815dce776097723513b14c77a4756151db740fb61b0307e",
-    "current_checksum": "5abe4c563dca43bb7815dce776097723513b14c77a4756151db740fb61b0307e"
+    "original_checksum": "b65a1ccbee1a3818ccf8d87010ad8651ade2cf8c9213a3265ea779170d234d42",
+    "current_checksum": "b65a1ccbee1a3818ccf8d87010ad8651ade2cf8c9213a3265ea779170d234d42"
   },
   "lib/custom_code/actions/auth_sign_in.dart": {
     "old_identifier_name": "authSignIn",
@@ -332,7 +332,7 @@
     "new_identifier_name": "firestoreService",
     "type": "A",
     "is_deleted": false,
-    "current_checksum": "660848ae9416d4c87c75c4048d4e6ede27c5da000420407a5c6c30dbc8db7d69",
-    "original_checksum": "660848ae9416d4c87c75c4048d4e6ede27c5da000420407a5c6c30dbc8db7d69"
+    "current_checksum": "583c153e9cf527c94bc19bb29cf7721b1accd4aafbd4fec84fb0541a96284ec8",
+    "original_checksum": "583c153e9cf527c94bc19bb29cf7721b1accd4aafbd4fec84fb0541a96284ec8"
   }
 }

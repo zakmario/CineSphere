@@ -189,7 +189,7 @@ void main() {
     }
   });
 
-  group('JSON Supabase', () {
+  group('JSON (lignes snake_case)', () {
     test('les colonnes date restent au format AAAA-MM-JJ', () {
       expect(_movie.toJson()['release_date'], '2010-07-16');
       expect(_series.toJson()['first_air_date'], '2017-12-01');
