@@ -16,11 +16,6 @@ class PlatformsRecord extends FirestoreRecord {
     _initializeFields();
   }
 
-  // "id" field.
-  int? _id;
-  int get id => _id ?? 0;
-  bool hasId() => _id != null;
-
   // "name" field.
   String? _name;
   String get name => _name ?? '';
@@ -32,7 +27,6 @@ class PlatformsRecord extends FirestoreRecord {
   bool hasLogoUrl() => _logoUrl != null;
 
   void _initializeFields() {
-    _id = castToType<int>(snapshotData['id']);
     _name = snapshotData['name'] as String?;
     _logoUrl = snapshotData['logoUrl'] as String?;
   }
@@ -71,13 +65,11 @@ class PlatformsRecord extends FirestoreRecord {
 }
 
 Map<String, dynamic> createPlatformsRecordData({
-  int? id,
   String? name,
   String? logoUrl,
 }) {
   final firestoreData = mapToFirestore(
     <String, dynamic>{
-      'id': id,
       'name': name,
       'logoUrl': logoUrl,
     }.withoutNulls,
@@ -91,14 +83,12 @@ class PlatformsRecordDocumentEquality implements Equality<PlatformsRecord> {
 
   @override
   bool equals(PlatformsRecord? e1, PlatformsRecord? e2) {
-    return e1?.id == e2?.id &&
-        e1?.name == e2?.name &&
-        e1?.logoUrl == e2?.logoUrl;
+    return e1?.name == e2?.name && e1?.logoUrl == e2?.logoUrl;
   }
 
   @override
   int hash(PlatformsRecord? e) =>
-      const ListEquality().hash([e?.id, e?.name, e?.logoUrl]);
+      const ListEquality().hash([e?.name, e?.logoUrl]);
 
   @override
   bool isValidKey(Object? o) => o is PlatformsRecord;

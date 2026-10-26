@@ -29,29 +29,65 @@ sont en lecture seule et régénérés par FlutterFlow) :
 ## 1. Firebase
 
 Projet Firebase `cinesphere-app-3f710` (forfait gratuit Spark), relié à
-FlutterFlow (*Settings → Project Setup → Firebase*). Le backend est passé de
-Supabase à Firebase le 26/10/2026 (décision d'équipe) ; le dossier
-`supabase/` est conservé comme archive de l'ancien schéma SQL.
+FlutterFlow (*Settings → Project Setup → Firebase*), conforme à la section 5
+du cahier des charges. Le backend est passé de Supabase à Firebase le
+26/10/2026 (décision d'équipe) ; le dossier `supabase/` est conservé comme
+archive de l'ancien schéma SQL.
 
-- **Authentication** : e-mail / mot de passe.
-- **Firestore** (`europe-west3`) : `users` (profil + préférences),
-  `usernames` (unicité des pseudos), `media` (films **et** séries, champ
-  `mediaType`), `genres`, `platforms`, `news`, `release_events`,
-  `favorites`, `watched`, `watchlists`, `watchlist_items`, `reviews`,
-  `notifications`, `search_history`. Champs en camelCase ; les documents
-  personnels portent `userId`.
-- **Règles et index** : dans [firebase/](firebase/) (`firestore.rules`,
-  `firestore.indexes.json`), déployés avec la CLI :
+- **Authentication** : e-mail / mot de passe, lien de réinitialisation.
+- **Firestore** (`europe-west3`, persistance hors ligne activée) :
+
+```text
+users/{uid}                    profil + preferences (map)
+  favorites/{movie_550}        titre, affiche, note dénormalisés
+  watchlists/{id}              name, isPublic, itemCount
+    items/{movie_550}
+  watched/{movie_550}
+  notifications/{id}
+  searchHistory/{id}
+usernames/{pseudo}             uid (unicité du pseudo)
+movies/{tmdbId}  series/{tmdbId}   cache TMDB, genreIds
+genres/{tmdbGenreId}  platforms/{tmdbProviderId}
+releaseEvents/{id}             calendrier (titre et affiche dénormalisés)
+reviews/{id}                   + likes/{uid}, likesCount
+news/{id}                      actualités (page Actualites, membre 2)
+```
+
+- **Logique côté client** (pas de Cloud Functions, forfait Spark) dans
+  `firebase_service.dart` : inscription en transaction (pseudo libre puis
+  `usernames` + `users`), `itemCount` et `likesCount` mis à jour dans le même
+  lot que l'élément, pseudo/avatar recopiés dans les avis, suppression
+  complète du compte (`requires-recent-login` géré).
+- **Règles, index, tests** : dans [firebase/](firebase/).
 
 ```bash
 cd firebase
-firebase deploy --only firestore
+npm install
+npm run test:rules      # 19 tests des règles sur l'émulateur (Java 21 requis)
+npm run seed:emulator   # tool/seed_firestore.dart sur l'émulateur
+npm run deploy          # règles + index sur le vrai projet
 ```
+
+`tool/seed_firestore.dart` remplit les genres TMDB et les plateformes ; avec
+`--release-events`, il ajoute au calendrier la sortie des films à venir
+(écriture réservée aux admins par les règles). Variables : voir
+`.env.example`.
 
 Ne pas utiliser le bouton *Deploy* des règles dans FlutterFlow : il
 remplacerait ces règles par des règles ouvertes. Pour la même raison,
 FlutterFlow affiche « Firestore rules not deployed » et « indexes not
 properly deployed » : c'est attendu.
+
+**Écarts assumés avec le cahier des charges**
+
+| Prévu | Réalisé | Raison |
+|---|---|---|
+| Avatar dans Firebase Storage | base64 dans `users/{uid}.avatarData` | Storage exige le forfait payant Blaze pour un nouveau projet |
+| Tests avec `fake_cloud_firestore` / `firebase_auth_mocks` | émulateur (règles) + `mocktail` (Dart) | ces paquets exigent `equatable` ≥ 2.1.0, FlutterFlow impose 2.0.7 |
+| `flutterfire configure` / `firebase_options.dart` | configuration générée par FlutterFlow (`lib/backend/firebase/`) | export FlutterFlow (prévu au 5.1) |
+| — | `display_name`, `photo_url`, `phone_number` dans `users` | champs exigés par FlutterFlow pour la collection des comptes (vides) |
+| — | `posterUrl` dans `watched`, `popularity` dans `movies` / `series`, collection `news` | affichage de l'onglet Vus, tri « Tendances », page Actualites |
+| SQLite (cache TMDB, `pending_sync`, `SyncService`) | non fait | partie hors ligne du membre 3 (section 6.10) |
 
 ## 2. Custom code fourni
 
@@ -61,7 +97,7 @@ properly deployed » : c'est attendu.
 |---|---|---|
 | `CatalogBrowser` | `pageSize`, `initialMediaType`, `onItemTap(mediaId)` | Recherche (titre + synopsis, délai 400 ms), filtres (type, genre, note min., statut), tri, pagination avec scroll infini (catalogue Firestore gardé en mémoire : Firestore n'a pas de recherche « contient »), états chargement / vide / erreur, pull-to-refresh |
 | `MediaCard` | `title`, `posterUrl`, `mediaType`, `rating`, `releaseDate`, `onTap` | Carte affiche + badges |
-| `FavoriteButton` | `mediaId`, `iconSize`, `onChanged(isFavorite)` | Cœur relié à la collection `favorites` |
+| `FavoriteButton` | `mediaId`, `iconSize`, `onChanged(isFavorite)` | Cœur relié à `users/{uid}/favorites` |
 | `UpcomingReleasesList` | `mediaId`, `pageSize`, `reminderMinutesBefore`, `onItemTap(selectedMediaId)` | Calendrier groupé par jour, paginé, cloche = notification programmée |
 | `OnboardingWalkthrough` | `onFinish()` | 4 étapes de présentation + choix des genres préférés |
 | `HomeFeed` | `onItemTap(tappedMediaId)` | Accueil : « Pour vous » (genres préférés), Tendances, Bientôt disponible, Les mieux notés |
@@ -189,7 +225,7 @@ depuis l'application.
 | `Profil` | — | photo de profil (`AvatarPicker`), pseudo et bio modifiables, nombre d'avis publiés | `updateMyProfile` |
 | `Parametres` | — | profil, favoris, changer de mot de passe, notifications, revoir l'onboarding, **actualiser le catalogue TMDB**, **supprimer mon compte** (avec confirmation), déconnexion | `initLocalNotifications`, `showInstantNotification`, `syncTmdbCatalog`, `deleteMyAccount`, *Log Out* |
 | `Favoris` | — | 3 onglets : **Favoris**, **Mes listes** (création), **Vus** | `createWatchlist` |
-| `DetailListe` | `watchlistId` | titres d'une liste, renommer, retirer un titre, supprimer la liste (avec confirmation) | `renameWatchlist`, `removeWatchlistItem`, `deleteWatchlist` |
+| `DetailListe` | `watchlist` (référence) | titres d'une liste, renommer, retirer un titre, supprimer la liste (avec confirmation) | `renameWatchlist`, `removeWatchlistItem`, `deleteWatchlist` |
 | `BandeAnnonce` | `trailerUrl` | widget natif *YouTube Player* de FlutterFlow (lecture automatique, plein écran) ; sa présence fait gérer le paquet du lecteur par FlutterFlow | — |
 
 Sur la fiche d'un titre (`MediaDetailView`, membre 2), avec son accord, le
@@ -198,7 +234,7 @@ membre 1 a ajouté ces widgets :
 | Widget | Paramètres | Rôle |
 |---|---|---|
 | `AddToWatchlistButton` | `mediaId` | feuille avec les listes du membre ; ajout à une liste existante ou création d'une liste avec le titre |
-| `MarkWatchedButton` | `mediaId`, `onChanged(isWatched)` | « Marquer comme vu » relié à la collection `watched` (onglet Vus) |
+| `MarkWatchedButton` | `mediaId`, `onChanged(isWatched)` | « Marquer comme vu » relié à `users/{uid}/watched` (onglet Vus) |
 | `TrailerPlayer` | `trailerUrl`, `autoPlay` | lecteur YouTube intégré, basé sur le lecteur natif de FlutterFlow (`FlutterFlowYoutubePlayer`) : le bouton « Bande-annonce » ouvre la vidéo dans une fenêtre de l'application (`showTrailerDialog`) au lieu de YouTube |
 | `AvatarPicker` | `avatarUrl`, `onChanged(avatarUrl)` | photo choisie dans la galerie, réduite à 256 px, enregistrée en base64 dans `users/{uid}.avatarData` (Storage demande le forfait payant Blaze) ; accepte aussi une URL http |
 
@@ -236,10 +272,11 @@ action (*API Call*). Code généré : `lib/backend/api_requests/api_calls.dart`.
 `Tendances` (2 pages), `FilmsPopulaires`, `SeriesPopulaires`,
 `ProchainesSorties` et `SeriesEnCours`, puis enregistre les titres (sans doublon)
 dans Firestore, ce que faisait l'ancienne fonction SQL `import_tmdb_media` :
-création ou mise à jour des documents de `media` (clé `mediaType` + `tmdbId`) : les widgets du catalogue affichent
+création ou mise à jour de `movies/{tmdbId}` et `series/{tmdbId}` : les widgets du catalogue affichent
 les vrais titres TMDB et favoris, listes et vus continuent de fonctionner.
-Un film à venir reçoit aussi un événement « Sortie au cinéma » dans
-`release_events` (calendrier).
+Les sorties au cinéma des films à venir sont ajoutées au calendrier
+(`releaseEvents`) par `tool/seed_firestore.dart --release-events`, les règles
+réservant cette collection aux admins.
 
 Les listes TMDB ne donnent ni durée, ni saisons, ni bande-annonce, ni
 plateformes : à chaque passage, l'action appelle ensuite `DetailFilm` ou
@@ -280,22 +317,24 @@ identifiants, mots de passe repris grâce à l'import bcrypt de Firebase Auth).
 
 ### Données
 
-`lib/custom_code/actions/firestore_service.dart` (`FirestoreService`)
-regroupe l'accès aux données : profil, pseudo, avatar, préférences,
-favoris, vus, listes (créer, renommer, supprimer, ajouter / retirer un
-titre), genres, plateformes et catalogue. `cineRow` convertit un document
-Firestore en ligne `snake_case` lue par les modèles de `cine_models.dart` et
-par les widgets.
+`lib/custom_code/actions/firebase_service.dart` (`CineFirebaseService`, nom
+choisi pour ne pas entrer en conflit avec `FirebaseService` de
+`firebase_core`) regroupe l'accès aux données : profil, pseudo, avatar,
+préférences, favoris, vus, listes, avis et likes, historique de recherche,
+genres, plateformes et catalogue. Un titre est désigné partout par sa clé
+`movie_550` / `series_1399` (`mediaKey`, `parseMediaKey`). `catalogRow`
+convertit un film ou une série en ligne commune lue par les widgets.
 
 ### Tests
 
 | Fichier | Contenu |
 |---|---|
+| `firebase/tests/rules.test.js` | règles Firestore sur l'émulateur : un membre ne lit ni ne modifie les données d'un autre, listes publiques, pseudos, avis et likes, cache TMDB, écritures admin |
 | `test/auth_service_test.dart` | validation, traduction des erreurs Firebase, `AuthService` avec une passerelle simulée |
 | `test/auth_actions_test.dart` | actions `auth*` et `deleteMyAccount` |
-| `test/firestore_service_test.dart` | validateurs, conversion des documents (`cineRow`, `toFirestoreFields`), erreurs Firestore |
+| `test/firebase_service_test.dart` | validateurs, clés `movie_550`, conversion des documents (`cineRow`, `catalogRow`), erreurs Firestore |
 | `test/cine_models_test.dart` | modèles (`fromJson`, `toJson`, SQLite, égalité) |
-| `test/avatar_picker_test.dart` | `AvatarPicker` (galerie simulée, `FirestoreService` en mémoire) |
+| `test/avatar_picker_test.dart` | `AvatarPicker` (galerie simulée, service en mémoire) |
 | `test/mark_watched_button_test.dart` | `MarkWatchedButton` |
 | `test/trailer_player_test.dart` | adresses YouTube, `TrailerPlayer` sans vidéo valide |
 | `test/sync_tmdb_catalog_test.dart` | conversion des résultats TMDB, fusion sans doublon, envoi par lots, TMDB injoignable, détails (bande-annonce, plateformes, séries terminées) |

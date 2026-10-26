@@ -16,16 +16,6 @@ class WatchlistsRecord extends FirestoreRecord {
     _initializeFields();
   }
 
-  // "id" field.
-  String? _id;
-  String get id => _id ?? '';
-  bool hasId() => _id != null;
-
-  // "userId" field.
-  String? _userId;
-  String get userId => _userId ?? '';
-  bool hasUserId() => _userId != null;
-
   // "name" field.
   String? _name;
   String get name => _name ?? '';
@@ -41,22 +31,39 @@ class WatchlistsRecord extends FirestoreRecord {
   bool get isPublic => _isPublic ?? false;
   bool hasIsPublic() => _isPublic != null;
 
+  // "itemCount" field.
+  int? _itemCount;
+  int get itemCount => _itemCount ?? 0;
+  bool hasItemCount() => _itemCount != null;
+
   // "createdAt" field.
   DateTime? _createdAt;
   DateTime? get createdAt => _createdAt;
   bool hasCreatedAt() => _createdAt != null;
 
+  // "updatedAt" field.
+  DateTime? _updatedAt;
+  DateTime? get updatedAt => _updatedAt;
+  bool hasUpdatedAt() => _updatedAt != null;
+
+  DocumentReference get parentReference => reference.parent.parent!;
+
   void _initializeFields() {
-    _id = snapshotData['id'] as String?;
-    _userId = snapshotData['userId'] as String?;
     _name = snapshotData['name'] as String?;
     _description = snapshotData['description'] as String?;
     _isPublic = snapshotData['isPublic'] as bool?;
+    _itemCount = castToType<int>(snapshotData['itemCount']);
     _createdAt = snapshotData['createdAt'] as DateTime?;
+    _updatedAt = snapshotData['updatedAt'] as DateTime?;
   }
 
-  static CollectionReference get collection =>
-      FirebaseFirestore.instance.collection('watchlists');
+  static Query<Map<String, dynamic>> collection([DocumentReference? parent]) =>
+      parent != null
+          ? parent.collection('watchlists')
+          : FirebaseFirestore.instance.collectionGroup('watchlists');
+
+  static DocumentReference createDoc(DocumentReference parent, {String? id}) =>
+      parent.collection('watchlists').doc(id);
 
   static Stream<WatchlistsRecord> getDocument(DocumentReference ref) =>
       ref.snapshots().map((s) => WatchlistsRecord.fromSnapshot(s));
@@ -89,21 +96,21 @@ class WatchlistsRecord extends FirestoreRecord {
 }
 
 Map<String, dynamic> createWatchlistsRecordData({
-  String? id,
-  String? userId,
   String? name,
   String? description,
   bool? isPublic,
+  int? itemCount,
   DateTime? createdAt,
+  DateTime? updatedAt,
 }) {
   final firestoreData = mapToFirestore(
     <String, dynamic>{
-      'id': id,
-      'userId': userId,
       'name': name,
       'description': description,
       'isPublic': isPublic,
+      'itemCount': itemCount,
       'createdAt': createdAt,
+      'updatedAt': updatedAt,
     }.withoutNulls,
   );
 
@@ -115,17 +122,23 @@ class WatchlistsRecordDocumentEquality implements Equality<WatchlistsRecord> {
 
   @override
   bool equals(WatchlistsRecord? e1, WatchlistsRecord? e2) {
-    return e1?.id == e2?.id &&
-        e1?.userId == e2?.userId &&
-        e1?.name == e2?.name &&
+    return e1?.name == e2?.name &&
         e1?.description == e2?.description &&
         e1?.isPublic == e2?.isPublic &&
-        e1?.createdAt == e2?.createdAt;
+        e1?.itemCount == e2?.itemCount &&
+        e1?.createdAt == e2?.createdAt &&
+        e1?.updatedAt == e2?.updatedAt;
   }
 
   @override
-  int hash(WatchlistsRecord? e) => const ListEquality().hash(
-      [e?.id, e?.userId, e?.name, e?.description, e?.isPublic, e?.createdAt]);
+  int hash(WatchlistsRecord? e) => const ListEquality().hash([
+        e?.name,
+        e?.description,
+        e?.isPublic,
+        e?.itemCount,
+        e?.createdAt,
+        e?.updatedAt
+      ]);
 
   @override
   bool isValidKey(Object? o) => o is WatchlistsRecord;

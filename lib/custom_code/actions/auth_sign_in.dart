@@ -9,7 +9,7 @@ import 'package:flutter/material.dart';
 // DO NOT REMOVE OR MODIFY THE CODE ABOVE!
 
 import '/custom_code/actions/auth_service.dart';
-import '/custom_code/actions/firestore_service.dart';
+import '/custom_code/actions/firebase_service.dart';
 import 'package:firebase_auth/firebase_auth.dart' as fb;
 
 /// Connexion par e-mail et mot de passe, pour le bouton « Se connecter ».

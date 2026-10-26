@@ -28,7 +28,8 @@ Future<bool> hasCompletedOnboarding() async {
         .collection('users')
         .doc(userId)
         .get();
-    final done = doc.data()?['onboardingCompleted'] == true;
+    final saved = doc.data()?['preferences'];
+    final done = saved is Map && saved['onboardingCompleted'] == true;
     if (done) {
       await prefs.setBool('cs_onboarding_done', true);
     }

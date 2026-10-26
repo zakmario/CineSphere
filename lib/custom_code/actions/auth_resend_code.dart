@@ -9,7 +9,7 @@ import 'package:flutter/material.dart';
 // DO NOT REMOVE OR MODIFY THE CODE ABOVE!
 
 import '/custom_code/actions/auth_service.dart';
-import '/custom_code/actions/firestore_service.dart';
+import '/custom_code/actions/firebase_service.dart';
 
 /// Renvoie le lien de confirmation par e-mail au membre connecté.
 /// Retourne "" en cas de succès, sinon le message d'erreur à afficher.

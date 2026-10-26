@@ -16,30 +16,35 @@ class ReleaseEventsRecord extends FirestoreRecord {
     _initializeFields();
   }
 
-  // "mediaId" field.
-  String? _mediaId;
-  String get mediaId => _mediaId ?? '';
-  bool hasMediaId() => _mediaId != null;
+  // "mediaType" field.
+  String? _mediaType;
+  String get mediaType => _mediaType ?? '';
+  bool hasMediaType() => _mediaType != null;
+
+  // "tmdbId" field.
+  int? _tmdbId;
+  int get tmdbId => _tmdbId ?? 0;
+  bool hasTmdbId() => _tmdbId != null;
 
   // "title" field.
   String? _title;
   String get title => _title ?? '';
   bool hasTitle() => _title != null;
 
-  // "releaseAt" field.
-  DateTime? _releaseAt;
-  DateTime? get releaseAt => _releaseAt;
-  bool hasReleaseAt() => _releaseAt != null;
+  // "posterUrl" field.
+  String? _posterUrl;
+  String get posterUrl => _posterUrl ?? '';
+  bool hasPosterUrl() => _posterUrl != null;
+
+  // "releaseDate" field.
+  DateTime? _releaseDate;
+  DateTime? get releaseDate => _releaseDate;
+  bool hasReleaseDate() => _releaseDate != null;
 
   // "platform" field.
   String? _platform;
   String get platform => _platform ?? '';
   bool hasPlatform() => _platform != null;
-
-  // "description" field.
-  String? _description;
-  String get description => _description ?? '';
-  bool hasDescription() => _description != null;
 
   // "seasonNumber" field.
   int? _seasonNumber;
@@ -51,24 +56,25 @@ class ReleaseEventsRecord extends FirestoreRecord {
   int get episodeNumber => _episodeNumber ?? 0;
   bool hasEpisodeNumber() => _episodeNumber != null;
 
-  // "releaseDate" field.
-  DateTime? _releaseDate;
-  DateTime? get releaseDate => _releaseDate;
-  bool hasReleaseDate() => _releaseDate != null;
+  // "description" field.
+  String? _description;
+  String get description => _description ?? '';
+  bool hasDescription() => _description != null;
 
   void _initializeFields() {
-    _mediaId = snapshotData['mediaId'] as String?;
+    _mediaType = snapshotData['mediaType'] as String?;
+    _tmdbId = castToType<int>(snapshotData['tmdbId']);
     _title = snapshotData['title'] as String?;
-    _releaseAt = snapshotData['releaseAt'] as DateTime?;
+    _posterUrl = snapshotData['posterUrl'] as String?;
+    _releaseDate = snapshotData['releaseDate'] as DateTime?;
     _platform = snapshotData['platform'] as String?;
-    _description = snapshotData['description'] as String?;
     _seasonNumber = castToType<int>(snapshotData['seasonNumber']);
     _episodeNumber = castToType<int>(snapshotData['episodeNumber']);
-    _releaseDate = snapshotData['releaseDate'] as DateTime?;
+    _description = snapshotData['description'] as String?;
   }
 
   static CollectionReference get collection =>
-      FirebaseFirestore.instance.collection('release_events');
+      FirebaseFirestore.instance.collection('releaseEvents');
 
   static Stream<ReleaseEventsRecord> getDocument(DocumentReference ref) =>
       ref.snapshots().map((s) => ReleaseEventsRecord.fromSnapshot(s));
@@ -101,25 +107,27 @@ class ReleaseEventsRecord extends FirestoreRecord {
 }
 
 Map<String, dynamic> createReleaseEventsRecordData({
-  String? mediaId,
+  String? mediaType,
+  int? tmdbId,
   String? title,
-  DateTime? releaseAt,
+  String? posterUrl,
+  DateTime? releaseDate,
   String? platform,
-  String? description,
   int? seasonNumber,
   int? episodeNumber,
-  DateTime? releaseDate,
+  String? description,
 }) {
   final firestoreData = mapToFirestore(
     <String, dynamic>{
-      'mediaId': mediaId,
+      'mediaType': mediaType,
+      'tmdbId': tmdbId,
       'title': title,
-      'releaseAt': releaseAt,
+      'posterUrl': posterUrl,
+      'releaseDate': releaseDate,
       'platform': platform,
-      'description': description,
       'seasonNumber': seasonNumber,
       'episodeNumber': episodeNumber,
-      'releaseDate': releaseDate,
+      'description': description,
     }.withoutNulls,
   );
 
@@ -132,26 +140,28 @@ class ReleaseEventsRecordDocumentEquality
 
   @override
   bool equals(ReleaseEventsRecord? e1, ReleaseEventsRecord? e2) {
-    return e1?.mediaId == e2?.mediaId &&
+    return e1?.mediaType == e2?.mediaType &&
+        e1?.tmdbId == e2?.tmdbId &&
         e1?.title == e2?.title &&
-        e1?.releaseAt == e2?.releaseAt &&
+        e1?.posterUrl == e2?.posterUrl &&
+        e1?.releaseDate == e2?.releaseDate &&
         e1?.platform == e2?.platform &&
-        e1?.description == e2?.description &&
         e1?.seasonNumber == e2?.seasonNumber &&
         e1?.episodeNumber == e2?.episodeNumber &&
-        e1?.releaseDate == e2?.releaseDate;
+        e1?.description == e2?.description;
   }
 
   @override
   int hash(ReleaseEventsRecord? e) => const ListEquality().hash([
-        e?.mediaId,
+        e?.mediaType,
+        e?.tmdbId,
         e?.title,
-        e?.releaseAt,
+        e?.posterUrl,
+        e?.releaseDate,
         e?.platform,
-        e?.description,
         e?.seasonNumber,
         e?.episodeNumber,
-        e?.releaseDate
+        e?.description
       ]);
 
   @override

@@ -8,13 +8,13 @@ import 'package:flutter/material.dart';
 // Begin custom action code
 // DO NOT REMOVE OR MODIFY THE CODE ABOVE!
 
-import '/custom_code/actions/firestore_service.dart';
+import '/custom_code/actions/firebase_service.dart';
 
-/// Retire un titre d'une liste (page Détail d'une liste).
-/// Retourne "" en cas de succès, sinon le message d'erreur à afficher.
-Future<String> removeWatchlistItem(String itemId) async {
+/// Retire un titre ([itemId] = clé movie_550) d'une liste (page Détail
+/// d'une liste). Retourne "" en cas de succès, sinon le message d'erreur.
+Future<String> removeWatchlistItem(String watchlistId, String itemId) async {
   try {
-    await FirestoreService.instance.removeWatchlistItem(itemId);
+    await CineFirebaseService.instance.removeWatchlistItem(watchlistId, itemId);
     return '';
   } on CineFailure catch (failure) {
     return failure.message;

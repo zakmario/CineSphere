@@ -9,7 +9,7 @@ import 'package:flutter/material.dart';
 // Begin custom widget code
 // DO NOT REMOVE OR MODIFY THE CODE ABOVE!
 
-import '/custom_code/actions/firestore_service.dart';
+import '/custom_code/actions/firebase_service.dart';
 import 'dart:async';
 
 /// Catalogue films + séries avec :
@@ -17,7 +17,7 @@ import 'dart:async';
 /// - filtres (type, genre, note minimale, statut),
 /// - tri (popularité, note, date, alphabétique),
 /// - pagination avec chargement progressif (scroll infini) sur le catalogue
-///   Firestore gardé en mémoire (FirestoreService.catalog).
+///   Firestore gardé en mémoire (CineFirebaseService.catalog).
 ///
 /// Dans FlutterFlow, donnez-lui une hauteur (ou cochez "Expanded") car la
 /// grille défile à l'intérieur du widget.
@@ -110,7 +110,7 @@ class _CatalogBrowserState extends State<CatalogBrowser> {
 
   Future<void> _loadGenres() async {
     try {
-      final genres = await FirestoreService.instance.fetchGenres();
+      final genres = await CineFirebaseService.instance.fetchGenres();
       if (mounted) {
         setState(() {
           _genres = genres.map((g) => g.name).toList();
@@ -201,7 +201,7 @@ class _CatalogBrowserState extends State<CatalogBrowser> {
     final query = _query.toLowerCase();
     bool contains(Object? text) =>
         text is String && text.toLowerCase().contains(query);
-    final rows = (await FirestoreService.instance.catalog()).where((row) {
+    final rows = (await CineFirebaseService.instance.catalog()).where((row) {
       if (query.isNotEmpty &&
           !contains(row['title']) &&
           !contains(row['overview'])) {

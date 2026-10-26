@@ -9,7 +9,7 @@ import 'package:flutter/material.dart';
 // Begin custom widget code
 // DO NOT REMOVE OR MODIFY THE CODE ABOVE!
 
-import '/custom_code/actions/firestore_service.dart';
+import '/custom_code/actions/firebase_service.dart';
 
 /// Bouton cœur relié à la collection `favorites` de Firestore.
 /// Charge son état tout seul et appelle [onChanged] après chaque changement.
@@ -55,7 +55,7 @@ class _FavoriteButtonState extends State<FavoriteButton> {
     if (!mounted) {
       return;
     }
-    if (FirestoreService.instance.currentUserId == null) {
+    if (CineFirebaseService.instance.currentUserId == null) {
       setState(() {
         _isFavorite = false;
         _busy = false;
@@ -64,7 +64,7 @@ class _FavoriteButtonState extends State<FavoriteButton> {
     }
     setState(() => _busy = true);
     try {
-      final value = await FirestoreService.instance.isFavorite(widget.mediaId);
+      final value = await CineFirebaseService.instance.isFavorite(widget.mediaId);
       if (mounted) {
         setState(() => _isFavorite = value);
       }

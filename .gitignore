@@ -57,3 +57,7 @@ android/local.properties
 assets/environment_values/environment.json
 coverage/
 ff_flutter_sdk/
+
+# Firebase (CLI, émulateur, tests des règles)
+firebase/node_modules/
+firebase/*-debug.log

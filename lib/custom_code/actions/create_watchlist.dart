@@ -8,13 +8,13 @@ import 'package:flutter/material.dart';
 // Begin custom action code
 // DO NOT REMOVE OR MODIFY THE CODE ABOVE!
 
-import '/custom_code/actions/firestore_service.dart';
+import '/custom_code/actions/firebase_service.dart';
 
 /// Crée une liste personnelle pour le membre connecté (onglet « Mes listes »).
 /// Retourne "" en cas de succès, sinon le message d'erreur à afficher.
 Future<String> createWatchlist(String name) async {
   try {
-    await FirestoreService.instance.createWatchlist(name);
+    await CineFirebaseService.instance.createWatchlist(name);
     return '';
   } on CineFailure catch (failure) {
     return failure.message;

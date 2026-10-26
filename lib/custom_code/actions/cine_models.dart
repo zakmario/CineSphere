@@ -35,7 +35,7 @@ abstract class CineModel {
   /// Valeurs comparées par [==] et [hashCode].
   List<Object?> get props;
 
-  /// Représentation JSON (clés snake_case ; voir cineRow dans firestore_service).
+  /// Représentation JSON (clés snake_case ; voir cineRow dans firebase_service).
   Map<String, dynamic> toJson();
 
   /// Représentation SQLite : booléens en 0/1, listes en JSON.

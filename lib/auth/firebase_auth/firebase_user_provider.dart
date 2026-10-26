@@ -1,3 +1,5 @@
+import 'dart:async';
+import 'pending_email_change.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:rxdart/rxdart.dart';
 
@@ -27,6 +29,8 @@ class CineSphereFirebaseUser extends BaseAuthUser {
     final targetUser = user;
     if (targetUser == null) return;
     await targetUser.verifyBeforeUpdateEmail(email);
+    await rememberPendingEmailChange(targetUser.uid, email);
+    unawaited(syncPendingEmailChange(targetUser));
   }
 
   @override
@@ -52,6 +56,7 @@ class CineSphereFirebaseUser extends BaseAuthUser {
     await FirebaseAuth.instance.currentUser
         ?.reload()
         .then((_) => user = FirebaseAuth.instance.currentUser);
+    unawaited(syncPendingEmailChange(user));
   }
 
   static BaseAuthUser fromUserCredential(UserCredential userCredential) =>
@@ -68,7 +73,7 @@ Stream<BaseAuthUser> cineSphereFirebaseUserStream() => FirebaseAuth.instance
         .map<BaseAuthUser>(
       (user) {
         currentUser = CineSphereFirebaseUser(user);
-
+        unawaited(syncPendingEmailChange(user));
         return currentUser!;
       },
     );

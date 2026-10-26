@@ -13,7 +13,7 @@ export '/custom_code/actions/has_completed_onboarding.dart'
     show hasCompletedOnboarding;
 export '/custom_code/actions/complete_onboarding.dart' show completeOnboarding;
 export '/custom_code/actions/cine_models.dart' show cineModels;
-export '/custom_code/actions/firestore_service.dart' show firestoreService;
+export '/custom_code/actions/firebase_service.dart' show firebaseService;
 export '/custom_code/actions/auth_service.dart' show authService;
 export 'auth_sign_in.dart' show authSignIn;
 export 'auth_confirm_sign_up.dart' show authConfirmSignUp;

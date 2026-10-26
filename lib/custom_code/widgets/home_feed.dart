@@ -9,7 +9,7 @@ import 'package:flutter/material.dart';
 // Begin custom widget code
 // DO NOT REMOVE OR MODIFY THE CODE ABOVE!
 
-import '/custom_code/actions/firestore_service.dart';
+import '/custom_code/actions/firebase_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 /// Contenu complet de la page d'accueil : sections horizontales
@@ -72,7 +72,7 @@ class _HomeFeedState extends State<HomeFeed> {
     try {
       final prefs = await SharedPreferences.getInstance();
       final genres = prefs.getStringList('cs_favorite_genres') ?? <String>[];
-      final media = await FirestoreService.instance.catalog();
+      final media = await CineFirebaseService.instance.catalog();
 
       /// Les 10 premiers titres retenus par [keep], triés par [key].
       List<Map<String, dynamic>> top(

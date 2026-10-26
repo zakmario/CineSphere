@@ -9,7 +9,7 @@ import 'package:flutter/material.dart';
 // Begin custom widget code
 // DO NOT REMOVE OR MODIFY THE CODE ABOVE!
 
-import '/custom_code/actions/firestore_service.dart';
+import '/custom_code/actions/firebase_service.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
 /// Calendrier des prochaines sorties (table `release_events`), groupé par jour,
@@ -102,26 +102,38 @@ class _UpcomingReleasesListState extends State<UpcomingReleasesList> {
       _error = null;
     });
     try {
-      final service = FirestoreService.instance;
-      Query<Map<String, dynamic>> query = service.col('release_events');
-      if (widget.mediaId != null && widget.mediaId!.isNotEmpty) {
-        query = query.where('mediaId', isEqualTo: widget.mediaId);
+      Query<Map<String, dynamic>> query =
+          CineFirebaseService.instance.col('releaseEvents');
+      final target = parseMediaKey(widget.mediaId);
+      if (target != null) {
+        query = query
+            .where('mediaType', isEqualTo: target.type)
+            .where('tmdbId', isEqualTo: target.tmdbId);
       }
       query = query
-          .where('releaseAt', isGreaterThanOrEqualTo: Timestamp.now())
-          .orderBy('releaseAt')
+          .where('releaseDate', isGreaterThanOrEqualTo: Timestamp.now())
+          .orderBy('releaseDate')
           .limit(_pageSize);
       final last = _lastDoc;
       if (last != null) {
         query = query.startAfterDocument(last);
       }
       final page = await query.get();
-      // Jointure avec le catalogue (titre, affiche, type).
-      final media = await service.fetchMediaByIds(
-          page.docs.map((d) => d.data()['mediaId'] as String? ?? ''));
+      // Titre et affiche sont dénormalisés dans l'événement (section 5.2).
       final rows = [
         for (final doc in page.docs)
-          cineRow(doc)..['media'] = media[doc.data()['mediaId']],
+          () {
+            final row = cineRow(doc);
+            return row
+              ..['release_at'] = row['release_date']
+              ..['media'] = {
+                'id': mediaKey(
+                    row['media_type'] as String, row['tmdb_id'] as int),
+                'title': row['title'],
+                'poster_url': row['poster_url'],
+                'media_type': row['media_type'],
+              };
+          }(),
       ];
       if (!mounted) {
         return;

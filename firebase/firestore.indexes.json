@@ -1,179 +1,62 @@
 {
   "indexes": [
     {
-      "collectionGroup": "favorites",
+      "collectionGroup": "reviews",
       "queryScope": "COLLECTION",
       "fields": [
-        {
-          "fieldPath": "userId",
-          "order": "ASCENDING"
-        },
-        {
-          "fieldPath": "createdAt",
-          "order": "DESCENDING"
-        }
+        { "fieldPath": "mediaType", "order": "ASCENDING" },
+        { "fieldPath": "tmdbId", "order": "ASCENDING" },
+        { "fieldPath": "isPrivate", "order": "ASCENDING" },
+        { "fieldPath": "createdAt", "order": "DESCENDING" }
       ]
     },
     {
-      "collectionGroup": "watched",
+      "collectionGroup": "releaseEvents",
       "queryScope": "COLLECTION",
       "fields": [
-        {
-          "fieldPath": "userId",
-          "order": "ASCENDING"
-        },
-        {
-          "fieldPath": "watchedAt",
-          "order": "DESCENDING"
-        }
+        { "fieldPath": "platform", "order": "ASCENDING" },
+        { "fieldPath": "releaseDate", "order": "ASCENDING" }
       ]
     },
     {
-      "collectionGroup": "watchlists",
+      "collectionGroup": "releaseEvents",
       "queryScope": "COLLECTION",
       "fields": [
-        {
-          "fieldPath": "userId",
-          "order": "ASCENDING"
-        },
-        {
-          "fieldPath": "createdAt",
-          "order": "DESCENDING"
-        }
-      ]
-    },
-    {
-      "collectionGroup": "watchlist_items",
-      "queryScope": "COLLECTION",
-      "fields": [
-        {
-          "fieldPath": "watchlistId",
-          "order": "ASCENDING"
-        },
-        {
-          "fieldPath": "addedAt",
-          "order": "DESCENDING"
-        }
-      ]
-    },
-    {
-      "collectionGroup": "watchlist_items",
-      "queryScope": "COLLECTION",
-      "fields": [
-        {
-          "fieldPath": "userId",
-          "order": "ASCENDING"
-        },
-        {
-          "fieldPath": "mediaId",
-          "order": "ASCENDING"
-        }
-      ]
-    },
-    {
-      "collectionGroup": "media",
-      "queryScope": "COLLECTION",
-      "fields": [
-        {
-          "fieldPath": "mediaType",
-          "order": "ASCENDING"
-        },
-        {
-          "fieldPath": "popularity",
-          "order": "DESCENDING"
-        }
-      ]
-    },
-    {
-      "collectionGroup": "media",
-      "queryScope": "COLLECTION",
-      "fields": [
-        {
-          "fieldPath": "genres",
-          "arrayConfig": "CONTAINS"
-        },
-        {
-          "fieldPath": "popularity",
-          "order": "DESCENDING"
-        }
-      ]
-    },
-    {
-      "collectionGroup": "media",
-      "queryScope": "COLLECTION",
-      "fields": [
-        {
-          "fieldPath": "mediaType",
-          "order": "ASCENDING"
-        },
-        {
-          "fieldPath": "genres",
-          "arrayConfig": "CONTAINS"
-        },
-        {
-          "fieldPath": "popularity",
-          "order": "DESCENDING"
-        }
+        { "fieldPath": "mediaType", "order": "ASCENDING" },
+        { "fieldPath": "tmdbId", "order": "ASCENDING" },
+        { "fieldPath": "releaseDate", "order": "ASCENDING" }
       ]
     },
     {
       "collectionGroup": "notifications",
-      "queryScope": "COLLECTION",
+      "queryScope": "COLLECTION_GROUP",
       "fields": [
-        {
-          "fieldPath": "userId",
-          "order": "ASCENDING"
-        },
-        {
-          "fieldPath": "createdAt",
-          "order": "DESCENDING"
-        }
+        { "fieldPath": "isRead", "order": "ASCENDING" },
+        { "fieldPath": "scheduledAt", "order": "DESCENDING" }
       ]
     },
     {
-      "collectionGroup": "search_history",
-      "queryScope": "COLLECTION",
+      "collectionGroup": "watchlists",
+      "queryScope": "COLLECTION_GROUP",
       "fields": [
-        {
-          "fieldPath": "userId",
-          "order": "ASCENDING"
-        },
-        {
-          "fieldPath": "createdAt",
-          "order": "DESCENDING"
-        }
+        { "fieldPath": "isPublic", "order": "ASCENDING" },
+        { "fieldPath": "updatedAt", "order": "DESCENDING" }
       ]
     },
     {
-      "collectionGroup": "release_events",
+      "collectionGroup": "movies",
       "queryScope": "COLLECTION",
       "fields": [
-        {
-          "fieldPath": "mediaId",
-          "order": "ASCENDING"
-        },
-        {
-          "fieldPath": "releaseAt",
-          "order": "ASCENDING"
-        }
+        { "fieldPath": "genreIds", "arrayConfig": "CONTAINS" },
+        { "fieldPath": "rating", "order": "DESCENDING" }
       ]
     },
     {
-      "collectionGroup": "watchlist_items",
+      "collectionGroup": "series",
       "queryScope": "COLLECTION",
       "fields": [
-        {
-          "fieldPath": "watchlistId",
-          "order": "ASCENDING"
-        },
-        {
-          "fieldPath": "userId",
-          "order": "ASCENDING"
-        },
-        {
-          "fieldPath": "addedAt",
-          "order": "DESCENDING"
-        }
+        { "fieldPath": "genreIds", "arrayConfig": "CONTAINS" },
+        { "fieldPath": "rating", "order": "DESCENDING" }
       ]
     }
   ],

@@ -9,7 +9,7 @@ import 'package:flutter/material.dart';
 // Begin custom widget code
 // DO NOT REMOVE OR MODIFY THE CODE ABOVE!
 
-import '/custom_code/actions/firestore_service.dart';
+import '/custom_code/actions/firebase_service.dart';
 
 /// Bouton « Marquer comme vu » de la fiche d'un titre (membre 1), relié à
 /// la table `watched`. Charge son état tout seul et appelle [onChanged]
@@ -54,7 +54,7 @@ class _MarkWatchedButtonState extends State<MarkWatchedButton> {
     if (!mounted) {
       return;
     }
-    if (FirestoreService.instance.currentUserId == null) {
+    if (CineFirebaseService.instance.currentUserId == null) {
       setState(() {
         _isWatched = false;
         _busy = false;
@@ -63,7 +63,7 @@ class _MarkWatchedButtonState extends State<MarkWatchedButton> {
     }
     setState(() => _busy = true);
     try {
-      final value = await FirestoreService.instance.isWatched(widget.mediaId);
+      final value = await CineFirebaseService.instance.isWatched(widget.mediaId);
       if (mounted) {
         setState(() => _isWatched = value);
       }

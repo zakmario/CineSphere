@@ -11,7 +11,7 @@ import 'package:flutter/material.dart';
 import 'dart:async';
 import 'dart:developer' as developer;
 
-import '/custom_code/actions/firestore_service.dart';
+import '/custom_code/actions/firebase_service.dart';
 import 'package:firebase_auth/firebase_auth.dart' as fb;
 
 /// Vrai si un membre est connecté avec une adresse e-mail confirmée.
@@ -191,7 +191,7 @@ class FirebaseAuthGateway implements AuthGateway {
   FirebaseAuthGateway(this._auth, this._data);
 
   final fb.FirebaseAuth _auth;
-  final FirestoreService _data;
+  final CineFirebaseService _data;
 
   fb.User get _user {
     final user = _auth.currentUser;
@@ -282,7 +282,7 @@ class AuthService {
   static AuthService get instance =>
       _override ??
       (_instance ??= AuthService(FirebaseAuthGateway(
-          fb.FirebaseAuth.instance, FirestoreService.instance)));
+          fb.FirebaseAuth.instance, CineFirebaseService.instance)));
 
   /// Remplace le service partagé (tests). `null` rétablit Firebase.
   @visibleForTesting

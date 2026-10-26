@@ -9,7 +9,7 @@ import 'package:flutter/material.dart';
 // Begin custom widget code
 // DO NOT REMOVE OR MODIFY THE CODE ABOVE!
 
-import '/custom_code/actions/firestore_service.dart';
+import '/custom_code/actions/firebase_service.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
@@ -83,7 +83,7 @@ class _NewsFeedState extends State<NewsFeed> {
       _error = null;
     });
     try {
-      var query = FirestoreService.instance
+      var query = CineFirebaseService.instance
           .col('news')
           .orderBy('publishedAt', descending: true)
           .limit(_pageSize);
@@ -99,7 +99,16 @@ class _NewsFeedState extends State<NewsFeed> {
         if (page.docs.isNotEmpty) {
           _lastDoc = page.docs.last;
         }
-        _items.addAll(page.docs.map(cineRow));
+        _items.addAll(page.docs.map((doc) {
+          final row = cineRow(doc);
+          final type = row['media_type'] as String?;
+          final tmdbId = row['tmdb_id'] as int?;
+          // Titre lié : clé movie_550 / series_1399 pour la fiche.
+          if (type != null && tmdbId != null) {
+            row['media_id'] = mediaKey(type, tmdbId);
+          }
+          return row;
+        }));
         _hasMore = page.docs.length == _pageSize;
         _loading = false;
       });

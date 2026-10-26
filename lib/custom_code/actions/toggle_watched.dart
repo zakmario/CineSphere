@@ -8,14 +8,14 @@ import 'package:flutter/material.dart';
 // Begin custom action code
 // DO NOT REMOVE OR MODIFY THE CODE ABOVE!
 
-import '/custom_code/actions/firestore_service.dart';
+import '/custom_code/actions/firebase_service.dart';
 
 /// Marque un contenu comme vu, ou le retire des vus, pour l'utilisateur
 /// connecté (collection `watched`, membre 1). Retourne le nouvel état
 /// (true = vu). Lève une exception si l'utilisateur n'est pas connecté.
 Future<bool> toggleWatched(String mediaId) async {
   try {
-    return await FirestoreService.instance.toggleWatched(mediaId);
+    return await CineFirebaseService.instance.toggleWatched(mediaId);
   } on CineFailure catch (failure) {
     throw Exception(failure.kind == CineFailureKind.unauthenticated
         ? 'Connectez-vous pour marquer un titre comme vu.'

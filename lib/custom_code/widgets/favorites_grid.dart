@@ -9,11 +9,11 @@ import 'package:flutter/material.dart';
 // Begin custom widget code
 // DO NOT REMOVE OR MODIFY THE CODE ABOVE!
 
-import '/custom_code/actions/firestore_service.dart';
+import '/custom_code/actions/firebase_service.dart';
 
 /// Grille paginée des favoris de l'utilisateur connecté
-/// (collection `favorites`, titres lus dans `media`), du plus récent au
-/// plus ancien.
+/// (sous-collection `users/{uid}/favorites`, titre et affiche dénormalisés),
+/// du plus récent au plus ancien.
 class FavoritesGrid extends StatefulWidget {
   const FavoritesGrid({
     super.key,
@@ -79,8 +79,7 @@ class _FavoritesGridState extends State<FavoritesGrid> {
     if (!mounted || _loading || !_hasMore) {
       return;
     }
-    final userId = FirestoreService.instance.currentUserId;
-    if (userId == null) {
+    if (CineFirebaseService.instance.currentUserId == null) {
       setState(() {
         _hasMore = false;
         _error = 'Connectez-vous pour voir vos favoris.';
@@ -93,18 +92,16 @@ class _FavoritesGridState extends State<FavoritesGrid> {
       _error = null;
     });
     try {
-      var query = FirestoreService.instance
-          .col('favorites')
-          .where('userId', isEqualTo: userId)
-          .orderBy('createdAt', descending: true)
+      // Pagination par curseur (section 5.5).
+      var query = CineFirebaseService.instance
+          .mine('favorites')
+          .orderBy('addedAt', descending: true)
           .limit(_pageSize);
       final last = _lastFavorite;
       if (last != null) {
         query = query.startAfterDocument(last);
       }
       final page = await query.get();
-      final media = await FirestoreService.instance.fetchMediaByIds(
-          page.docs.map((d) => d.data()['mediaId'] as String));
       if (!mounted || requestId != _requestId) {
         return;
       }
@@ -112,11 +109,8 @@ class _FavoritesGridState extends State<FavoritesGrid> {
         if (page.docs.isNotEmpty) {
           _lastFavorite = page.docs.last;
         }
-        _items.addAll([
-          for (final doc in page.docs)
-            if (media[doc.data()['mediaId']] != null)
-              media[doc.data()['mediaId']]!,
-        ]);
+        // L'identifiant du favori est la clé du titre (movie_550).
+        _items.addAll(page.docs.map(cineRow));
         _hasMore = page.docs.length == _pageSize;
         _loading = false;
       });

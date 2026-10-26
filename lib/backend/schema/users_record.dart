@@ -16,20 +16,10 @@ class UsersRecord extends FirestoreRecord {
     _initializeFields();
   }
 
-  // "id" field.
-  String? _id;
-  String get id => _id ?? '';
-  bool hasId() => _id != null;
-
   // "username" field.
   String? _username;
   String get username => _username ?? '';
   bool hasUsername() => _username != null;
-
-  // "usernameLower" field.
-  String? _usernameLower;
-  String get usernameLower => _usernameLower ?? '';
-  bool hasUsernameLower() => _usernameLower != null;
 
   // "email" field.
   String? _email;
@@ -66,55 +56,28 @@ class UsersRecord extends FirestoreRecord {
   DateTime? get updatedAt => _updatedAt;
   bool hasUpdatedAt() => _updatedAt != null;
 
-  // "favoriteGenres" field.
-  List<int>? _favoriteGenres;
-  List<int> get favoriteGenres => _favoriteGenres ?? const [];
-  bool hasFavoriteGenres() => _favoriteGenres != null;
+  // "preferences" field.
+  PreferencesStruct? _preferences;
+  PreferencesStruct get preferences => _preferences ?? PreferencesStruct();
+  bool hasPreferences() => _preferences != null;
 
-  // "favoritePlatforms" field.
-  List<String>? _favoritePlatforms;
-  List<String> get favoritePlatforms => _favoritePlatforms ?? const [];
-  bool hasFavoritePlatforms() => _favoritePlatforms != null;
+  // "display_name" field.
+  String? _displayName;
+  String get displayName => _displayName ?? '';
+  bool hasDisplayName() => _displayName != null;
 
-  // "contentTypes" field.
-  List<String>? _contentTypes;
-  List<String> get contentTypes => _contentTypes ?? const [];
-  bool hasContentTypes() => _contentTypes != null;
+  // "photo_url" field.
+  String? _photoUrl;
+  String get photoUrl => _photoUrl ?? '';
+  bool hasPhotoUrl() => _photoUrl != null;
 
-  // "notificationsEnabled" field.
-  bool? _notificationsEnabled;
-  bool get notificationsEnabled => _notificationsEnabled ?? false;
-  bool hasNotificationsEnabled() => _notificationsEnabled != null;
-
-  // "notifyReleases" field.
-  bool? _notifyReleases;
-  bool get notifyReleases => _notifyReleases ?? false;
-  bool hasNotifyReleases() => _notifyReleases != null;
-
-  // "notifyFavoriteSeries" field.
-  bool? _notifyFavoriteSeries;
-  bool get notifyFavoriteSeries => _notifyFavoriteSeries ?? false;
-  bool hasNotifyFavoriteSeries() => _notifyFavoriteSeries != null;
-
-  // "reminderTime" field.
-  String? _reminderTime;
-  String get reminderTime => _reminderTime ?? '';
-  bool hasReminderTime() => _reminderTime != null;
-
-  // "themeMode" field.
-  String? _themeMode;
-  String get themeMode => _themeMode ?? '';
-  bool hasThemeMode() => _themeMode != null;
-
-  // "onboardingCompleted" field.
-  bool? _onboardingCompleted;
-  bool get onboardingCompleted => _onboardingCompleted ?? false;
-  bool hasOnboardingCompleted() => _onboardingCompleted != null;
+  // "phone_number" field.
+  String? _phoneNumber;
+  String get phoneNumber => _phoneNumber ?? '';
+  bool hasPhoneNumber() => _phoneNumber != null;
 
   void _initializeFields() {
-    _id = snapshotData['id'] as String?;
     _username = snapshotData['username'] as String?;
-    _usernameLower = snapshotData['usernameLower'] as String?;
     _email = snapshotData['email'] as String?;
     _avatarUrl = snapshotData['avatarUrl'] as String?;
     _avatarData = snapshotData['avatarData'] as String?;
@@ -122,15 +85,12 @@ class UsersRecord extends FirestoreRecord {
     _role = snapshotData['role'] as String?;
     _createdAt = snapshotData['createdAt'] as DateTime?;
     _updatedAt = snapshotData['updatedAt'] as DateTime?;
-    _favoriteGenres = getDataList(snapshotData['favoriteGenres']);
-    _favoritePlatforms = getDataList(snapshotData['favoritePlatforms']);
-    _contentTypes = getDataList(snapshotData['contentTypes']);
-    _notificationsEnabled = snapshotData['notificationsEnabled'] as bool?;
-    _notifyReleases = snapshotData['notifyReleases'] as bool?;
-    _notifyFavoriteSeries = snapshotData['notifyFavoriteSeries'] as bool?;
-    _reminderTime = snapshotData['reminderTime'] as String?;
-    _themeMode = snapshotData['themeMode'] as String?;
-    _onboardingCompleted = snapshotData['onboardingCompleted'] as bool?;
+    _preferences = snapshotData['preferences'] is PreferencesStruct
+        ? snapshotData['preferences']
+        : PreferencesStruct.maybeFromMap(snapshotData['preferences']);
+    _displayName = snapshotData['display_name'] as String?;
+    _photoUrl = snapshotData['photo_url'] as String?;
+    _phoneNumber = snapshotData['phone_number'] as String?;
   }
 
   static CollectionReference get collection =>
@@ -166,9 +126,7 @@ class UsersRecord extends FirestoreRecord {
 }
 
 Map<String, dynamic> createUsersRecordData({
-  String? id,
   String? username,
-  String? usernameLower,
   String? email,
   String? avatarUrl,
   String? avatarData,
@@ -176,18 +134,14 @@ Map<String, dynamic> createUsersRecordData({
   String? role,
   DateTime? createdAt,
   DateTime? updatedAt,
-  bool? notificationsEnabled,
-  bool? notifyReleases,
-  bool? notifyFavoriteSeries,
-  String? reminderTime,
-  String? themeMode,
-  bool? onboardingCompleted,
+  PreferencesStruct? preferences,
+  String? displayName,
+  String? photoUrl,
+  String? phoneNumber,
 }) {
   final firestoreData = mapToFirestore(
     <String, dynamic>{
-      'id': id,
       'username': username,
-      'usernameLower': usernameLower,
       'email': email,
       'avatarUrl': avatarUrl,
       'avatarData': avatarData,
@@ -195,14 +149,15 @@ Map<String, dynamic> createUsersRecordData({
       'role': role,
       'createdAt': createdAt,
       'updatedAt': updatedAt,
-      'notificationsEnabled': notificationsEnabled,
-      'notifyReleases': notifyReleases,
-      'notifyFavoriteSeries': notifyFavoriteSeries,
-      'reminderTime': reminderTime,
-      'themeMode': themeMode,
-      'onboardingCompleted': onboardingCompleted,
+      'preferences': PreferencesStruct().toMap(),
+      'display_name': displayName,
+      'photo_url': photoUrl,
+      'phone_number': phoneNumber,
     }.withoutNulls,
   );
+
+  // Handle nested data for "preferences" field.
+  addPreferencesStructData(firestoreData, preferences, 'preferences');
 
   return firestoreData;
 }
@@ -212,10 +167,7 @@ class UsersRecordDocumentEquality implements Equality<UsersRecord> {
 
   @override
   bool equals(UsersRecord? e1, UsersRecord? e2) {
-    const listEquality = ListEquality();
-    return e1?.id == e2?.id &&
-        e1?.username == e2?.username &&
-        e1?.usernameLower == e2?.usernameLower &&
+    return e1?.username == e2?.username &&
         e1?.email == e2?.email &&
         e1?.avatarUrl == e2?.avatarUrl &&
         e1?.avatarData == e2?.avatarData &&
@@ -223,22 +175,15 @@ class UsersRecordDocumentEquality implements Equality<UsersRecord> {
         e1?.role == e2?.role &&
         e1?.createdAt == e2?.createdAt &&
         e1?.updatedAt == e2?.updatedAt &&
-        listEquality.equals(e1?.favoriteGenres, e2?.favoriteGenres) &&
-        listEquality.equals(e1?.favoritePlatforms, e2?.favoritePlatforms) &&
-        listEquality.equals(e1?.contentTypes, e2?.contentTypes) &&
-        e1?.notificationsEnabled == e2?.notificationsEnabled &&
-        e1?.notifyReleases == e2?.notifyReleases &&
-        e1?.notifyFavoriteSeries == e2?.notifyFavoriteSeries &&
-        e1?.reminderTime == e2?.reminderTime &&
-        e1?.themeMode == e2?.themeMode &&
-        e1?.onboardingCompleted == e2?.onboardingCompleted;
+        e1?.preferences == e2?.preferences &&
+        e1?.displayName == e2?.displayName &&
+        e1?.photoUrl == e2?.photoUrl &&
+        e1?.phoneNumber == e2?.phoneNumber;
   }
 
   @override
   int hash(UsersRecord? e) => const ListEquality().hash([
-        e?.id,
         e?.username,
-        e?.usernameLower,
         e?.email,
         e?.avatarUrl,
         e?.avatarData,
@@ -246,15 +191,10 @@ class UsersRecordDocumentEquality implements Equality<UsersRecord> {
         e?.role,
         e?.createdAt,
         e?.updatedAt,
-        const ListEquality().hash(e?.favoriteGenres),
-        const ListEquality().hash(e?.favoritePlatforms),
-        const ListEquality().hash(e?.contentTypes),
-        e?.notificationsEnabled,
-        e?.notifyReleases,
-        e?.notifyFavoriteSeries,
-        e?.reminderTime,
-        e?.themeMode,
-        e?.onboardingCompleted
+        e?.preferences,
+        e?.displayName,
+        e?.photoUrl,
+        e?.phoneNumber
       ]);
 
   @override

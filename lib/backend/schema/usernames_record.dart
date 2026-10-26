@@ -16,19 +16,13 @@ class UsernamesRecord extends FirestoreRecord {
     _initializeFields();
   }
 
-  // "userId" field.
-  String? _userId;
-  String get userId => _userId ?? '';
-  bool hasUserId() => _userId != null;
-
-  // "username" field.
-  String? _username;
-  String get username => _username ?? '';
-  bool hasUsername() => _username != null;
+  // "uid" field.
+  String? _uid;
+  String get uid => _uid ?? '';
+  bool hasUid() => _uid != null;
 
   void _initializeFields() {
-    _userId = snapshotData['userId'] as String?;
-    _username = snapshotData['username'] as String?;
+    _uid = snapshotData['uid'] as String?;
   }
 
   static CollectionReference get collection =>
@@ -65,13 +59,11 @@ class UsernamesRecord extends FirestoreRecord {
 }
 
 Map<String, dynamic> createUsernamesRecordData({
-  String? userId,
-  String? username,
+  String? uid,
 }) {
   final firestoreData = mapToFirestore(
     <String, dynamic>{
-      'userId': userId,
-      'username': username,
+      'uid': uid,
     }.withoutNulls,
   );
 
@@ -83,12 +75,11 @@ class UsernamesRecordDocumentEquality implements Equality<UsernamesRecord> {
 
   @override
   bool equals(UsernamesRecord? e1, UsernamesRecord? e2) {
-    return e1?.userId == e2?.userId && e1?.username == e2?.username;
+    return e1?.uid == e2?.uid;
   }
 
   @override
-  int hash(UsernamesRecord? e) =>
-      const ListEquality().hash([e?.userId, e?.username]);
+  int hash(UsernamesRecord? e) => const ListEquality().hash([e?.uid]);
 
   @override
   bool isValidKey(Object? o) => o is UsernamesRecord;

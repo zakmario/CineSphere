@@ -1,16 +1,16 @@
-import 'package:cine_sphere/custom_code/actions/firestore_service.dart';
+import 'package:cine_sphere/custom_code/actions/firebase_service.dart';
 import 'package:cine_sphere/custom_code/widgets/index.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'fake_firestore_service.dart';
+import 'fake_firebase_service.dart';
 
-const _mediaId = '22222222-2222-2222-2222-222222222222';
+const _mediaId = 'movie_550';
 
 void main() {
-  late FakeFirestoreService service;
+  late FakeCineFirebaseService service;
 
   setUpAll(() {
     GoogleFonts.config.allowRuntimeFetching = false;
@@ -18,11 +18,11 @@ void main() {
   });
 
   setUp(() {
-    service = FakeFirestoreService();
-    FirestoreService.debugInstance = service;
+    service = FakeCineFirebaseService();
+    CineFirebaseService.debugInstance = service;
   });
 
-  tearDown(() => FirestoreService.debugInstance = null);
+  tearDown(() => CineFirebaseService.debugInstance = null);
 
   Future<void> pump(WidgetTester tester, {List<bool>? changes}) async {
     await tester.pumpWidget(MaterialApp(

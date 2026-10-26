@@ -30,8 +30,9 @@ Future completeOnboarding(List<String> favoriteGenres) async {
         if (favoriteGenres.contains(doc.data()['name'])) doc.data()['id'],
     ];
     await FirebaseFirestore.instance.collection('users').doc(userId).update({
-      'onboardingCompleted': true,
-      'favoriteGenres': ids,
+      'preferences.onboardingCompleted': true,
+      'preferences.favoriteGenres': ids,
+      'updatedAt': FieldValue.serverTimestamp(),
     });
   } catch (e) {
     // Les préférences restent enregistrées localement.

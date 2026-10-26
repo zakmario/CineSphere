@@ -14,7 +14,7 @@ import 'dart:convert';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:image_picker/image_picker.dart';
 
-import '/custom_code/actions/firestore_service.dart';
+import '/custom_code/actions/firebase_service.dart';
 
 /// Photo de profil du membre connecté (membre 1). Un appui ouvre la
 /// galerie ; l'image, réduite à 256 px, est enregistrée en base64 dans
@@ -95,7 +95,7 @@ class _AvatarPickerState extends State<AvatarPicker> {
         throw const CineFailure(CineFailureKind.invalid,
             'Image trop lourde : choisissez-en une autre.');
       }
-      await FirestoreService.instance.uploadAvatar(bytes);
+      await CineFirebaseService.instance.uploadAvatar(bytes);
       final data = base64Encode(bytes);
       if (!mounted) {
         return;

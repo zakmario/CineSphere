@@ -1,150 +1,174 @@
 rules_version = '2';
 
-// CinéSphère — règles Firestore (équivalent des politiques RLS Supabase).
-//
-// Les collections reprennent les tables Supabase. Les documents personnels
-// portent un champ `userId` ; les identifiants déterministes garantissent
-// l'unicité (favorites/{uid}_{mediaId}, watched/{uid}_{mediaId},
-// watchlist_items/{watchlistId}_{mediaId}, usernames/{pseudo en minuscules}).
+// CinéSphère — règles Firestore (cahier des charges, section 5.4).
+// Tout ce qui n'est pas autorisé ci-dessous est refusé.
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    function signedIn() {
+    // Fonctions utilitaires ------------------------------------------------
+
+    function isSignedIn() {
       return request.auth != null;
     }
 
-    function isMe(uid) {
-      return signedIn() && request.auth.uid == uid;
+    function isOwner(uid) {
+      return isSignedIn() && request.auth.uid == uid;
     }
 
     function isAdmin() {
-      return signedIn()
+      return isSignedIn()
           && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
     }
 
-    // Le document créé appartient à l'utilisateur connecté.
-    function createsOwn() {
-      return isMe(request.resource.data.userId);
+    // Note d'avis : entier de 1 à 10.
+    function validRating() {
+      return request.resource.data.rating is int
+          && request.resource.data.rating >= 1
+          && request.resource.data.rating <= 10;
     }
 
-    // Le document existant appartient à l'utilisateur et le reste.
-    function updatesOwn() {
-      return isMe(resource.data.userId)
-          && request.resource.data.userId == resource.data.userId;
+    // Le champ n'est pas modifié par l'écriture.
+    function unchanged(field) {
+      return request.resource.data.get(field, null) == resource.data.get(field, null);
+    }
+
+    // Seuls les champs listés changent.
+    function onlyChanges(fields) {
+      return request.resource.data.diff(resource.data).affectedKeys().hasOnly(fields);
+    }
+
+    // likesCount varie de ±1.
+    function likeDelta() {
+      return request.resource.data.likesCount == resource.data.likesCount + 1
+          || request.resource.data.likesCount == resource.data.likesCount - 1;
+    }
+
+    // Cache TMDB : champs valides et tmdbId = identifiant du document.
+    function validCatalogEntry(tmdbId) {
+      return request.resource.data.tmdbId is int
+          && string(request.resource.data.tmdbId) == tmdbId
+          && request.resource.data.title is string
+          && request.resource.data.title.size() > 0
+          && request.resource.data.get('rating', 0) is number
+          && request.resource.data.get('rating', 0) >= 0
+          && request.resource.data.get('rating', 0) <= 10;
     }
 
     // Profils ----------------------------------------------------------------
-    // users/{uid} : pseudo, e-mail, avatar, bio, rôle et préférences.
+
     match /users/{uid} {
-      // id = uid : la page Profil lit son document par une requête sur id.
-      allow read: if isMe(uid) || isMe(resource.data.get('id', '')) || isAdmin();
-      allow create: if isMe(uid)
-          && request.resource.data.get('id', uid) == uid
-          && request.resource.data.get('role', 'user') == 'user';
-      // Le rôle ne se change pas depuis l'application.
-      allow update: if (isMe(uid)
-          && request.resource.data.get('role', 'user') == resource.data.get('role', 'user'))
-          || isAdmin();
-      allow delete: if isMe(uid);
+      allow read: if isSignedIn();
+      allow create: if isOwner(uid)
+          && request.resource.data.role == 'user'
+          && request.resource.data.email == request.auth.token.email;
+      allow update: if isOwner(uid)
+          && unchanged('role')
+          && unchanged('email');
+      allow delete: if isOwner(uid);
+
+      // Données privées : propriétaire uniquement.
+      match /favorites/{mediaId} {
+        allow read, write: if isOwner(uid);
+      }
+      match /watched/{docId} {
+        allow read, write: if isOwner(uid);
+      }
+      match /notifications/{notificationId} {
+        allow read, write: if isOwner(uid);
+      }
+      match /searchHistory/{docId} {
+        allow read, write: if isOwner(uid);
+      }
+
+      // Listes : lisibles par les membres connectés si isPublic, écrites par
+      // le propriétaire.
+      match /watchlists/{watchlistId} {
+        allow read: if isOwner(uid)
+            || (isSignedIn() && resource.data.isPublic == true);
+        allow create, update: if isOwner(uid)
+            && request.resource.data.name is string
+            && request.resource.data.name.size() >= 1
+            && request.resource.data.name.size() <= 60;
+        allow delete: if isOwner(uid);
+
+        match /items/{mediaId} {
+          allow read: if isOwner(uid)
+              || (isSignedIn()
+                  && get(/databases/$(database)/documents/users/$(uid)/watchlists/$(watchlistId)).data.isPublic == true);
+          allow write: if isOwner(uid);
+        }
+      }
     }
 
-    // Réservation des pseudos (unicité insensible à la casse).
-    // Lecture publique : l'inscription vérifie la disponibilité avant le compte.
+    // Pseudos : unicité, aucune modification.
     match /usernames/{name} {
-      allow read: if true;
-      allow create: if createsOwn();
-      allow delete: if isMe(resource.data.userId);
+      allow read: if isSignedIn();
+      allow create: if isSignedIn()
+          && request.resource.data.uid == request.auth.uid
+          && !exists(/databases/$(database)/documents/usernames/$(name));
+      allow delete: if isSignedIn() && resource.data.uid == request.auth.uid;
+    }
+
+    // Avis -------------------------------------------------------------------
+
+    match /reviews/{reviewId} {
+      allow read: if resource.data.isPrivate == false
+          || (isSignedIn() && resource.data.userId == request.auth.uid);
+      allow create: if isSignedIn()
+          && request.resource.data.userId == request.auth.uid
+          && validRating()
+          && request.resource.data.get('content', '') is string
+          && request.resource.data.get('content', '').size() <= 2000
+          && request.resource.data.likesCount == 0;
+      // L'auteur modifie tout sauf userId, mediaType et tmdbId ; les autres
+      // membres ne peuvent changer que likesCount, de ±1.
+      allow update: if isSignedIn() && (
+          (resource.data.userId == request.auth.uid
+              && unchanged('userId') && unchanged('mediaType') && unchanged('tmdbId')
+              && validRating()
+              && (unchanged('likesCount') || likeDelta()))
+          || (onlyChanges(['likesCount']) && likeDelta()));
+      allow delete: if isSignedIn() && resource.data.userId == request.auth.uid;
+
+      match /likes/{uid} {
+        allow read: if isSignedIn();
+        allow create, delete: if isOwner(uid);
+      }
     }
 
     // Catalogue ---------------------------------------------------------------
-    // Lecture publique. L'import TMDB tourne dans l'application (forfait
-    // Spark, pas de Cloud Functions) : un membre connecté peut l'alimenter.
-    match /media/{id} {
-      allow read: if true;
-      allow create, update: if signedIn()
-          && request.resource.data.title is string
-          && request.resource.data.mediaType in ['movie', 'series'];
+
+    match /movies/{tmdbId} {
+      allow read: if isSignedIn();
+      allow create, update: if isAdmin() || (isSignedIn() && validCatalogEntry(tmdbId));
       allow delete: if isAdmin();
     }
 
-    match /genres/{id} {
-      allow read: if true;
-      allow write: if isAdmin();
-    }
-
-    match /platforms/{id} {
-      allow read: if true;
-      allow write: if isAdmin();
-    }
-
-    match /release_events/{id} {
-      allow read: if true;
-      allow create, update: if signedIn();
+    match /series/{tmdbId} {
+      allow read: if isSignedIn();
+      allow create, update: if isAdmin() || (isSignedIn() && validCatalogEntry(tmdbId));
       allow delete: if isAdmin();
     }
 
-    match /news/{id} {
-      allow read: if true;
+    match /genres/{genreId} {
+      allow read: if isSignedIn();
       allow write: if isAdmin();
     }
 
-    // Données personnelles -----------------------------------------------------
-    match /favorites/{id} {
-      allow read, delete: if isMe(resource.data.userId);
-      allow create: if createsOwn() && id == request.auth.uid + '_' + request.resource.data.mediaId;
+    match /platforms/{platformId} {
+      allow read: if isSignedIn();
+      allow write: if isAdmin();
     }
 
-    match /watched/{id} {
-      allow read, delete: if isMe(resource.data.userId);
-      allow create: if createsOwn() && id == request.auth.uid + '_' + request.resource.data.mediaId;
-      allow update: if updatesOwn();
+    match /releaseEvents/{eventId} {
+      allow read: if isSignedIn();
+      allow write: if isAdmin();
     }
 
-    match /watchlists/{id} {
-      allow read: if resource.data.isPublic == true || isMe(resource.data.userId);
-      allow create: if createsOwn()
-          && request.resource.data.name is string
-          && request.resource.data.name.size() >= 1
-          && request.resource.data.name.size() <= 60;
-      allow update: if updatesOwn()
-          && request.resource.data.name.size() >= 1
-          && request.resource.data.name.size() <= 60;
-      allow delete: if isMe(resource.data.userId);
-    }
-
-    // Un titre de liste : lisible avec sa liste, modifiable par son propriétaire.
-    match /watchlist_items/{id} {
-      function list(listId) {
-        return get(/databases/$(database)/documents/watchlists/$(listId)).data;
-      }
-      allow read: if isMe(resource.data.userId)
-          || list(resource.data.watchlistId).isPublic == true;
-      allow create: if createsOwn()
-          && list(request.resource.data.watchlistId).userId == request.auth.uid
-          && id == request.resource.data.watchlistId + '_' + request.resource.data.mediaId;
-      allow delete: if isMe(resource.data.userId);
-    }
-
-    // Avis : publics sauf s'ils sont privés ; une note de 1 à 10.
-    match /reviews/{id} {
-      allow read: if resource.data.isPrivate == false || isMe(resource.data.userId);
-      allow create: if createsOwn()
-          && request.resource.data.rating is int
-          && request.resource.data.rating >= 1
-          && request.resource.data.rating <= 10;
-      allow update: if updatesOwn();
-      allow delete: if isMe(resource.data.userId);
-    }
-
-    match /notifications/{id} {
-      allow read, delete: if isMe(resource.data.userId);
-      allow create: if createsOwn();
-      allow update: if updatesOwn();
-    }
-
-    match /search_history/{id} {
-      allow read, delete: if isMe(resource.data.userId);
-      allow create: if createsOwn();
+    // Hors cahier des charges : actualités de la page Actualites (membre 2).
+    match /news/{newsId} {
+      allow read: if isSignedIn();
+      allow write: if isAdmin();
     }
   }
 }

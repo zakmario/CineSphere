@@ -8,13 +8,13 @@ import 'package:flutter/material.dart';
 // Begin custom action code
 // DO NOT REMOVE OR MODIFY THE CODE ABOVE!
 
-import '/custom_code/actions/firestore_service.dart';
+import '/custom_code/actions/firebase_service.dart';
 
 /// Supprime une liste du membre connecté et ses titres.
 /// Retourne "" en cas de succès, sinon le message d'erreur à afficher.
 Future<String> deleteWatchlist(String watchlistId) async {
   try {
-    await FirestoreService.instance.deleteWatchlist(watchlistId);
+    await CineFirebaseService.instance.deleteWatchlist(watchlistId);
     return '';
   } on CineFailure catch (failure) {
     return failure.message;

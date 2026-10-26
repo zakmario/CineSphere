@@ -16,29 +16,60 @@ class FavoritesRecord extends FirestoreRecord {
     _initializeFields();
   }
 
-  // "userId" field.
-  String? _userId;
-  String get userId => _userId ?? '';
-  bool hasUserId() => _userId != null;
+  // "mediaType" field.
+  String? _mediaType;
+  String get mediaType => _mediaType ?? '';
+  bool hasMediaType() => _mediaType != null;
 
-  // "mediaId" field.
-  String? _mediaId;
-  String get mediaId => _mediaId ?? '';
-  bool hasMediaId() => _mediaId != null;
+  // "tmdbId" field.
+  int? _tmdbId;
+  int get tmdbId => _tmdbId ?? 0;
+  bool hasTmdbId() => _tmdbId != null;
 
-  // "createdAt" field.
-  DateTime? _createdAt;
-  DateTime? get createdAt => _createdAt;
-  bool hasCreatedAt() => _createdAt != null;
+  // "title" field.
+  String? _title;
+  String get title => _title ?? '';
+  bool hasTitle() => _title != null;
+
+  // "posterUrl" field.
+  String? _posterUrl;
+  String get posterUrl => _posterUrl ?? '';
+  bool hasPosterUrl() => _posterUrl != null;
+
+  // "rating" field.
+  double? _rating;
+  double get rating => _rating ?? 0.0;
+  bool hasRating() => _rating != null;
+
+  // "releaseDate" field.
+  DateTime? _releaseDate;
+  DateTime? get releaseDate => _releaseDate;
+  bool hasReleaseDate() => _releaseDate != null;
+
+  // "addedAt" field.
+  DateTime? _addedAt;
+  DateTime? get addedAt => _addedAt;
+  bool hasAddedAt() => _addedAt != null;
+
+  DocumentReference get parentReference => reference.parent.parent!;
 
   void _initializeFields() {
-    _userId = snapshotData['userId'] as String?;
-    _mediaId = snapshotData['mediaId'] as String?;
-    _createdAt = snapshotData['createdAt'] as DateTime?;
+    _mediaType = snapshotData['mediaType'] as String?;
+    _tmdbId = castToType<int>(snapshotData['tmdbId']);
+    _title = snapshotData['title'] as String?;
+    _posterUrl = snapshotData['posterUrl'] as String?;
+    _rating = castToType<double>(snapshotData['rating']);
+    _releaseDate = snapshotData['releaseDate'] as DateTime?;
+    _addedAt = snapshotData['addedAt'] as DateTime?;
   }
 
-  static CollectionReference get collection =>
-      FirebaseFirestore.instance.collection('favorites');
+  static Query<Map<String, dynamic>> collection([DocumentReference? parent]) =>
+      parent != null
+          ? parent.collection('favorites')
+          : FirebaseFirestore.instance.collectionGroup('favorites');
+
+  static DocumentReference createDoc(DocumentReference parent, {String? id}) =>
+      parent.collection('favorites').doc(id);
 
   static Stream<FavoritesRecord> getDocument(DocumentReference ref) =>
       ref.snapshots().map((s) => FavoritesRecord.fromSnapshot(s));
@@ -71,15 +102,23 @@ class FavoritesRecord extends FirestoreRecord {
 }
 
 Map<String, dynamic> createFavoritesRecordData({
-  String? userId,
-  String? mediaId,
-  DateTime? createdAt,
+  String? mediaType,
+  int? tmdbId,
+  String? title,
+  String? posterUrl,
+  double? rating,
+  DateTime? releaseDate,
+  DateTime? addedAt,
 }) {
   final firestoreData = mapToFirestore(
     <String, dynamic>{
-      'userId': userId,
-      'mediaId': mediaId,
-      'createdAt': createdAt,
+      'mediaType': mediaType,
+      'tmdbId': tmdbId,
+      'title': title,
+      'posterUrl': posterUrl,
+      'rating': rating,
+      'releaseDate': releaseDate,
+      'addedAt': addedAt,
     }.withoutNulls,
   );
 
@@ -91,14 +130,25 @@ class FavoritesRecordDocumentEquality implements Equality<FavoritesRecord> {
 
   @override
   bool equals(FavoritesRecord? e1, FavoritesRecord? e2) {
-    return e1?.userId == e2?.userId &&
-        e1?.mediaId == e2?.mediaId &&
-        e1?.createdAt == e2?.createdAt;
+    return e1?.mediaType == e2?.mediaType &&
+        e1?.tmdbId == e2?.tmdbId &&
+        e1?.title == e2?.title &&
+        e1?.posterUrl == e2?.posterUrl &&
+        e1?.rating == e2?.rating &&
+        e1?.releaseDate == e2?.releaseDate &&
+        e1?.addedAt == e2?.addedAt;
   }
 
   @override
-  int hash(FavoritesRecord? e) =>
-      const ListEquality().hash([e?.userId, e?.mediaId, e?.createdAt]);
+  int hash(FavoritesRecord? e) => const ListEquality().hash([
+        e?.mediaType,
+        e?.tmdbId,
+        e?.title,
+        e?.posterUrl,
+        e?.rating,
+        e?.releaseDate,
+        e?.addedAt
+      ]);
 
   @override
   bool isValidKey(Object? o) => o is FavoritesRecord;

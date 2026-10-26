@@ -16,10 +16,15 @@ class NewsRecord extends FirestoreRecord {
     _initializeFields();
   }
 
-  // "mediaId" field.
-  String? _mediaId;
-  String get mediaId => _mediaId ?? '';
-  bool hasMediaId() => _mediaId != null;
+  // "mediaType" field.
+  String? _mediaType;
+  String get mediaType => _mediaType ?? '';
+  bool hasMediaType() => _mediaType != null;
+
+  // "tmdbId" field.
+  int? _tmdbId;
+  int get tmdbId => _tmdbId ?? 0;
+  bool hasTmdbId() => _tmdbId != null;
 
   // "title" field.
   String? _title;
@@ -42,7 +47,8 @@ class NewsRecord extends FirestoreRecord {
   bool hasPublishedAt() => _publishedAt != null;
 
   void _initializeFields() {
-    _mediaId = snapshotData['mediaId'] as String?;
+    _mediaType = snapshotData['mediaType'] as String?;
+    _tmdbId = castToType<int>(snapshotData['tmdbId']);
     _title = snapshotData['title'] as String?;
     _summary = snapshotData['summary'] as String?;
     _imageUrl = snapshotData['imageUrl'] as String?;
@@ -82,7 +88,8 @@ class NewsRecord extends FirestoreRecord {
 }
 
 Map<String, dynamic> createNewsRecordData({
-  String? mediaId,
+  String? mediaType,
+  int? tmdbId,
   String? title,
   String? summary,
   String? imageUrl,
@@ -90,7 +97,8 @@ Map<String, dynamic> createNewsRecordData({
 }) {
   final firestoreData = mapToFirestore(
     <String, dynamic>{
-      'mediaId': mediaId,
+      'mediaType': mediaType,
+      'tmdbId': tmdbId,
       'title': title,
       'summary': summary,
       'imageUrl': imageUrl,
@@ -106,7 +114,8 @@ class NewsRecordDocumentEquality implements Equality<NewsRecord> {
 
   @override
   bool equals(NewsRecord? e1, NewsRecord? e2) {
-    return e1?.mediaId == e2?.mediaId &&
+    return e1?.mediaType == e2?.mediaType &&
+        e1?.tmdbId == e2?.tmdbId &&
         e1?.title == e2?.title &&
         e1?.summary == e2?.summary &&
         e1?.imageUrl == e2?.imageUrl &&
@@ -114,8 +123,14 @@ class NewsRecordDocumentEquality implements Equality<NewsRecord> {
   }
 
   @override
-  int hash(NewsRecord? e) => const ListEquality()
-      .hash([e?.mediaId, e?.title, e?.summary, e?.imageUrl, e?.publishedAt]);
+  int hash(NewsRecord? e) => const ListEquality().hash([
+        e?.mediaType,
+        e?.tmdbId,
+        e?.title,
+        e?.summary,
+        e?.imageUrl,
+        e?.publishedAt
+      ]);
 
   @override
   bool isValidKey(Object? o) => o is NewsRecord;

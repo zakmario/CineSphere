@@ -206,11 +206,7 @@ class _FavorisWidgetState extends State<FavorisWidget>
                                   children: [
                                     FutureBuilder<List<FavoritesRecord>>(
                                       future: queryFavoritesRecordOnce(
-                                        queryBuilder: (favoritesRecord) =>
-                                            favoritesRecord.where(
-                                          'userId',
-                                          isEqualTo: currentUserUid,
-                                        ),
+                                        parent: currentUserReference,
                                       ),
                                       builder: (context, snapshot) {
                                         // Customize what your widget looks like when it's loading.
@@ -558,14 +554,10 @@ class _FavorisWidgetState extends State<FavorisWidget>
                                     ),
                                     FutureBuilder<List<FavoritesRecord>>(
                                       future: queryFavoritesRecordOnce(
+                                        parent: currentUserReference,
                                         queryBuilder: (favoritesRecord) =>
-                                            favoritesRecord
-                                                .where(
-                                                  'userId',
-                                                  isEqualTo: currentUserUid,
-                                                )
-                                                .orderBy('createdAt',
-                                                    descending: true),
+                                            favoritesRecord.orderBy('addedAt',
+                                                descending: true),
                                       ),
                                       builder: (context, snapshot) {
                                         // Customize what your widget looks like when it's loading.
@@ -612,260 +604,221 @@ class _FavorisWidgetState extends State<FavorisWidget>
                                                 final favoritesListItem =
                                                     favoritesList[
                                                         favoritesListIndex];
-                                                return FutureBuilder<
-                                                    List<MediaRecord>>(
-                                                  future: queryMediaRecordOnce(
-                                                    queryBuilder:
-                                                        (mediaRecord) =>
-                                                            mediaRecord.where(
-                                                      'id',
-                                                      isEqualTo:
-                                                          favoritesListItem
-                                                              .mediaId,
-                                                    ),
-                                                    singleRecord: true,
-                                                  ),
-                                                  builder: (context, snapshot) {
-                                                    // Customize what your widget looks like when it's loading.
-                                                    if (!snapshot.hasData) {
-                                                      return Center(
-                                                        child: SizedBox(
-                                                          width: 50.0,
-                                                          height: 50.0,
-                                                          child:
-                                                              CircularProgressIndicator(
-                                                            valueColor:
-                                                                AlwaysStoppedAnimation<
-                                                                    Color>(
-                                                              FlutterFlowTheme.of(
-                                                                      context)
-                                                                  .primary,
-                                                            ),
-                                                          ),
-                                                        ),
-                                                      );
-                                                    }
-                                                    List<MediaRecord>
-                                                        containerMediaRecordList =
-                                                        snapshot.data!;
-                                                    final containerMediaRecord =
-                                                        containerMediaRecordList
-                                                                .isNotEmpty
-                                                            ? containerMediaRecordList
-                                                                .first
-                                                            : null;
-
-                                                    return InkWell(
-                                                      splashColor:
-                                                          Colors.transparent,
-                                                      focusColor:
-                                                          Colors.transparent,
-                                                      hoverColor:
-                                                          Colors.transparent,
-                                                      highlightColor:
-                                                          Colors.transparent,
-                                                      onTap: () async {
-                                                        context.pushNamed(
-                                                          MediaDetailWidget
-                                                              .routeName,
-                                                          queryParameters: {
-                                                            'mediaId':
-                                                                serializeParam(
+                                                return InkWell(
+                                                  splashColor:
+                                                      Colors.transparent,
+                                                  focusColor:
+                                                      Colors.transparent,
+                                                  hoverColor:
+                                                      Colors.transparent,
+                                                  highlightColor:
+                                                      Colors.transparent,
+                                                  onTap: () async {
+                                                    context.pushNamed(
+                                                      MediaDetailWidget
+                                                          .routeName,
+                                                      queryParameters: {
+                                                        'mediaId':
+                                                            serializeParam(
+                                                          (String? mediaType,
+                                                                  int? tmdbId) {
+                                                            return '${mediaType}_${tmdbId}';
+                                                          }(
                                                               favoritesListItem
-                                                                  .mediaId,
-                                                              ParamType.String,
-                                                            ),
-                                                          }.withoutNulls,
-                                                        );
-                                                      },
-                                                      child: Container(
-                                                        decoration:
-                                                            BoxDecoration(
-                                                          color:
-                                                              Color(0xFF15151F),
-                                                          borderRadius:
-                                                              BorderRadius
-                                                                  .circular(
-                                                                      12.0),
-                                                          border: Border.all(
-                                                            color: Color(
-                                                                0xFF2A2A3A),
-                                                            width: 1.0,
-                                                          ),
+                                                                  .mediaType,
+                                                              favoritesListItem
+                                                                  .tmdbId),
+                                                          ParamType.String,
                                                         ),
-                                                        child: Column(
-                                                          mainAxisSize:
-                                                              MainAxisSize.max,
-                                                          mainAxisAlignment:
-                                                              MainAxisAlignment
-                                                                  .start,
-                                                          crossAxisAlignment:
-                                                              CrossAxisAlignment
-                                                                  .stretch,
-                                                          children: [
-                                                            Expanded(
-                                                              child: Stack(
-                                                                alignment:
-                                                                    AlignmentDirectional(
-                                                                        1.0,
-                                                                        -1.0),
-                                                                children: [
-                                                                  ClipRRect(
-                                                                    borderRadius:
-                                                                        BorderRadius
-                                                                            .only(
-                                                                      topLeft: Radius
-                                                                          .circular(
-                                                                              12.0),
-                                                                      topRight:
-                                                                          Radius.circular(
-                                                                              12.0),
-                                                                    ),
-                                                                    child:
-                                                                        CachedNetworkImage(
-                                                                      fadeInDuration:
-                                                                          Duration(
-                                                                              milliseconds: 0),
-                                                                      fadeOutDuration:
-                                                                          Duration(
-                                                                              milliseconds: 0),
-                                                                      imageUrl: (String?
-                                                                          url) {
-                                                                        return url ??
-                                                                            '';
-                                                                      }(containerMediaRecord
-                                                                          ?.posterUrl),
-                                                                      width: double
-                                                                          .infinity,
-                                                                      height: double
-                                                                          .infinity,
-                                                                      fit: BoxFit
-                                                                          .cover,
-                                                                    ),
-                                                                  ),
-                                                                  Padding(
-                                                                    padding: EdgeInsetsDirectional
+                                                      }.withoutNulls,
+                                                    );
+                                                  },
+                                                  child: Container(
+                                                    decoration: BoxDecoration(
+                                                      color: Color(0xFF15151F),
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              12.0),
+                                                      border: Border.all(
+                                                        color:
+                                                            Color(0xFF2A2A3A),
+                                                        width: 1.0,
+                                                      ),
+                                                    ),
+                                                    child: Column(
+                                                      mainAxisSize:
+                                                          MainAxisSize.max,
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .start,
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .stretch,
+                                                      children: [
+                                                        Expanded(
+                                                          child: Stack(
+                                                            alignment:
+                                                                AlignmentDirectional(
+                                                                    1.0, -1.0),
+                                                            children: [
+                                                              ClipRRect(
+                                                                borderRadius:
+                                                                    BorderRadius
+                                                                        .only(
+                                                                  topLeft: Radius
+                                                                      .circular(
+                                                                          12.0),
+                                                                  topRight: Radius
+                                                                      .circular(
+                                                                          12.0),
+                                                                ),
+                                                                child:
+                                                                    CachedNetworkImage(
+                                                                  fadeInDuration:
+                                                                      Duration(
+                                                                          milliseconds:
+                                                                              0),
+                                                                  fadeOutDuration:
+                                                                      Duration(
+                                                                          milliseconds:
+                                                                              0),
+                                                                  imageUrl: (String?
+                                                                      url) {
+                                                                    return url ??
+                                                                        '';
+                                                                  }(favoritesListItem
+                                                                      .posterUrl),
+                                                                  width: double
+                                                                      .infinity,
+                                                                  height: double
+                                                                      .infinity,
+                                                                  fit: BoxFit
+                                                                      .cover,
+                                                                ),
+                                                              ),
+                                                              Padding(
+                                                                padding:
+                                                                    EdgeInsetsDirectional
                                                                         .fromSTEB(
                                                                             0.0,
                                                                             8.0,
                                                                             8.0,
                                                                             0.0),
-                                                                    child:
-                                                                        Container(
-                                                                      width:
-                                                                          32.0,
-                                                                      height:
-                                                                          32.0,
-                                                                      decoration:
-                                                                          BoxDecoration(
-                                                                        color: Color(
-                                                                            0xCC0B0B12),
-                                                                        shape: BoxShape
-                                                                            .circle,
-                                                                      ),
-                                                                      alignment:
-                                                                          AlignmentDirectional(
-                                                                              0.0,
-                                                                              0.0),
-                                                                      child:
-                                                                          Icon(
-                                                                        Icons
-                                                                            .favorite_rounded,
-                                                                        color: Color(
-                                                                            0xFFE5484D),
-                                                                        size:
-                                                                            16.0,
-                                                                      ),
-                                                                    ),
+                                                                child:
+                                                                    Container(
+                                                                  width: 32.0,
+                                                                  height: 32.0,
+                                                                  decoration:
+                                                                      BoxDecoration(
+                                                                    color: Color(
+                                                                        0xCC0B0B12),
+                                                                    shape: BoxShape
+                                                                        .circle,
                                                                   ),
-                                                                ],
+                                                                  alignment:
+                                                                      AlignmentDirectional(
+                                                                          0.0,
+                                                                          0.0),
+                                                                  child: Icon(
+                                                                    Icons
+                                                                        .favorite_rounded,
+                                                                    color: Color(
+                                                                        0xFFE5484D),
+                                                                    size: 16.0,
+                                                                  ),
+                                                                ),
                                                               ),
-                                                            ),
-                                                            Padding(
-                                                              padding:
-                                                                  EdgeInsetsDirectional
-                                                                      .fromSTEB(
-                                                                          10.0,
-                                                                          10.0,
-                                                                          10.0,
-                                                                          12.0),
-                                                              child: Column(
-                                                                mainAxisSize:
-                                                                    MainAxisSize
-                                                                        .min,
-                                                                mainAxisAlignment:
-                                                                    MainAxisAlignment
-                                                                        .start,
-                                                                crossAxisAlignment:
-                                                                    CrossAxisAlignment
-                                                                        .stretch,
-                                                                children: [
-                                                                  Text(
-                                                                    containerMediaRecord!
-                                                                        .title,
-                                                                    maxLines: 2,
-                                                                    style: FlutterFlowTheme.of(
-                                                                            context)
-                                                                        .bodyMedium
-                                                                        .override(
-                                                                          font:
-                                                                              GoogleFonts.inter(
-                                                                            fontWeight:
-                                                                                FontWeight.w600,
-                                                                            fontStyle:
-                                                                                FlutterFlowTheme.of(context).bodyMedium.fontStyle,
-                                                                          ),
-                                                                          color:
-                                                                              Color(0xFFF5F5F7),
-                                                                          fontSize:
-                                                                              14.0,
-                                                                          letterSpacing:
-                                                                              0.0,
-                                                                          fontWeight:
-                                                                              FontWeight.w600,
-                                                                          fontStyle: FlutterFlowTheme.of(context)
-                                                                              .bodyMedium
-                                                                              .fontStyle,
-                                                                          lineHeight:
-                                                                              1.3,
-                                                                        ),
-                                                                  ),
-                                                                  Text(
-                                                                    'Voir la fiche',
-                                                                    style: FlutterFlowTheme.of(
-                                                                            context)
-                                                                        .bodyMedium
-                                                                        .override(
-                                                                          font:
-                                                                              GoogleFonts.inter(
-                                                                            fontWeight:
-                                                                                FontWeight.w600,
-                                                                            fontStyle:
-                                                                                FlutterFlowTheme.of(context).bodyMedium.fontStyle,
-                                                                          ),
-                                                                          color:
-                                                                              Color(0xFFF5B841),
-                                                                          fontSize:
-                                                                              12.0,
-                                                                          letterSpacing:
-                                                                              0.0,
-                                                                          fontWeight:
-                                                                              FontWeight.w600,
-                                                                          fontStyle: FlutterFlowTheme.of(context)
-                                                                              .bodyMedium
-                                                                              .fontStyle,
-                                                                        ),
-                                                                  ),
-                                                                ].divide(SizedBox(
-                                                                    height:
-                                                                        4.0)),
-                                                              ),
-                                                            ),
-                                                          ],
+                                                            ],
+                                                          ),
                                                         ),
-                                                      ),
-                                                    );
-                                                  },
+                                                        Padding(
+                                                          padding:
+                                                              EdgeInsetsDirectional
+                                                                  .fromSTEB(
+                                                                      10.0,
+                                                                      10.0,
+                                                                      10.0,
+                                                                      12.0),
+                                                          child: Column(
+                                                            mainAxisSize:
+                                                                MainAxisSize
+                                                                    .min,
+                                                            mainAxisAlignment:
+                                                                MainAxisAlignment
+                                                                    .start,
+                                                            crossAxisAlignment:
+                                                                CrossAxisAlignment
+                                                                    .stretch,
+                                                            children: [
+                                                              Text(
+                                                                favoritesListItem
+                                                                    .title,
+                                                                maxLines: 2,
+                                                                style: FlutterFlowTheme.of(
+                                                                        context)
+                                                                    .bodyMedium
+                                                                    .override(
+                                                                      font: GoogleFonts
+                                                                          .inter(
+                                                                        fontWeight:
+                                                                            FontWeight.w600,
+                                                                        fontStyle: FlutterFlowTheme.of(context)
+                                                                            .bodyMedium
+                                                                            .fontStyle,
+                                                                      ),
+                                                                      color: Color(
+                                                                          0xFFF5F5F7),
+                                                                      fontSize:
+                                                                          14.0,
+                                                                      letterSpacing:
+                                                                          0.0,
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .w600,
+                                                                      fontStyle: FlutterFlowTheme.of(
+                                                                              context)
+                                                                          .bodyMedium
+                                                                          .fontStyle,
+                                                                      lineHeight:
+                                                                          1.3,
+                                                                    ),
+                                                              ),
+                                                              Text(
+                                                                'Voir la fiche',
+                                                                style: FlutterFlowTheme.of(
+                                                                        context)
+                                                                    .bodyMedium
+                                                                    .override(
+                                                                      font: GoogleFonts
+                                                                          .inter(
+                                                                        fontWeight:
+                                                                            FontWeight.w600,
+                                                                        fontStyle: FlutterFlowTheme.of(context)
+                                                                            .bodyMedium
+                                                                            .fontStyle,
+                                                                      ),
+                                                                      color: Color(
+                                                                          0xFFF5B841),
+                                                                      fontSize:
+                                                                          12.0,
+                                                                      letterSpacing:
+                                                                          0.0,
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .w600,
+                                                                      fontStyle: FlutterFlowTheme.of(
+                                                                              context)
+                                                                          .bodyMedium
+                                                                          .fontStyle,
+                                                                    ),
+                                                              ),
+                                                            ].divide(SizedBox(
+                                                                height: 4.0)),
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ),
                                                 );
                                               },
                                             );
@@ -1320,14 +1273,10 @@ class _FavorisWidgetState extends State<FavorisWidget>
                                                   List<WatchlistsRecord>>()
                                                 ..complete(
                                                     queryWatchlistsRecordOnce(
+                                                  parent: currentUserReference,
                                                   queryBuilder:
                                                       (watchlistsRecord) =>
                                                           watchlistsRecord
-                                                              .where(
-                                                                'userId',
-                                                                isEqualTo:
-                                                                    currentUserUid,
-                                                              )
                                                               .orderBy(
                                                                   'createdAt',
                                                                   descending:
@@ -1544,222 +1493,173 @@ class _FavorisWidgetState extends State<FavorisWidget>
                                                       final watchlistsListItem =
                                                           watchlistsList[
                                                               watchlistsListIndex];
-                                                      return FutureBuilder<
-                                                          List<
-                                                              WatchlistItemsRecord>>(
-                                                        future:
-                                                            queryWatchlistItemsRecordOnce(
-                                                          queryBuilder:
-                                                              (watchlistItemsRecord) =>
-                                                                  watchlistItemsRecord
-                                                                      .where(
-                                                                        'watchlistId',
-                                                                        isEqualTo:
-                                                                            watchlistsListItem.id,
-                                                                      )
-                                                                      .where(
-                                                                        'userId',
-                                                                        isEqualTo:
-                                                                            currentUserUid,
-                                                                      ),
-                                                        ),
-                                                        builder: (context,
-                                                            snapshot) {
-                                                          // Customize what your widget looks like when it's loading.
-                                                          if (!snapshot
-                                                              .hasData) {
-                                                            return Center(
-                                                              child: SizedBox(
-                                                                width: 50.0,
-                                                                height: 50.0,
-                                                                child:
-                                                                    CircularProgressIndicator(
-                                                                  valueColor:
-                                                                      AlwaysStoppedAnimation<
-                                                                          Color>(
-                                                                    FlutterFlowTheme.of(
-                                                                            context)
-                                                                        .primary,
-                                                                  ),
-                                                                ),
+                                                      return InkWell(
+                                                        splashColor:
+                                                            Colors.transparent,
+                                                        focusColor:
+                                                            Colors.transparent,
+                                                        hoverColor:
+                                                            Colors.transparent,
+                                                        highlightColor:
+                                                            Colors.transparent,
+                                                        onTap: () async {
+                                                          context.pushNamed(
+                                                            DetailListeWidget
+                                                                .routeName,
+                                                            queryParameters: {
+                                                              'watchlist':
+                                                                  serializeParam(
+                                                                watchlistsListItem
+                                                                    .reference,
+                                                                ParamType
+                                                                    .DocumentReference,
                                                               ),
-                                                            );
-                                                          }
-                                                          List<WatchlistItemsRecord>
-                                                              containerWatchlistItemsRecordList =
-                                                              snapshot.data!;
-
-                                                          return InkWell(
-                                                            splashColor: Colors
-                                                                .transparent,
-                                                            focusColor: Colors
-                                                                .transparent,
-                                                            hoverColor: Colors
-                                                                .transparent,
-                                                            highlightColor:
-                                                                Colors
-                                                                    .transparent,
-                                                            onTap: () async {
-                                                              context.pushNamed(
-                                                                DetailListeWidget
-                                                                    .routeName,
-                                                                queryParameters:
-                                                                    {
-                                                                  'watchlistId':
-                                                                      serializeParam(
-                                                                    watchlistsListItem
-                                                                        .id,
-                                                                    ParamType
-                                                                        .String,
-                                                                  ),
-                                                                }.withoutNulls,
-                                                              );
-                                                            },
-                                                            child: Container(
-                                                              decoration:
-                                                                  BoxDecoration(
-                                                                color: Color(
-                                                                    0xFF15151F),
-                                                                borderRadius:
-                                                                    BorderRadius
-                                                                        .circular(
-                                                                            16.0),
-                                                                border:
-                                                                    Border.all(
-                                                                  color: Color(
-                                                                      0xFF2A2A3A),
-                                                                  width: 1.0,
-                                                                ),
-                                                              ),
-                                                              child: Padding(
-                                                                padding: EdgeInsetsDirectional
+                                                            }.withoutNulls,
+                                                          );
+                                                        },
+                                                        child: Container(
+                                                          decoration:
+                                                              BoxDecoration(
+                                                            color: Color(
+                                                                0xFF15151F),
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        16.0),
+                                                            border: Border.all(
+                                                              color: Color(
+                                                                  0xFF2A2A3A),
+                                                              width: 1.0,
+                                                            ),
+                                                          ),
+                                                          child: Padding(
+                                                            padding:
+                                                                EdgeInsetsDirectional
                                                                     .fromSTEB(
                                                                         14.0,
                                                                         12.0,
                                                                         14.0,
                                                                         12.0),
-                                                                child: Row(
-                                                                  mainAxisSize:
-                                                                      MainAxisSize
-                                                                          .max,
-                                                                  mainAxisAlignment:
-                                                                      MainAxisAlignment
-                                                                          .start,
-                                                                  crossAxisAlignment:
-                                                                      CrossAxisAlignment
-                                                                          .center,
-                                                                  children: [
-                                                                    Container(
-                                                                      width:
-                                                                          44.0,
-                                                                      height:
-                                                                          44.0,
-                                                                      decoration:
-                                                                          BoxDecoration(
-                                                                        color: Color(
-                                                                            0x267C5CFF),
-                                                                        shape: BoxShape
-                                                                            .circle,
+                                                            child: Row(
+                                                              mainAxisSize:
+                                                                  MainAxisSize
+                                                                      .max,
+                                                              mainAxisAlignment:
+                                                                  MainAxisAlignment
+                                                                      .start,
+                                                              crossAxisAlignment:
+                                                                  CrossAxisAlignment
+                                                                      .center,
+                                                              children: [
+                                                                Container(
+                                                                  width: 44.0,
+                                                                  height: 44.0,
+                                                                  decoration:
+                                                                      BoxDecoration(
+                                                                    color: Color(
+                                                                        0x267C5CFF),
+                                                                    shape: BoxShape
+                                                                        .circle,
+                                                                  ),
+                                                                  alignment:
+                                                                      AlignmentDirectional(
+                                                                          0.0,
+                                                                          0.0),
+                                                                  child: Icon(
+                                                                    Icons
+                                                                        .playlist_play_rounded,
+                                                                    color: Color(
+                                                                        0xFF7C5CFF),
+                                                                    size: 20.0,
+                                                                  ),
+                                                                ),
+                                                                Expanded(
+                                                                  child: Column(
+                                                                    mainAxisSize:
+                                                                        MainAxisSize
+                                                                            .min,
+                                                                    mainAxisAlignment:
+                                                                        MainAxisAlignment
+                                                                            .start,
+                                                                    crossAxisAlignment:
+                                                                        CrossAxisAlignment
+                                                                            .stretch,
+                                                                    children: [
+                                                                      Text(
+                                                                        watchlistsListItem
+                                                                            .name,
+                                                                        maxLines:
+                                                                            1,
+                                                                        style: FlutterFlowTheme.of(context)
+                                                                            .bodyMedium
+                                                                            .override(
+                                                                              font: GoogleFonts.inter(
+                                                                                fontWeight: FontWeight.w600,
+                                                                                fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
+                                                                              ),
+                                                                              color: Color(0xFFF5F5F7),
+                                                                              fontSize: 15.0,
+                                                                              letterSpacing: 0.0,
+                                                                              fontWeight: FontWeight.w600,
+                                                                              fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
+                                                                            ),
                                                                       ),
-                                                                      alignment:
-                                                                          AlignmentDirectional(
-                                                                              0.0,
-                                                                              0.0),
-                                                                      child:
-                                                                          Icon(
-                                                                        Icons
-                                                                            .playlist_play_rounded,
-                                                                        color: Color(
-                                                                            0xFF7C5CFF),
-                                                                        size:
-                                                                            20.0,
-                                                                      ),
-                                                                    ),
-                                                                    Expanded(
-                                                                      child:
-                                                                          Column(
+                                                                      Row(
                                                                         mainAxisSize:
-                                                                            MainAxisSize.min,
+                                                                            MainAxisSize.max,
                                                                         mainAxisAlignment:
                                                                             MainAxisAlignment.start,
                                                                         crossAxisAlignment:
-                                                                            CrossAxisAlignment.stretch,
+                                                                            CrossAxisAlignment.center,
                                                                         children:
                                                                             [
                                                                           Text(
-                                                                            watchlistsListItem.name,
-                                                                            maxLines:
-                                                                                1,
+                                                                            watchlistsListItem.itemCount.toString(),
                                                                             style: FlutterFlowTheme.of(context).bodyMedium.override(
                                                                                   font: GoogleFonts.inter(
-                                                                                    fontWeight: FontWeight.w600,
+                                                                                    fontWeight: FontWeight.normal,
                                                                                     fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
                                                                                   ),
-                                                                                  color: Color(0xFFF5F5F7),
-                                                                                  fontSize: 15.0,
+                                                                                  color: Color(0xFFA0A0B2),
+                                                                                  fontSize: 12.0,
                                                                                   letterSpacing: 0.0,
-                                                                                  fontWeight: FontWeight.w600,
+                                                                                  fontWeight: FontWeight.normal,
                                                                                   fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
                                                                                 ),
                                                                           ),
-                                                                          Row(
-                                                                            mainAxisSize:
-                                                                                MainAxisSize.max,
-                                                                            mainAxisAlignment:
-                                                                                MainAxisAlignment.start,
-                                                                            crossAxisAlignment:
-                                                                                CrossAxisAlignment.center,
-                                                                            children:
-                                                                                [
-                                                                              Text(
-                                                                                containerWatchlistItemsRecordList.length.toString(),
-                                                                                style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                                                      font: GoogleFonts.inter(
-                                                                                        fontWeight: FontWeight.normal,
-                                                                                        fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
-                                                                                      ),
-                                                                                      color: Color(0xFFA0A0B2),
-                                                                                      fontSize: 12.0,
-                                                                                      letterSpacing: 0.0,
-                                                                                      fontWeight: FontWeight.normal,
-                                                                                      fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
-                                                                                    ),
-                                                                              ),
-                                                                              Text(
-                                                                                'titre(s)',
-                                                                                style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                                                      font: GoogleFonts.inter(
-                                                                                        fontWeight: FontWeight.normal,
-                                                                                        fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
-                                                                                      ),
-                                                                                      color: Color(0xFFA0A0B2),
-                                                                                      fontSize: 12.0,
-                                                                                      letterSpacing: 0.0,
-                                                                                      fontWeight: FontWeight.normal,
-                                                                                      fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
-                                                                                    ),
-                                                                              ),
-                                                                            ].divide(SizedBox(width: 4.0)),
+                                                                          Text(
+                                                                            'titre(s)',
+                                                                            style: FlutterFlowTheme.of(context).bodyMedium.override(
+                                                                                  font: GoogleFonts.inter(
+                                                                                    fontWeight: FontWeight.normal,
+                                                                                    fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
+                                                                                  ),
+                                                                                  color: Color(0xFFA0A0B2),
+                                                                                  fontSize: 12.0,
+                                                                                  letterSpacing: 0.0,
+                                                                                  fontWeight: FontWeight.normal,
+                                                                                  fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
+                                                                                ),
                                                                           ),
-                                                                        ].divide(SizedBox(height: 4.0)),
+                                                                        ].divide(SizedBox(width: 4.0)),
                                                                       ),
-                                                                    ),
-                                                                    Icon(
-                                                                      Icons
-                                                                          .chevron_right_rounded,
-                                                                      color: Color(
-                                                                          0xFF5E5E70),
-                                                                      size:
-                                                                          22.0,
-                                                                    ),
-                                                                  ].divide(SizedBox(
-                                                                      width:
-                                                                          14.0)),
+                                                                    ].divide(SizedBox(
+                                                                        height:
+                                                                            4.0)),
+                                                                  ),
                                                                 ),
-                                                              ),
+                                                                Icon(
+                                                                  Icons
+                                                                      .chevron_right_rounded,
+                                                                  color: Color(
+                                                                      0xFF5E5E70),
+                                                                  size: 22.0,
+                                                                ),
+                                                              ].divide(SizedBox(
+                                                                  width: 14.0)),
                                                             ),
-                                                          );
-                                                        },
+                                                          ),
+                                                        ),
                                                       );
                                                     }).divide(
                                                         SizedBox(height: 12.0)),
@@ -1790,11 +1690,7 @@ class _FavorisWidgetState extends State<FavorisWidget>
                                   children: [
                                     FutureBuilder<List<WatchedRecord>>(
                                       future: queryWatchedRecordOnce(
-                                        queryBuilder: (watchedRecord) =>
-                                            watchedRecord.where(
-                                          'userId',
-                                          isEqualTo: currentUserUid,
-                                        ),
+                                        parent: currentUserReference,
                                       ),
                                       builder: (context, snapshot) {
                                         // Customize what your widget looks like when it's loading.
@@ -2072,14 +1968,10 @@ class _FavorisWidgetState extends State<FavorisWidget>
                                     ),
                                     FutureBuilder<List<WatchedRecord>>(
                                       future: queryWatchedRecordOnce(
+                                        parent: currentUserReference,
                                         queryBuilder: (watchedRecord) =>
-                                            watchedRecord
-                                                .where(
-                                                  'userId',
-                                                  isEqualTo: currentUserUid,
-                                                )
-                                                .orderBy('watchedAt',
-                                                    descending: true),
+                                            watchedRecord.orderBy('watchedAt',
+                                                descending: true),
                                       ),
                                       builder: (context, snapshot) {
                                         // Customize what your widget looks like when it's loading.
@@ -2147,199 +2039,183 @@ class _FavorisWidgetState extends State<FavorisWidget>
                                                             .stretch,
                                                     children: [
                                                       Expanded(
-                                                        child: FutureBuilder<
-                                                            List<MediaRecord>>(
-                                                          future:
-                                                              queryMediaRecordOnce(
-                                                            queryBuilder:
-                                                                (mediaRecord) =>
-                                                                    mediaRecord
-                                                                        .where(
-                                                              'id',
-                                                              isEqualTo:
-                                                                  watchedListItem
-                                                                      .mediaId,
-                                                            ),
-                                                            singleRecord: true,
-                                                          ),
-                                                          builder: (context,
-                                                              snapshot) {
-                                                            // Customize what your widget looks like when it's loading.
-                                                            if (!snapshot
-                                                                .hasData) {
-                                                              return Center(
-                                                                child: SizedBox(
-                                                                  width: 50.0,
-                                                                  height: 50.0,
-                                                                  child:
-                                                                      CircularProgressIndicator(
-                                                                    valueColor:
-                                                                        AlwaysStoppedAnimation<
-                                                                            Color>(
-                                                                      FlutterFlowTheme.of(
-                                                                              context)
-                                                                          .primary,
-                                                                    ),
-                                                                  ),
-                                                                ),
-                                                              );
-                                                            }
-                                                            List<MediaRecord>
-                                                                containerMediaRecordList =
-                                                                snapshot.data!;
-                                                            final containerMediaRecord =
-                                                                containerMediaRecordList
-                                                                        .isNotEmpty
-                                                                    ? containerMediaRecordList
-                                                                        .first
-                                                                    : null;
-
-                                                            return InkWell(
-                                                              splashColor: Colors
-                                                                  .transparent,
-                                                              focusColor: Colors
-                                                                  .transparent,
-                                                              hoverColor: Colors
-                                                                  .transparent,
-                                                              highlightColor:
-                                                                  Colors
-                                                                      .transparent,
-                                                              onTap: () async {
-                                                                context
-                                                                    .pushNamed(
-                                                                  MediaDetailWidget
-                                                                      .routeName,
-                                                                  queryParameters:
-                                                                      {
-                                                                    'mediaId':
-                                                                        serializeParam(
+                                                        child: InkWell(
+                                                          splashColor: Colors
+                                                              .transparent,
+                                                          focusColor: Colors
+                                                              .transparent,
+                                                          hoverColor: Colors
+                                                              .transparent,
+                                                          highlightColor: Colors
+                                                              .transparent,
+                                                          onTap: () async {
+                                                            context.pushNamed(
+                                                              MediaDetailWidget
+                                                                  .routeName,
+                                                              queryParameters: {
+                                                                'mediaId':
+                                                                    serializeParam(
+                                                                  (String? mediaType,
+                                                                          int?
+                                                                              tmdbId) {
+                                                                    return '${mediaType}_${tmdbId}';
+                                                                  }(
                                                                       watchedListItem
-                                                                          .mediaId,
-                                                                      ParamType
-                                                                          .String,
-                                                                    ),
-                                                                  }.withoutNulls,
-                                                                );
-                                                              },
-                                                              child: Container(
-                                                                decoration:
-                                                                    BoxDecoration(),
-                                                                child: Column(
-                                                                  mainAxisSize:
-                                                                      MainAxisSize
-                                                                          .max,
-                                                                  mainAxisAlignment:
-                                                                      MainAxisAlignment
-                                                                          .start,
-                                                                  crossAxisAlignment:
-                                                                      CrossAxisAlignment
-                                                                          .stretch,
-                                                                  children: [
-                                                                    Expanded(
-                                                                      child:
-                                                                          Stack(
-                                                                        alignment: AlignmentDirectional(
+                                                                          .mediaType,
+                                                                      watchedListItem
+                                                                          .tmdbId),
+                                                                  ParamType
+                                                                      .String,
+                                                                ),
+                                                              }.withoutNulls,
+                                                            );
+                                                          },
+                                                          child: Container(
+                                                            decoration:
+                                                                BoxDecoration(),
+                                                            child: Column(
+                                                              mainAxisSize:
+                                                                  MainAxisSize
+                                                                      .max,
+                                                              mainAxisAlignment:
+                                                                  MainAxisAlignment
+                                                                      .start,
+                                                              crossAxisAlignment:
+                                                                  CrossAxisAlignment
+                                                                      .stretch,
+                                                              children: [
+                                                                Expanded(
+                                                                  child: Stack(
+                                                                    alignment:
+                                                                        AlignmentDirectional(
                                                                             1.0,
                                                                             -1.0),
-                                                                        children: [
-                                                                          ClipRRect(
-                                                                            borderRadius:
-                                                                                BorderRadius.only(
-                                                                              topLeft: Radius.circular(12.0),
-                                                                              topRight: Radius.circular(12.0),
-                                                                            ),
-                                                                            child:
-                                                                                CachedNetworkImage(
-                                                                              fadeInDuration: Duration(milliseconds: 0),
-                                                                              fadeOutDuration: Duration(milliseconds: 0),
-                                                                              imageUrl: (String? url) {
-                                                                                return url ?? '';
-                                                                              }(containerMediaRecord?.posterUrl),
-                                                                              width: double.infinity,
-                                                                              height: double.infinity,
-                                                                              fit: BoxFit.cover,
-                                                                            ),
-                                                                          ),
-                                                                          Padding(
-                                                                            padding: EdgeInsetsDirectional.fromSTEB(
-                                                                                0.0,
-                                                                                8.0,
-                                                                                8.0,
-                                                                                0.0),
-                                                                            child:
-                                                                                Container(
-                                                                              width: 32.0,
-                                                                              height: 32.0,
-                                                                              decoration: BoxDecoration(
-                                                                                color: Color(0xCC0B0B12),
-                                                                                shape: BoxShape.circle,
-                                                                              ),
-                                                                              alignment: AlignmentDirectional(0.0, 0.0),
-                                                                              child: Icon(
-                                                                                Icons.movie_outlined,
-                                                                                color: Color(0xFFF5B841),
-                                                                                size: 16.0,
-                                                                              ),
-                                                                            ),
-                                                                          ),
-                                                                        ],
+                                                                    children: [
+                                                                      ClipRRect(
+                                                                        borderRadius:
+                                                                            BorderRadius.only(
+                                                                          topLeft:
+                                                                              Radius.circular(12.0),
+                                                                          topRight:
+                                                                              Radius.circular(12.0),
+                                                                        ),
+                                                                        child:
+                                                                            CachedNetworkImage(
+                                                                          fadeInDuration:
+                                                                              Duration(milliseconds: 0),
+                                                                          fadeOutDuration:
+                                                                              Duration(milliseconds: 0),
+                                                                          imageUrl: (String?
+                                                                              url) {
+                                                                            return url ??
+                                                                                '';
+                                                                          }(watchedListItem
+                                                                              .posterUrl),
+                                                                          width:
+                                                                              double.infinity,
+                                                                          height:
+                                                                              double.infinity,
+                                                                          fit: BoxFit
+                                                                              .cover,
+                                                                        ),
                                                                       ),
-                                                                    ),
-                                                                    Padding(
-                                                                      padding: EdgeInsetsDirectional.fromSTEB(
+                                                                      Padding(
+                                                                        padding: EdgeInsetsDirectional.fromSTEB(
+                                                                            0.0,
+                                                                            8.0,
+                                                                            8.0,
+                                                                            0.0),
+                                                                        child:
+                                                                            Container(
+                                                                          width:
+                                                                              32.0,
+                                                                          height:
+                                                                              32.0,
+                                                                          decoration:
+                                                                              BoxDecoration(
+                                                                            color:
+                                                                                Color(0xCC0B0B12),
+                                                                            shape:
+                                                                                BoxShape.circle,
+                                                                          ),
+                                                                          alignment: AlignmentDirectional(
+                                                                              0.0,
+                                                                              0.0),
+                                                                          child:
+                                                                              Icon(
+                                                                            Icons.visibility_outlined,
+                                                                            color:
+                                                                                Color(0xFF2ECC71),
+                                                                            size:
+                                                                                16.0,
+                                                                          ),
+                                                                        ),
+                                                                      ),
+                                                                    ],
+                                                                  ),
+                                                                ),
+                                                                Padding(
+                                                                  padding: EdgeInsetsDirectional
+                                                                      .fromSTEB(
                                                                           10.0,
                                                                           10.0,
                                                                           10.0,
                                                                           12.0),
-                                                                      child:
-                                                                          Column(
-                                                                        mainAxisSize:
-                                                                            MainAxisSize.min,
-                                                                        mainAxisAlignment:
-                                                                            MainAxisAlignment.start,
-                                                                        crossAxisAlignment:
-                                                                            CrossAxisAlignment.stretch,
-                                                                        children:
-                                                                            [
-                                                                          Text(
-                                                                            containerMediaRecord!.title,
-                                                                            maxLines:
-                                                                                2,
-                                                                            style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                                                  font: GoogleFonts.inter(
-                                                                                    fontWeight: FontWeight.w600,
-                                                                                    fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
-                                                                                  ),
-                                                                                  color: Color(0xFFF5F5F7),
-                                                                                  fontSize: 14.0,
-                                                                                  letterSpacing: 0.0,
-                                                                                  fontWeight: FontWeight.w600,
-                                                                                  fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
-                                                                                  lineHeight: 1.3,
-                                                                                ),
-                                                                          ),
-                                                                          Text(
-                                                                            'Voir la fiche',
-                                                                            style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                                                  font: GoogleFonts.inter(
-                                                                                    fontWeight: FontWeight.w600,
-                                                                                    fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
-                                                                                  ),
-                                                                                  color: Color(0xFFF5B841),
-                                                                                  fontSize: 12.0,
-                                                                                  letterSpacing: 0.0,
-                                                                                  fontWeight: FontWeight.w600,
-                                                                                  fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
-                                                                                ),
-                                                                          ),
-                                                                        ].divide(SizedBox(height: 4.0)),
+                                                                  child: Column(
+                                                                    mainAxisSize:
+                                                                        MainAxisSize
+                                                                            .min,
+                                                                    mainAxisAlignment:
+                                                                        MainAxisAlignment
+                                                                            .start,
+                                                                    crossAxisAlignment:
+                                                                        CrossAxisAlignment
+                                                                            .stretch,
+                                                                    children: [
+                                                                      Text(
+                                                                        watchedListItem
+                                                                            .title,
+                                                                        maxLines:
+                                                                            2,
+                                                                        style: FlutterFlowTheme.of(context)
+                                                                            .bodyMedium
+                                                                            .override(
+                                                                              font: GoogleFonts.inter(
+                                                                                fontWeight: FontWeight.w600,
+                                                                                fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
+                                                                              ),
+                                                                              color: Color(0xFFF5F5F7),
+                                                                              fontSize: 14.0,
+                                                                              letterSpacing: 0.0,
+                                                                              fontWeight: FontWeight.w600,
+                                                                              fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
+                                                                              lineHeight: 1.3,
+                                                                            ),
                                                                       ),
-                                                                    ),
-                                                                  ],
+                                                                      Text(
+                                                                        'Voir la fiche',
+                                                                        style: FlutterFlowTheme.of(context)
+                                                                            .bodyMedium
+                                                                            .override(
+                                                                              font: GoogleFonts.inter(
+                                                                                fontWeight: FontWeight.w600,
+                                                                                fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
+                                                                              ),
+                                                                              color: Color(0xFF2ECC71),
+                                                                              fontSize: 12.0,
+                                                                              letterSpacing: 0.0,
+                                                                              fontWeight: FontWeight.w600,
+                                                                              fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
+                                                                            ),
+                                                                      ),
+                                                                    ].divide(SizedBox(
+                                                                        height:
+                                                                            4.0)),
+                                                                  ),
                                                                 ),
-                                                              ),
-                                                            );
-                                                          },
+                                                              ],
+                                                            ),
+                                                          ),
                                                         ),
                                                       ),
                                                     ],

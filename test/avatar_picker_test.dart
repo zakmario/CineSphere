@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:cine_sphere/custom_code/actions/firestore_service.dart';
+import 'package:cine_sphere/custom_code/actions/firebase_service.dart';
 import 'package:cine_sphere/custom_code/widgets/index.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -9,13 +9,13 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'fake_firestore_service.dart';
+import 'fake_firebase_service.dart';
 
 const _picker = MethodChannel('plugins.flutter.io/image_picker');
 
 void main() {
   late Directory tmp;
-  late FakeFirestoreService service;
+  late FakeCineFirebaseService service;
 
   setUpAll(() async {
     GoogleFonts.config.allowRuntimeFetching = false;
@@ -37,11 +37,11 @@ void main() {
   });
 
   setUp(() {
-    service = FakeFirestoreService();
-    FirestoreService.debugInstance = service;
+    service = FakeCineFirebaseService();
+    CineFirebaseService.debugInstance = service;
   });
 
-  tearDown(() => FirestoreService.debugInstance = null);
+  tearDown(() => CineFirebaseService.debugInstance = null);
 
   void fakeGallery(String? path) {
     TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger

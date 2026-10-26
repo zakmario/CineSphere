@@ -1,0 +1,15 @@
+{
+  "name": "cinesphere-firebase",
+  "private": true,
+  "description": "Règles Firestore de CinéSphère et leurs tests sur l'émulateur (cahier des charges, 5.7).",
+  "type": "module",
+  "scripts": {
+    "test:rules": "firebase emulators:exec --only firestore --project demo-cinesphere \"node --test tests/rules.test.js\"",
+    "seed:emulator": "firebase emulators:exec --only firestore --project demo-cinesphere \"cd .. && dart run tool/seed_firestore.dart --release-events\"",
+    "deploy": "firebase deploy --only firestore"
+  },
+  "devDependencies": {
+    "@firebase/rules-unit-testing": "6.0.0",
+    "firebase": "13.0.0"
+  }
+}

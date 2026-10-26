@@ -9,7 +9,7 @@ import 'package:flutter/material.dart';
 // DO NOT REMOVE OR MODIFY THE CODE ABOVE!
 
 import '/custom_code/actions/auth_service.dart';
-import '/custom_code/actions/firestore_service.dart';
+import '/custom_code/actions/firebase_service.dart';
 
 /// Enregistre un nouveau mot de passe pour le membre connecté. Le mot de
 /// passe oublié passe par le lien Firebase reçu par e-mail ; [email] et

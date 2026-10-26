@@ -61,14 +61,8 @@ class _ProfilWidgetState extends State<ProfilWidget> {
           top: true,
           child: Padding(
             padding: EdgeInsetsDirectional.fromSTEB(16.0, 16.0, 16.0, 32.0),
-            child: FutureBuilder<List<UsersRecord>>(
-              future: queryUsersRecordOnce(
-                queryBuilder: (usersRecord) => usersRecord.where(
-                  'id',
-                  isEqualTo: currentUserUid,
-                ),
-                singleRecord: true,
-              ),
+            child: FutureBuilder<UsersRecord>(
+              future: UsersRecord.getDocumentOnce(currentUserReference!),
               builder: (context, snapshot) {
                 // Customize what your widget looks like when it's loading.
                 if (!snapshot.hasData) {
@@ -84,10 +78,8 @@ class _ProfilWidgetState extends State<ProfilWidget> {
                     ),
                   );
                 }
-                List<UsersRecord> columnUsersRecordList = snapshot.data!;
-                final columnUsersRecord = columnUsersRecordList.isNotEmpty
-                    ? columnUsersRecordList.first
-                    : null;
+
+                final columnUsersRecord = snapshot.data!;
 
                 return SingleChildScrollView(
                   primary: false,
@@ -183,11 +175,11 @@ class _ProfilWidgetState extends State<ProfilWidget> {
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
                               custom_widgets.AvatarPicker(
-                                avatarUrl: columnUsersRecord?.avatarData,
+                                avatarUrl: columnUsersRecord.avatarData,
                                 onChanged: (avatarUrl) async {},
                               ),
                               Text(
-                                columnUsersRecord!.username,
+                                columnUsersRecord.username,
                                 textAlign: TextAlign.center,
                                 style: FlutterFlowTheme.of(context)
                                     .headlineMedium
@@ -233,7 +225,7 @@ class _ProfilWidgetState extends State<ProfilWidget> {
                                     8.0, 4.0, 8.0, 0.0),
                                 child: Text(
                                   valueOrDefault<String>(
-                                    columnUsersRecord?.bio,
+                                    columnUsersRecord.bio,
                                     'Ajoutez une bio pour vous présenter.',
                                   ),
                                   textAlign: TextAlign.center,
@@ -274,11 +266,7 @@ class _ProfilWidgetState extends State<ProfilWidget> {
                           Expanded(
                             child: FutureBuilder<List<FavoritesRecord>>(
                               future: queryFavoritesRecordOnce(
-                                queryBuilder: (favoritesRecord) =>
-                                    favoritesRecord.where(
-                                  'userId',
-                                  isEqualTo: currentUserUid,
-                                ),
+                                parent: currentUserReference,
                               ),
                               builder: (context, snapshot) {
                                 // Customize what your widget looks like when it's loading.
@@ -383,11 +371,7 @@ class _ProfilWidgetState extends State<ProfilWidget> {
                           Expanded(
                             child: FutureBuilder<List<WatchlistsRecord>>(
                               future: queryWatchlistsRecordOnce(
-                                queryBuilder: (watchlistsRecord) =>
-                                    watchlistsRecord.where(
-                                  'userId',
-                                  isEqualTo: currentUserUid,
-                                ),
+                                parent: currentUserReference,
                               ),
                               builder: (context, snapshot) {
                                 // Customize what your widget looks like when it's loading.
@@ -662,7 +646,7 @@ class _ProfilWidgetState extends State<ProfilWidget> {
                                         controller: _model
                                                 .usernameFieldTextController ??=
                                             TextEditingController(
-                                          text: columnUsersRecord?.username,
+                                          text: columnUsersRecord.username,
                                         ),
                                         focusNode:
                                             _model.usernameFieldFocusNode,
@@ -834,7 +818,7 @@ class _ProfilWidgetState extends State<ProfilWidget> {
                                         controller:
                                             _model.bioFieldTextController ??=
                                                 TextEditingController(
-                                          text: columnUsersRecord?.bio,
+                                          text: columnUsersRecord.bio,
                                         ),
                                         focusNode: _model.bioFieldFocusNode,
                                         obscureText: false,

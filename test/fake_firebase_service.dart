@@ -1,6 +1,6 @@
 import 'dart:typed_data';
 
-import 'package:cine_sphere/custom_code/actions/firestore_service.dart';
+import 'package:cine_sphere/custom_code/actions/firebase_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:mocktail/mocktail.dart';
 
@@ -9,8 +9,8 @@ class _UnusedFirestore extends Mock implements FirebaseFirestore {}
 /// Service Firestore en mémoire pour les tests de widgets : favoris, vus et
 /// avatar du membre [userId] (null = déconnecté). Chaque appel est noté dans
 /// [calls].
-class FakeFirestoreService extends FirestoreService {
-  FakeFirestoreService({this.userId = 'u1'})
+class FakeCineFirebaseService extends CineFirebaseService {
+  FakeCineFirebaseService({this.userId = 'u1'})
       : super(_UnusedFirestore(), currentUserId: null);
 
   String? userId;

@@ -16,11 +16,6 @@ class SearchHistoryRecord extends FirestoreRecord {
     _initializeFields();
   }
 
-  // "userId" field.
-  String? _userId;
-  String get userId => _userId ?? '';
-  bool hasUserId() => _userId != null;
-
   // "query" field.
   String? _query;
   String get query => _query ?? '';
@@ -31,14 +26,20 @@ class SearchHistoryRecord extends FirestoreRecord {
   DateTime? get createdAt => _createdAt;
   bool hasCreatedAt() => _createdAt != null;
 
+  DocumentReference get parentReference => reference.parent.parent!;
+
   void _initializeFields() {
-    _userId = snapshotData['userId'] as String?;
     _query = snapshotData['query'] as String?;
     _createdAt = snapshotData['createdAt'] as DateTime?;
   }
 
-  static CollectionReference get collection =>
-      FirebaseFirestore.instance.collection('search_history');
+  static Query<Map<String, dynamic>> collection([DocumentReference? parent]) =>
+      parent != null
+          ? parent.collection('searchHistory')
+          : FirebaseFirestore.instance.collectionGroup('searchHistory');
+
+  static DocumentReference createDoc(DocumentReference parent, {String? id}) =>
+      parent.collection('searchHistory').doc(id);
 
   static Stream<SearchHistoryRecord> getDocument(DocumentReference ref) =>
       ref.snapshots().map((s) => SearchHistoryRecord.fromSnapshot(s));
@@ -71,13 +72,11 @@ class SearchHistoryRecord extends FirestoreRecord {
 }
 
 Map<String, dynamic> createSearchHistoryRecordData({
-  String? userId,
   String? query,
   DateTime? createdAt,
 }) {
   final firestoreData = mapToFirestore(
     <String, dynamic>{
-      'userId': userId,
       'query': query,
       'createdAt': createdAt,
     }.withoutNulls,
@@ -92,14 +91,12 @@ class SearchHistoryRecordDocumentEquality
 
   @override
   bool equals(SearchHistoryRecord? e1, SearchHistoryRecord? e2) {
-    return e1?.userId == e2?.userId &&
-        e1?.query == e2?.query &&
-        e1?.createdAt == e2?.createdAt;
+    return e1?.query == e2?.query && e1?.createdAt == e2?.createdAt;
   }
 
   @override
   int hash(SearchHistoryRecord? e) =>
-      const ListEquality().hash([e?.userId, e?.query, e?.createdAt]);
+      const ListEquality().hash([e?.query, e?.createdAt]);
 
   @override
   bool isValidKey(Object? o) => o is SearchHistoryRecord;

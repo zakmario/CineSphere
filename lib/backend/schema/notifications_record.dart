@@ -16,11 +16,6 @@ class NotificationsRecord extends FirestoreRecord {
     _initializeFields();
   }
 
-  // "userId" field.
-  String? _userId;
-  String get userId => _userId ?? '';
-  bool hasUserId() => _userId != null;
-
   // "title" field.
   String? _title;
   String get title => _title ?? '';
@@ -30,6 +25,16 @@ class NotificationsRecord extends FirestoreRecord {
   String? _message;
   String get message => _message ?? '';
   bool hasMessage() => _message != null;
+
+  // "mediaType" field.
+  String? _mediaType;
+  String get mediaType => _mediaType ?? '';
+  bool hasMediaType() => _mediaType != null;
+
+  // "tmdbId" field.
+  int? _tmdbId;
+  int get tmdbId => _tmdbId ?? 0;
+  bool hasTmdbId() => _tmdbId != null;
 
   // "releaseEventId" field.
   String? _releaseEventId;
@@ -51,18 +56,26 @@ class NotificationsRecord extends FirestoreRecord {
   DateTime? get createdAt => _createdAt;
   bool hasCreatedAt() => _createdAt != null;
 
+  DocumentReference get parentReference => reference.parent.parent!;
+
   void _initializeFields() {
-    _userId = snapshotData['userId'] as String?;
     _title = snapshotData['title'] as String?;
     _message = snapshotData['message'] as String?;
+    _mediaType = snapshotData['mediaType'] as String?;
+    _tmdbId = castToType<int>(snapshotData['tmdbId']);
     _releaseEventId = snapshotData['releaseEventId'] as String?;
     _scheduledAt = snapshotData['scheduledAt'] as DateTime?;
     _isRead = snapshotData['isRead'] as bool?;
     _createdAt = snapshotData['createdAt'] as DateTime?;
   }
 
-  static CollectionReference get collection =>
-      FirebaseFirestore.instance.collection('notifications');
+  static Query<Map<String, dynamic>> collection([DocumentReference? parent]) =>
+      parent != null
+          ? parent.collection('notifications')
+          : FirebaseFirestore.instance.collectionGroup('notifications');
+
+  static DocumentReference createDoc(DocumentReference parent, {String? id}) =>
+      parent.collection('notifications').doc(id);
 
   static Stream<NotificationsRecord> getDocument(DocumentReference ref) =>
       ref.snapshots().map((s) => NotificationsRecord.fromSnapshot(s));
@@ -95,9 +108,10 @@ class NotificationsRecord extends FirestoreRecord {
 }
 
 Map<String, dynamic> createNotificationsRecordData({
-  String? userId,
   String? title,
   String? message,
+  String? mediaType,
+  int? tmdbId,
   String? releaseEventId,
   DateTime? scheduledAt,
   bool? isRead,
@@ -105,9 +119,10 @@ Map<String, dynamic> createNotificationsRecordData({
 }) {
   final firestoreData = mapToFirestore(
     <String, dynamic>{
-      'userId': userId,
       'title': title,
       'message': message,
+      'mediaType': mediaType,
+      'tmdbId': tmdbId,
       'releaseEventId': releaseEventId,
       'scheduledAt': scheduledAt,
       'isRead': isRead,
@@ -124,9 +139,10 @@ class NotificationsRecordDocumentEquality
 
   @override
   bool equals(NotificationsRecord? e1, NotificationsRecord? e2) {
-    return e1?.userId == e2?.userId &&
-        e1?.title == e2?.title &&
+    return e1?.title == e2?.title &&
         e1?.message == e2?.message &&
+        e1?.mediaType == e2?.mediaType &&
+        e1?.tmdbId == e2?.tmdbId &&
         e1?.releaseEventId == e2?.releaseEventId &&
         e1?.scheduledAt == e2?.scheduledAt &&
         e1?.isRead == e2?.isRead &&
@@ -135,9 +151,10 @@ class NotificationsRecordDocumentEquality
 
   @override
   int hash(NotificationsRecord? e) => const ListEquality().hash([
-        e?.userId,
         e?.title,
         e?.message,
+        e?.mediaType,
+        e?.tmdbId,
         e?.releaseEventId,
         e?.scheduledAt,
         e?.isRead,

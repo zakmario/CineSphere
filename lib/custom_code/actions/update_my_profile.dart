@@ -8,12 +8,12 @@ import 'package:flutter/material.dart';
 // Begin custom action code
 // DO NOT REMOVE OR MODIFY THE CODE ABOVE!
 
-import '/custom_code/actions/firestore_service.dart';
+import '/custom_code/actions/firebase_service.dart';
 
 /// Enregistre le pseudo et la bio du membre connecté (page Profil).
 /// Retourne "" en cas de succès, sinon le message d'erreur à afficher.
 Future<String> updateMyProfile(String username, String bio) async {
-  final service = FirestoreService.instance;
+  final service = CineFirebaseService.instance;
   try {
     if (!await service.isUsernameAvailable(username)) {
       return 'Ce pseudo est déjà utilisé.';

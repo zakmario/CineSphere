@@ -9,7 +9,7 @@ import 'package:flutter/material.dart';
 // Begin custom widget code
 // DO NOT REMOVE OR MODIFY THE CODE ABOVE!
 
-import '/custom_code/actions/firestore_service.dart';
+import '/custom_code/actions/firebase_service.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import '/custom_code/widgets/trailer_player.dart';
 
@@ -61,7 +61,7 @@ class _MediaDetailViewState extends State<MediaDetailView> {
       _error = null;
     });
     try {
-      final row = await FirestoreService.instance.fetchMedia(widget.mediaId);
+      final row = await CineFirebaseService.instance.fetchMedia(widget.mediaId);
       if (!mounted) {
         return;
       }

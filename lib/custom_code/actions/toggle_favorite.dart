@@ -8,14 +8,14 @@ import 'package:flutter/material.dart';
 // Begin custom action code
 // DO NOT REMOVE OR MODIFY THE CODE ABOVE!
 
-import '/custom_code/actions/firestore_service.dart';
+import '/custom_code/actions/firebase_service.dart';
 
 /// Ajoute ou retire un contenu des favoris de l'utilisateur connecté.
 /// Retourne le nouvel état (true = favori). Lève une exception si
 /// l'utilisateur n'est pas connecté.
 Future<bool> toggleFavorite(String mediaId) async {
   try {
-    return await FirestoreService.instance.toggleFavorite(mediaId);
+    return await CineFirebaseService.instance.toggleFavorite(mediaId);
   } on CineFailure catch (failure) {
     throw Exception(failure.kind == CineFailureKind.unauthenticated
         ? 'Connectez-vous pour gérer vos favoris.'

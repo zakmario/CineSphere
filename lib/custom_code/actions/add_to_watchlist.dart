@@ -8,13 +8,13 @@ import 'package:flutter/material.dart';
 // Begin custom action code
 // DO NOT REMOVE OR MODIFY THE CODE ABOVE!
 
-import '/custom_code/actions/firestore_service.dart';
+import '/custom_code/actions/firebase_service.dart';
 
 /// Ajoute un titre du catalogue (mediaId) à une liste (bouton de la fiche).
 /// Retourne "" en cas de succès, sinon le message d'erreur à afficher.
 Future<String> addToWatchlist(String watchlistId, String mediaId) async {
   try {
-    await FirestoreService.instance.addMediaToWatchlist(watchlistId, mediaId);
+    await CineFirebaseService.instance.addMediaToWatchlist(watchlistId, mediaId);
     return '';
   } on CineFailure catch (failure) {
     return failure.kind == CineFailureKind.conflict

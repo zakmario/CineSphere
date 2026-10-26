@@ -9,7 +9,7 @@ import 'package:flutter/material.dart';
 // Begin custom widget code
 // DO NOT REMOVE OR MODIFY THE CODE ABOVE!
 
-import '/custom_code/actions/firestore_service.dart';
+import '/custom_code/actions/firebase_service.dart';
 
 /// Écran de première utilisation : 4 étapes de présentation puis choix des
 /// genres préférés. À la fin, enregistre les choix (completeOnboarding) puis
@@ -84,7 +84,7 @@ class _OnboardingWalkthroughState extends State<OnboardingWalkthrough> {
 
   Future<void> _loadGenres() async {
     try {
-      final genres = await FirestoreService.instance.fetchGenres();
+      final genres = await CineFirebaseService.instance.fetchGenres();
       final names = genres.map((g) => g.name).toList();
       if (mounted && names.isNotEmpty) {
         setState(() => _genres = names);

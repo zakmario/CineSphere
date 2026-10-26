@@ -1,4 +1,3 @@
-import '/auth/firebase_auth/auth_util.dart';
 import '/backend/backend.dart';
 import '/flutter_flow/flutter_flow_icon_button.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
@@ -9,6 +8,7 @@ import '/custom_code/actions/index.dart' as actions;
 import '/index.dart';
 import 'dart:async';
 import 'detail_liste_widget.dart' show DetailListeWidget;
+import 'package:cloud_firestore/cloud_firestore.dart' hide Type;
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -24,10 +24,10 @@ class DetailListeModel extends FlutterFlowModel<DetailListeWidget> {
   String? Function(BuildContext, String?)? listNameFieldTextControllerValidator;
   // Stores action output result for [Custom Action - renameWatchlist] action in RenameButton widget.
   String? renommage;
-  Completer<List<WatchlistsRecord>>? firestoreRequestCompleter1;
+  Completer<WatchlistsRecord>? documentRequestCompleter;
   // Stores action output result for [Custom Action - removeWatchlistItem] action in Container widget.
   String? retrait;
-  Completer<List<WatchlistItemsRecord>>? firestoreRequestCompleter2;
+  Completer<List<ItemsRecord>>? firestoreRequestCompleter;
   // Stores action output result for [Custom Action - deleteWatchlist] action in DeleteListButton widget.
   String? suppression;
 
@@ -41,7 +41,7 @@ class DetailListeModel extends FlutterFlowModel<DetailListeWidget> {
   }
 
   /// Additional helper methods.
-  Future waitForFirestoreRequestCompleted1({
+  Future waitForDocumentRequestCompleted({
     double minWait = 0,
     double maxWait = double.infinity,
   }) async {
@@ -49,14 +49,14 @@ class DetailListeModel extends FlutterFlowModel<DetailListeWidget> {
     while (true) {
       await Future.delayed(Duration(milliseconds: 50));
       final timeElapsed = stopwatch.elapsedMilliseconds;
-      final requestComplete = firestoreRequestCompleter1?.isCompleted ?? false;
+      final requestComplete = documentRequestCompleter?.isCompleted ?? false;
       if (timeElapsed > maxWait || (requestComplete && timeElapsed > minWait)) {
         break;
       }
     }
   }
 
-  Future waitForFirestoreRequestCompleted2({
+  Future waitForFirestoreRequestCompleted({
     double minWait = 0,
     double maxWait = double.infinity,
   }) async {
@@ -64,7 +64,7 @@ class DetailListeModel extends FlutterFlowModel<DetailListeWidget> {
     while (true) {
       await Future.delayed(Duration(milliseconds: 50));
       final timeElapsed = stopwatch.elapsedMilliseconds;
-      final requestComplete = firestoreRequestCompleter2?.isCompleted ?? false;
+      final requestComplete = firestoreRequestCompleter?.isCompleted ?? false;
       if (timeElapsed > maxWait || (requestComplete && timeElapsed > minWait)) {
         break;
       }

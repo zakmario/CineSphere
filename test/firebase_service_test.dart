@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:cine_sphere/custom_code/actions/firestore_service.dart';
+import 'package:cine_sphere/custom_code/actions/firebase_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
@@ -93,9 +93,89 @@ void main() {
         DateTime.utc(2026, 10, 20, 9, 30));
   });
 
-  test('identifiants déterministes', () {
-    expect(userMediaDocId('u1', 'm1'), 'u1_m1');
-    expect(watchlistItemDocId('w1', 'm1'), 'w1_m1');
+  group('clé de titre (movie_550)', () {
+    test('mediaKey et parseMediaKey', () {
+      expect(mediaKey('movie', 550), 'movie_550');
+      expect(mediaKey('series', 1399), 'series_1399');
+      expect(parseMediaKey('series_1399'), (type: 'series', tmdbId: 1399));
+      for (final bad in [null, '', 'movie_', 'film_550', 'movie_55a', '550']) {
+        expect(parseMediaKey(bad), isNull, reason: bad);
+      }
+    });
+
+    test('collection du catalogue', () {
+      expect(catalogCollection('movie'), 'movies');
+      expect(catalogCollection('series'), 'series');
+    });
+  });
+
+  group('catalogRow', () {
+    test('film : clé, durée, genres nommés', () {
+      final row = catalogRow(
+          'movie',
+          _doc('550', {
+            'tmdbId': 550,
+            'title': 'Fight Club',
+            'description': 'Un employé…',
+            'posterUrl': 'https://img/p.jpg',
+            'releaseDate': Timestamp.fromDate(DateTime.utc(1999, 11, 10)),
+            'duration': 139,
+            'rating': 8.4,
+            'genreIds': [18, 99999],
+            'platforms': ['Netflix'],
+          }),
+          {18: 'Drame'});
+      expect(row['id'], 'movie_550');
+      expect(row['media_type'], 'movie');
+      expect(row['overview'], 'Un employé…');
+      expect(row['release_date'], '1999-11-10T00:00:00.000Z');
+      expect(row['runtime_minutes'], 139);
+      expect(row['seasons'], isNull);
+      expect(row['genres'], ['Drame']);
+      expect(row['platforms'], ['Netflix']);
+    });
+
+    test('série : première diffusion, saisons et épisodes', () {
+      final row = catalogRow(
+          'series',
+          _doc('1399', {
+            'tmdbId': 1399,
+            'title': 'Game of Thrones',
+            'firstAirDate': Timestamp.fromDate(DateTime.utc(2011, 4, 17)),
+            'numberOfSeasons': 8,
+            'numberOfEpisodes': 73,
+            'status': 'ended',
+          }));
+      expect(row['id'], 'series_1399');
+      expect(row['release_date'], '2011-04-17T00:00:00.000Z');
+      expect((row['seasons'], row['episodes']), (8, 73));
+      expect(row['runtime_minutes'], isNull);
+      expect(row['rating'], 0);
+    });
+
+    test('mediaSummary : champs dénormalisés', () {
+      expect(
+          mediaSummary({
+            'media_type': 'movie',
+            'tmdb_id': 550,
+            'title': 'Fight Club',
+            'poster_url': 'p',
+          }),
+          {
+            'mediaType': 'movie',
+            'tmdbId': 550,
+            'title': 'Fight Club',
+            'posterUrl': 'p',
+          });
+    });
+  });
+
+  test('validateReview : note 1-10, 2000 caractères', () {
+    expect(validateReview(7, 'Bien'), isNull);
+    expect(validateReview(10, null), isNull);
+    expect(validateReview(0, ''), isNotNull);
+    expect(validateReview(11, ''), isNotNull);
+    expect(validateReview(5, 'x' * 2001), contains('2000'));
   });
 
   group('mapFirestoreError', () {
@@ -134,12 +214,12 @@ void main() {
   });
 
   test('requireUserId sans session : CineFailure unauthenticated', () {
-    final service = FirestoreService(_UnusedDb(), currentUserId: () => null);
+    final service = CineFirebaseService(_UnusedDb(), currentUserId: () => null);
     expect(() => service.requireUserId,
         throwsA(isA<CineFailure>().having(
             (f) => f.kind, 'kind', CineFailureKind.unauthenticated)));
     expect(
-        FirestoreService(_UnusedDb(), currentUserId: () => 'u1').requireUserId,
+        CineFirebaseService(_UnusedDb(), currentUserId: () => 'u1').requireUserId,
         'u1');
   });
 }
