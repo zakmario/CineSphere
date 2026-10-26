@@ -6,8 +6,6 @@ import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
 import '/backend/backend.dart';
 
-import '/backend/supabase/supabase.dart';
-
 import '/auth/base_auth_user_provider.dart';
 
 import '/main.dart';

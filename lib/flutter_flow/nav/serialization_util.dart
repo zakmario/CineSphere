@@ -5,8 +5,6 @@ import 'package:from_css_color/from_css_color.dart';
 
 import '/backend/backend.dart';
 
-import '/backend/supabase/supabase.dart';
-
 import '../../flutter_flow/lat_lng.dart';
 import '../../flutter_flow/place.dart';
 import '../../flutter_flow/uploaded_file.dart';
@@ -96,9 +94,6 @@ String? serializeParam(
       case ParamType.Document:
         final reference = (param as FirestoreRecord).reference;
         data = _serializeDocumentReference(reference);
-
-      case ParamType.SupabaseRow:
-        return json.encode((param as SupabaseDataRow).data);
 
       default:
         data = null;
@@ -222,7 +217,6 @@ enum ParamType {
 
   Document,
   DocumentReference,
-  SupabaseRow,
 }
 
 dynamic deserializeParam<T>(
@@ -274,51 +268,6 @@ dynamic deserializeParam<T>(
         return json.decode(param);
       case ParamType.DocumentReference:
         return _deserializeDocumentReference(param, collectionNamePath ?? []);
-
-      case ParamType.SupabaseRow:
-        final data = json.decode(param) as Map<String, dynamic>;
-        switch (T) {
-          case FavoritesRow:
-            return FavoritesRow(data);
-          case GenresRow:
-            return GenresRow(data);
-          case MediaRow:
-            return MediaRow(data);
-          case MovieGenresRow:
-            return MovieGenresRow(data);
-          case MoviesRow:
-            return MoviesRow(data);
-          case NewsRow:
-            return NewsRow(data);
-          case NotificationsRow:
-            return NotificationsRow(data);
-          case PlatformsRow:
-            return PlatformsRow(data);
-          case ProfilesRow:
-            return ProfilesRow(data);
-          case ReleaseEventsRow:
-            return ReleaseEventsRow(data);
-          case ReviewLikesRow:
-            return ReviewLikesRow(data);
-          case ReviewsRow:
-            return ReviewsRow(data);
-          case SearchHistoryRow:
-            return SearchHistoryRow(data);
-          case SeriesRow:
-            return SeriesRow(data);
-          case SeriesGenresRow:
-            return SeriesGenresRow(data);
-          case UserPreferencesRow:
-            return UserPreferencesRow(data);
-          case WatchedRow:
-            return WatchedRow(data);
-          case WatchlistItemsRow:
-            return WatchlistItemsRow(data);
-          case WatchlistsRow:
-            return WatchlistsRow(data);
-          default:
-            return null;
-        }
 
       default:
         return null;

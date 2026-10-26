@@ -11,7 +11,6 @@ import '/flutter_flow/place.dart';
 import '/flutter_flow/uploaded_file.dart';
 import '/backend/backend.dart';
 import 'package:cloud_firestore/cloud_firestore.dart' hide Type;
-import '/backend/supabase/supabase.dart';
 import '/auth/firebase_auth/auth_util.dart';
 
 /// Identifiant de notification stable (entier 31 bits) dérivé d'une chaîne,
