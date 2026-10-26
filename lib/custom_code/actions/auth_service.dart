@@ -1,5 +1,5 @@
 // Automatic FlutterFlow imports
-import '/backend/supabase/supabase.dart';
+import '/backend/backend.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import 'index.dart'; // Imports other custom actions
@@ -11,21 +11,21 @@ import 'package:flutter/material.dart';
 import 'dart:async';
 import 'dart:developer' as developer;
 
-import '/custom_code/actions/supabase_service.dart';
-import 'package:supabase_flutter/supabase_flutter.dart' as supa;
+import '/custom_code/actions/firestore_service.dart';
+import 'package:firebase_auth/firebase_auth.dart' as fb;
 
-/// Vrai si un membre est connecté (session Supabase active).
+/// Vrai si un membre est connecté avec une adresse e-mail confirmée.
 /// Action FlutterFlow, utilisable dans un *Conditional* ou un *On Page Load*.
 Future<bool> authService() async => AuthService.instance.hasSession;
 
 /// Longueur minimale du mot de passe (cahier des charges, section 6.2).
 const int kMinPasswordLength = 8;
 
-/// Délai avant de pouvoir renvoyer un code par e-mail.
+/// Délai avant de pouvoir renvoyer un e-mail.
 const Duration kResendCooldown = Duration(seconds: 60);
 
-/// Résultat des actions authSignIn / authSignUp quand le membre doit saisir
-/// le code reçu par e-mail (page ConfirmationEmail).
+/// Résultat des actions authSignIn / authSignUp quand le membre doit
+/// confirmer son adresse avec le lien reçu par e-mail (page ConfirmationEmail).
 const String kAuthNeedsCode = 'CONFIRM';
 
 // Validation des champs ------------------------------------------------------
@@ -66,7 +66,8 @@ String? validatePasswordConfirmation(String? password, String? confirmation) {
   return null;
 }
 
-/// Code à usage unique envoyé par e-mail (6 à 8 chiffres selon Supabase).
+/// Code à usage unique (6 à 8 chiffres). Firebase envoie des liens : ce
+/// validateur ne sert plus qu'aux anciens formulaires.
 String? validateOtpCode(String? value) {
   final code = value?.trim() ?? '';
   if (!RegExp(r'^\d{6,8}$').hasMatch(code)) {
@@ -78,115 +79,68 @@ String? validateOtpCode(String? value) {
 // Erreurs --------------------------------------------------------------------
 
 const _authMessages = <String, (CineFailureKind, String)>{
-  'invalid_credentials': (
+  'invalid-credential': (
     CineFailureKind.unauthenticated,
     'E-mail ou mot de passe incorrect.'
   ),
-  'email_not_confirmed': (
+  'wrong-password': (
+    CineFailureKind.unauthenticated,
+    'E-mail ou mot de passe incorrect.'
+  ),
+  'user-not-found': (
+    CineFailureKind.unauthenticated,
+    'E-mail ou mot de passe incorrect.'
+  ),
+  'email-not-verified': (
     CineFailureKind.unauthenticated,
     'Confirmez votre adresse e-mail avant de vous connecter.'
   ),
-  'user_already_exists': (
+  'email-already-in-use': (
     CineFailureKind.conflict,
     'Un compte existe déjà avec cette adresse e-mail.'
   ),
-  'email_exists': (
-    CineFailureKind.conflict,
-    'Un compte existe déjà avec cette adresse e-mail.'
-  ),
-  'weak_password': (
+  'weak-password': (
     CineFailureKind.invalid,
     'Mot de passe trop faible : choisissez-en un plus long.'
   ),
-  'same_password': (
-    CineFailureKind.invalid,
-    'Le nouveau mot de passe doit être différent de l\'ancien.'
-  ),
-  'otp_expired': (CineFailureKind.invalid, 'Code incorrect ou expiré.'),
-  'email_address_invalid': (
-    CineFailureKind.invalid,
-    'Adresse e-mail invalide.'
-  ),
-  'validation_failed': (CineFailureKind.invalid, 'Données invalides.'),
-  'over_email_send_rate_limit': (
-    CineFailureKind.forbidden,
-    'Trop d\'e-mails envoyés. Patientez quelques minutes avant de réessayer.'
-  ),
-  'over_request_rate_limit': (
+  'invalid-email': (CineFailureKind.invalid, 'Adresse e-mail invalide.'),
+  'too-many-requests': (
     CineFailureKind.forbidden,
     'Trop de tentatives. Patientez quelques minutes avant de réessayer.'
   ),
-  'signup_disabled': (
+  'operation-not-allowed': (
     CineFailureKind.forbidden,
     'Les inscriptions sont momentanément fermées.'
   ),
-  'user_banned': (CineFailureKind.forbidden, 'Ce compte a été suspendu.'),
-  'user_not_found': (CineFailureKind.notFound, 'Aucun compte avec cet e-mail.'),
-  'session_not_found': (
+  'user-disabled': (CineFailureKind.forbidden, 'Ce compte a été suspendu.'),
+  'requires-recent-login': (
+    CineFailureKind.unauthenticated,
+    'Pour des raisons de sécurité, reconnectez-vous puis réessayez.'
+  ),
+  'user-token-expired': (
     CineFailureKind.unauthenticated,
     'Votre session a expiré. Reconnectez-vous.'
   ),
-  'session_expired': (
-    CineFailureKind.unauthenticated,
-    'Votre session a expiré. Reconnectez-vous.'
+  'network-request-failed': (
+    CineFailureKind.network,
+    'Pas de connexion Internet. Réessayez plus tard.'
   ),
 };
 
-/// Anciens serveurs GoTrue : pas de `code`, seulement un message en anglais.
-const _legacyMessages = <String, String>{
-  'invalid login credentials': 'invalid_credentials',
-  'email not confirmed': 'email_not_confirmed',
-  'user already registered': 'user_already_exists',
-  'token has expired or is invalid': 'otp_expired',
-  'should be different from the old password': 'same_password',
-  'for security purposes, you can only request this': 'over_request_rate_limit',
-  'email rate limit exceeded': 'over_email_send_rate_limit',
-};
-
-/// Code d'erreur GoTrue de [error] (`invalid_credentials`…), ou null.
-String? authErrorCode(supa.AuthException error) {
-  if (error is AuthWeakPasswordException) {
-    return 'weak_password';
-  }
-  final code = error.code;
-  if (code != null && code.isNotEmpty) {
-    return code;
-  }
-  final message = error.message.toLowerCase();
-  for (final entry in _legacyMessages.entries) {
-    if (message.contains(entry.key)) {
-      return entry.value;
-    }
-  }
-  return null;
-}
-
-/// Traduit une erreur Supabase Auth en [CineFailure] (message en français).
+/// Traduit une erreur Firebase Auth en [CineFailure] (message en français).
 CineFailure mapAuthError(Object error) {
   if (error is CineFailure) {
     return error;
   }
-  if (error is AuthRetryableFetchException) {
-    return CineFailure(CineFailureKind.network,
-        'Pas de connexion Internet. Réessayez plus tard.', error);
-  }
-  if (error is AuthSessionMissingException) {
-    return CineFailure(CineFailureKind.unauthenticated,
-        'Votre session a expiré. Reconnectez-vous.', error);
-  }
-  if (error is supa.AuthException) {
-    final known = _authMessages[authErrorCode(error)];
+  if (error is fb.FirebaseAuthException) {
+    final known = _authMessages[error.code];
     if (known != null) {
       return CineFailure(known.$1, known.$2, error);
-    }
-    if (error.statusCode == '429') {
-      return CineFailure(CineFailureKind.forbidden,
-          'Trop de tentatives. Patientez quelques minutes.', error);
     }
     return CineFailure(CineFailureKind.unknown,
         'L\'authentification a échoué. Réessayez.', error);
   }
-  return mapSupabaseError(error);
+  return mapFirestoreError(error);
 }
 
 // Service --------------------------------------------------------------------
@@ -196,13 +150,16 @@ enum SignUpOutcome {
   /// Compte créé et membre connecté.
   signedIn,
 
-  /// Compte créé : il faut saisir le code reçu par e-mail.
+  /// Compte créé : il faut confirmer l'adresse avec le lien reçu par e-mail.
   confirmationRequired,
 }
 
-/// Opérations Supabase Auth utilisées par l'application (remplaçable en test).
+/// Opérations Firebase Auth utilisées par l'application (remplaçable en test).
 abstract class AuthGateway {
-  bool get hasSession;
+  /// Vrai si un membre est connecté (adresse confirmée ou non).
+  bool get isSignedIn;
+
+  bool get isEmailVerified;
 
   Future<void> signIn(String email, String password);
 
@@ -211,86 +168,104 @@ abstract class AuthGateway {
 
   Future<bool> isUsernameAvailable(String username);
 
-  Future<void> verifySignUpCode(String email, String code);
+  /// Recharge le compte et renvoie vrai si l'adresse est confirmée.
+  Future<bool> refreshEmailVerified();
 
-  Future<void> resendSignUpCode(String email);
+  Future<void> sendEmailVerification();
 
-  Future<void> sendPasswordResetCode(String email);
-
-  Future<void> verifyRecoveryCode(String email, String code);
+  Future<void> sendPasswordResetEmail(String email);
 
   Future<void> updatePassword(String newPassword);
+
+  /// Vrai si la dernière connexion date de moins de 5 minutes (Firebase
+  /// l'exige pour supprimer un compte).
+  Future<bool> signedInRecently();
+
+  Future<void> deleteAccount();
 
   Future<void> signOut();
 }
 
-class SupabaseAuthGateway implements AuthGateway {
-  SupabaseAuthGateway(this._client);
+class FirebaseAuthGateway implements AuthGateway {
+  FirebaseAuthGateway(this._auth, this._data);
 
-  final SupabaseClient _client;
+  final fb.FirebaseAuth _auth;
+  final FirestoreService _data;
 
-  GoTrueClient get _auth => _client.auth;
+  fb.User get _user {
+    final user = _auth.currentUser;
+    if (user == null) {
+      throw const CineFailure(CineFailureKind.unauthenticated,
+          'Votre session a expiré. Reconnectez-vous.');
+    }
+    return user;
+  }
 
   @override
-  bool get hasSession => _auth.currentSession != null;
+  bool get isSignedIn => _auth.currentUser != null;
+
+  @override
+  bool get isEmailVerified => _auth.currentUser?.emailVerified ?? false;
 
   @override
   Future<void> signIn(String email, String password) =>
-      _auth.signInWithPassword(email: email, password: password);
+      _auth.signInWithEmailAndPassword(email: email, password: password);
 
   @override
   Future<SignUpOutcome> signUp(String email, String password,
       {required String username}) async {
-    // Le pseudo est lu par le trigger `on_auth_user_created`.
-    final response = await _auth.signUp(
-      email: email,
-      password: password,
-      data: {'username': username},
-    );
-    if (response.session != null) {
-      return SignUpOutcome.signedIn;
+    final credential = await _auth.createUserWithEmailAndPassword(
+        email: email, password: password);
+    final user = credential.user!;
+    try {
+      await _data.createProfile(
+          userId: user.uid, username: username, email: email);
+    } catch (_) {
+      // Pseudo pris entre la vérification et l'inscription : pas de compte
+      // sans profil.
+      await user.delete();
+      rethrow;
     }
-    // Quand la confirmation est activée, Supabase ne signale pas un e-mail
-    // déjà inscrit : il renvoie un utilisateur sans identité.
-    if (response.user?.identities?.isEmpty ?? false) {
-      throw const supa.AuthException('User already registered',
-          code: 'user_already_exists');
-    }
+    await user.sendEmailVerification();
     return SignUpOutcome.confirmationRequired;
   }
 
   @override
-  Future<bool> isUsernameAvailable(String username) async {
-    final available = await _client
-        .rpc('username_available', params: {'candidate': username});
-    return available == true;
+  Future<bool> isUsernameAvailable(String username) =>
+      _data.isUsernameAvailable(username);
+
+  @override
+  Future<bool> refreshEmailVerified() async {
+    await _user.reload();
+    return _auth.currentUser?.emailVerified ?? false;
   }
 
   @override
-  Future<void> verifySignUpCode(String email, String code) =>
-      _auth.verifyOTP(email: email, token: code, type: OtpType.signup);
+  Future<void> sendEmailVerification() => _user.sendEmailVerification();
 
   @override
-  Future<void> resendSignUpCode(String email) =>
-      _auth.resend(email: email, type: OtpType.signup);
-
-  @override
-  Future<void> sendPasswordResetCode(String email) =>
-      _auth.resetPasswordForEmail(email);
-
-  @override
-  Future<void> verifyRecoveryCode(String email, String code) =>
-      _auth.verifyOTP(email: email, token: code, type: OtpType.recovery);
+  Future<void> sendPasswordResetEmail(String email) =>
+      _auth.sendPasswordResetEmail(email: email);
 
   @override
   Future<void> updatePassword(String newPassword) =>
-      _auth.updateUser(UserAttributes(password: newPassword));
+      _user.updatePassword(newPassword);
+
+  @override
+  Future<bool> signedInRecently() async {
+    final authTime = (await _user.getIdTokenResult()).authTime;
+    return authTime != null &&
+        DateTime.now().difference(authTime) < const Duration(minutes: 5);
+  }
+
+  @override
+  Future<void> deleteAccount() => _user.delete();
 
   @override
   Future<void> signOut() => _auth.signOut();
 }
 
-/// Connexion, inscription et mot de passe oublié avec Supabase Auth.
+/// Connexion, inscription et mot de passe oublié avec Firebase Auth.
 ///
 /// Valide les champs avant chaque appel et lève une [CineFailure] dont le
 /// message, en français, peut être affiché tel quel.
@@ -302,15 +277,17 @@ class AuthService {
 
   static AuthService get instance =>
       _override ??
-      (_instance ??= AuthService(SupabaseAuthGateway(SupaFlow.client)));
+      (_instance ??= AuthService(FirebaseAuthGateway(
+          fb.FirebaseAuth.instance, FirestoreService.instance)));
 
-  /// Remplace le service partagé (tests). `null` rétablit Supabase.
+  /// Remplace le service partagé (tests). `null` rétablit Firebase.
   @visibleForTesting
   static set debugInstance(AuthService? service) => _override = service;
 
   final AuthGateway _gateway;
 
-  bool get hasSession => _gateway.hasSession;
+  /// Connecté avec une adresse confirmée.
+  bool get hasSession => _gateway.isSignedIn && _gateway.isEmailVerified;
 
   Future<T> _guard<T>(String operation, Future<T> Function() run) async {
     try {
@@ -329,6 +306,9 @@ class AuthService {
     }
   }
 
+  /// Connecte le membre. Si son adresse n'est pas confirmée, il reste
+  /// connecté (pour pouvoir renvoyer le lien) et l'erreur
+  /// `email-not-verified` est levée.
   Future<void> signIn({required String email, required String password}) =>
       _guard('signIn', () async {
         _check(validateEmail(email));
@@ -336,6 +316,9 @@ class AuthService {
           _check('Saisissez votre mot de passe.');
         }
         await _gateway.signIn(email.trim(), password);
+        if (!_gateway.isEmailVerified) {
+          throw fb.FirebaseAuthException(code: 'email-not-verified');
+        }
       });
 
   Future<SignUpOutcome> signUp({
@@ -365,49 +348,61 @@ class AuthService {
       final available = await _gateway.isUsernameAvailable(username.trim());
       return available ? null : 'Ce pseudo est déjà utilisé.';
     } catch (error) {
-      // Vérification indicative : le serveur tranchera à l'inscription.
+      // Vérification indicative : l'inscription tranchera.
       developer.log('checkUsername', name: 'AuthService', error: error);
       return null;
     }
   }
 
-  Future<void> confirmSignUp({required String email, required String code}) =>
-      _guard('confirmSignUp', () async {
-        _check(validateOtpCode(code));
-        await _gateway.verifySignUpCode(email.trim(), code.trim());
-      });
-
-  Future<void> resendSignUpCode(String email) =>
-      _guard('resendSignUpCode', () async {
-        _check(validateEmail(email));
-        await _gateway.resendSignUpCode(email.trim());
-      });
-
-  Future<void> sendPasswordResetCode(String email) =>
-      _guard('sendPasswordResetCode', () async {
-        _check(validateEmail(email));
-        await _gateway.sendPasswordResetCode(email.trim());
-      });
-
-  /// Vérifie le code de récupération (ce qui connecte le membre), puis
-  /// enregistre le nouveau mot de passe. Sans [code], le membre doit déjà
-  /// être connecté (changement de mot de passe depuis l'application).
-  Future<void> resetPassword({
-    String? email,
-    String? code,
-    required String newPassword,
-  }) =>
-      _guard('resetPassword', () async {
-        _check(validatePassword(newPassword));
-        if (code != null) {
-          _check(validateEmail(email));
-          _check(validateOtpCode(code));
-          await _gateway.verifyRecoveryCode(email!.trim(), code.trim());
-        } else if (!_gateway.hasSession) {
+  /// Vérifie que le membre a cliqué sur le lien de confirmation.
+  Future<void> confirmSignUp() => _guard('confirmSignUp', () async {
+        if (!_gateway.isSignedIn) {
           throw const CineFailure(CineFailureKind.unauthenticated,
-              'Le lien a expiré. Demandez un nouveau code.');
+              'Reconnectez-vous pour terminer l\'inscription.');
+        }
+        if (!await _gateway.refreshEmailVerified()) {
+          throw const CineFailure(CineFailureKind.invalid,
+              'Adresse pas encore confirmée : cliquez sur le lien reçu par '
+              'e-mail, puis réessayez.');
+        }
+      });
+
+  Future<void> resendConfirmation() => _guard('resendConfirmation', () async {
+        if (!_gateway.isSignedIn) {
+          throw const CineFailure(CineFailureKind.unauthenticated,
+              'Reconnectez-vous pour recevoir un nouveau lien.');
+        }
+        await _gateway.sendEmailVerification();
+      });
+
+  Future<void> sendPasswordReset(String email) =>
+      _guard('sendPasswordReset', () async {
+        _check(validateEmail(email));
+        await _gateway.sendPasswordResetEmail(email.trim());
+      });
+
+  /// Change le mot de passe du membre connecté. Le mot de passe oublié passe
+  /// par le lien reçu par e-mail (page Firebase), pas par cette méthode.
+  Future<void> changePassword(String newPassword) =>
+      _guard('changePassword', () async {
+        _check(validatePassword(newPassword));
+        if (!_gateway.isSignedIn) {
+          throw const CineFailure(CineFailureKind.unauthenticated,
+              'Utilisez le lien reçu par e-mail pour choisir un nouveau '
+              'mot de passe.');
         }
         await _gateway.updatePassword(newPassword);
+      });
+
+  /// Supprime les données Firestore du membre puis son compte. Vérifie
+  /// d'abord la connexion récente : sans elle, Firebase refuserait de
+  /// supprimer le compte après l'effacement des données.
+  Future<void> deleteAccount() => _guard('deleteAccount', () async {
+        if (!await _gateway.signedInRecently()) {
+          throw fb.FirebaseAuthException(code: 'requires-recent-login');
+        }
+        await FirestoreService.instance.deleteMyData();
+        await _gateway.deleteAccount();
       });
 
   Future<void> signOut() => _guard('signOut', _gateway.signOut);

@@ -3,11 +3,12 @@ import 'package:flutter/material.dart';
 
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_web_plugins/url_strategy.dart';
-
-import 'auth/supabase_auth/supabase_user_provider.dart';
-import 'auth/supabase_auth/auth_util.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'auth/firebase_auth/firebase_user_provider.dart';
+import 'auth/firebase_auth/auth_util.dart';
 
 import '/backend/supabase/supabase.dart';
+import 'backend/firebase/firebase_config.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import 'flutter_flow/flutter_flow_util.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -21,6 +22,8 @@ void main() async {
 
   final environmentValues = FFDevEnvironmentValues();
   await environmentValues.initialize();
+
+  await initFirebase();
 
   await SupaFlow.initialize();
 
@@ -64,7 +67,7 @@ class _MyAppState extends State<MyApp> {
 
     _appStateNotifier = AppStateNotifier.instance;
     _router = createRouter(_appStateNotifier);
-    userStream = cineSphereSupabaseUserStream()
+    userStream = cineSphereFirebaseUserStream()
       ..listen((user) {
         _appStateNotifier.update(user);
       });

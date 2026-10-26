@@ -1,5 +1,5 @@
 // Automatic FlutterFlow imports
-import '/backend/supabase/supabase.dart';
+import '/backend/backend.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import 'index.dart'; // Imports other custom widgets
@@ -8,6 +8,8 @@ import '/flutter_flow/custom_functions.dart'; // Imports custom functions
 import 'package:flutter/material.dart';
 // Begin custom widget code
 // DO NOT REMOVE OR MODIFY THE CODE ABOVE!
+
+import '/custom_code/actions/firestore_service.dart';
 
 /// Écran de première utilisation : 4 étapes de présentation puis choix des
 /// genres préférés. À la fin, enregistre les choix (completeOnboarding) puis
@@ -82,9 +84,8 @@ class _OnboardingWalkthroughState extends State<OnboardingWalkthrough> {
 
   Future<void> _loadGenres() async {
     try {
-      final rows =
-          await SupaFlow.client.from('genres').select('name').order('name');
-      final names = rows.map((r) => r['name'] as String).toList();
+      final genres = await FirestoreService.instance.fetchGenres();
+      final names = genres.map((g) => g.name).toList();
       if (mounted && names.isNotEmpty) {
         setState(() => _genres = names);
       }

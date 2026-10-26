@@ -1,5 +1,5 @@
-import '/auth/supabase_auth/auth_util.dart';
-import '/backend/supabase/supabase.dart';
+import '/auth/firebase_auth/auth_util.dart';
+import '/backend/backend.dart';
 import '/flutter_flow/flutter_flow_icon_button.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
@@ -14,7 +14,7 @@ import 'package:provider/provider.dart';
 import 'profil_model.dart';
 export 'profil_model.dart';
 
-/// Membre 1 — profil Supabase et statistiques
+/// Membre 1 — profil Firestore et statistiques
 class ProfilWidget extends StatefulWidget {
   const ProfilWidget({super.key});
 
@@ -61,12 +61,13 @@ class _ProfilWidgetState extends State<ProfilWidget> {
           top: true,
           child: Padding(
             padding: EdgeInsetsDirectional.fromSTEB(16.0, 16.0, 16.0, 32.0),
-            child: FutureBuilder<List<ProfilesRow>>(
-              future: ProfilesTable().querySingleRow(
-                queryFn: (q) => q.eqOrNull(
+            child: FutureBuilder<List<UsersRecord>>(
+              future: queryUsersRecordOnce(
+                queryBuilder: (usersRecord) => usersRecord.where(
                   'id',
-                  currentUserUid,
+                  isEqualTo: currentUserUid,
                 ),
+                singleRecord: true,
               ),
               builder: (context, snapshot) {
                 // Customize what your widget looks like when it's loading.
@@ -83,10 +84,9 @@ class _ProfilWidgetState extends State<ProfilWidget> {
                     ),
                   );
                 }
-                List<ProfilesRow> columnProfilesRowList = snapshot.data!;
-
-                final columnProfilesRow = columnProfilesRowList.isNotEmpty
-                    ? columnProfilesRowList.first
+                List<UsersRecord> columnUsersRecordList = snapshot.data!;
+                final columnUsersRecord = columnUsersRecordList.isNotEmpty
+                    ? columnUsersRecordList.first
                     : null;
 
                 return SingleChildScrollView(
@@ -183,11 +183,11 @@ class _ProfilWidgetState extends State<ProfilWidget> {
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
                               custom_widgets.AvatarPicker(
-                                avatarUrl: columnProfilesRow?.avatarUrl,
+                                avatarUrl: columnUsersRecord?.avatarData,
                                 onChanged: (avatarUrl) async {},
                               ),
                               Text(
-                                columnProfilesRow!.username,
+                                columnUsersRecord!.username,
                                 textAlign: TextAlign.center,
                                 style: FlutterFlowTheme.of(context)
                                     .headlineMedium
@@ -233,7 +233,7 @@ class _ProfilWidgetState extends State<ProfilWidget> {
                                     8.0, 4.0, 8.0, 0.0),
                                 child: Text(
                                   valueOrDefault<String>(
-                                    columnProfilesRow?.bio,
+                                    columnUsersRecord?.bio,
                                     'Ajoutez une bio pour vous présenter.',
                                   ),
                                   textAlign: TextAlign.center,
@@ -272,11 +272,12 @@ class _ProfilWidgetState extends State<ProfilWidget> {
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           Expanded(
-                            child: FutureBuilder<List<FavoritesRow>>(
-                              future: FavoritesTable().queryRows(
-                                queryFn: (q) => q.eqOrNull(
-                                  'user_id',
-                                  currentUserUid,
+                            child: FutureBuilder<List<FavoritesRecord>>(
+                              future: queryFavoritesRecordOnce(
+                                queryBuilder: (favoritesRecord) =>
+                                    favoritesRecord.where(
+                                  'userId',
+                                  isEqualTo: currentUserUid,
                                 ),
                               ),
                               builder: (context, snapshot) {
@@ -295,7 +296,8 @@ class _ProfilWidgetState extends State<ProfilWidget> {
                                     ),
                                   );
                                 }
-                                List<FavoritesRow> containerFavoritesRowList =
+                                List<FavoritesRecord>
+                                    containerFavoritesRecordList =
                                     snapshot.data!;
 
                                 return Container(
@@ -323,7 +325,7 @@ class _ProfilWidgetState extends State<ProfilWidget> {
                                           size: 22.0,
                                         ),
                                         Text(
-                                          containerFavoritesRowList.length
+                                          containerFavoritesRecordList.length
                                               .toString(),
                                           textAlign: TextAlign.center,
                                           style: FlutterFlowTheme.of(context)
@@ -379,11 +381,12 @@ class _ProfilWidgetState extends State<ProfilWidget> {
                             ),
                           ),
                           Expanded(
-                            child: FutureBuilder<List<WatchlistsRow>>(
-                              future: WatchlistsTable().queryRows(
-                                queryFn: (q) => q.eqOrNull(
-                                  'user_id',
-                                  currentUserUid,
+                            child: FutureBuilder<List<WatchlistsRecord>>(
+                              future: queryWatchlistsRecordOnce(
+                                queryBuilder: (watchlistsRecord) =>
+                                    watchlistsRecord.where(
+                                  'userId',
+                                  isEqualTo: currentUserUid,
                                 ),
                               ),
                               builder: (context, snapshot) {
@@ -402,7 +405,8 @@ class _ProfilWidgetState extends State<ProfilWidget> {
                                     ),
                                   );
                                 }
-                                List<WatchlistsRow> containerWatchlistsRowList =
+                                List<WatchlistsRecord>
+                                    containerWatchlistsRecordList =
                                     snapshot.data!;
 
                                 return Container(
@@ -430,7 +434,7 @@ class _ProfilWidgetState extends State<ProfilWidget> {
                                           size: 22.0,
                                         ),
                                         Text(
-                                          containerWatchlistsRowList.length
+                                          containerWatchlistsRecordList.length
                                               .toString(),
                                           textAlign: TextAlign.center,
                                           style: FlutterFlowTheme.of(context)
@@ -486,11 +490,12 @@ class _ProfilWidgetState extends State<ProfilWidget> {
                             ),
                           ),
                           Expanded(
-                            child: FutureBuilder<List<ReviewsRow>>(
-                              future: ReviewsTable().queryRows(
-                                queryFn: (q) => q.eqOrNull(
-                                  'user_id',
-                                  currentUserUid,
+                            child: FutureBuilder<List<ReviewsRecord>>(
+                              future: queryReviewsRecordOnce(
+                                queryBuilder: (reviewsRecord) =>
+                                    reviewsRecord.where(
+                                  'userId',
+                                  isEqualTo: currentUserUid,
                                 ),
                               ),
                               builder: (context, snapshot) {
@@ -509,7 +514,7 @@ class _ProfilWidgetState extends State<ProfilWidget> {
                                     ),
                                   );
                                 }
-                                List<ReviewsRow> containerReviewsRowList =
+                                List<ReviewsRecord> containerReviewsRecordList =
                                     snapshot.data!;
 
                                 return Container(
@@ -537,7 +542,7 @@ class _ProfilWidgetState extends State<ProfilWidget> {
                                           size: 22.0,
                                         ),
                                         Text(
-                                          containerReviewsRowList.length
+                                          containerReviewsRecordList.length
                                               .toString(),
                                           textAlign: TextAlign.center,
                                           style: FlutterFlowTheme.of(context)
@@ -657,7 +662,7 @@ class _ProfilWidgetState extends State<ProfilWidget> {
                                         controller: _model
                                                 .usernameFieldTextController ??=
                                             TextEditingController(
-                                          text: columnProfilesRow?.username,
+                                          text: columnUsersRecord?.username,
                                         ),
                                         focusNode:
                                             _model.usernameFieldFocusNode,
@@ -829,7 +834,7 @@ class _ProfilWidgetState extends State<ProfilWidget> {
                                         controller:
                                             _model.bioFieldTextController ??=
                                                 TextEditingController(
-                                          text: columnProfilesRow?.bio,
+                                          text: columnUsersRecord?.bio,
                                         ),
                                         focusNode: _model.bioFieldFocusNode,
                                         obscureText: false,

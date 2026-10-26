@@ -13,358 +13,326 @@
     "type": "D",
     "is_deleted": false,
     "current_checksum": "16be983745cb8b0b777135b2cfbc1d4245521f7d4cf18bf7e80387f0bd4aa4d1",
-    "original_checksum": "45ab9dc142a50b19be19337a3b1ea74e8b696b0961840475141b629585b4005f"
+    "original_checksum": "16be983745cb8b0b777135b2cfbc1d4245521f7d4cf18bf7e80387f0bd4aa4d1"
   },
   "lib/custom_code/actions/init_local_notifications.dart": {
     "old_identifier_name": "initLocalNotifications",
     "new_identifier_name": "initLocalNotifications",
     "type": "A",
     "is_deleted": false,
-    "current_checksum": "2333841f9a3bae6b83695607ae701346a8456a8b64d209813776664332aedcfa",
-    "original_checksum": "2333841f9a3bae6b83695607ae701346a8456a8b64d209813776664332aedcfa"
+    "current_checksum": "74b557e0553e71a4a5a756bb690f9037bf7b773e36b6c42dd3a86246719ee95c",
+    "original_checksum": "74b557e0553e71a4a5a756bb690f9037bf7b773e36b6c42dd3a86246719ee95c"
   },
   "lib/custom_code/actions/cancel_release_notification.dart": {
     "old_identifier_name": "cancelReleaseNotification",
     "new_identifier_name": "cancelReleaseNotification",
     "type": "A",
     "is_deleted": false,
-    "current_checksum": "92f131b330bac31767f317cf5dfc9cd89ad67964020f3b99fb135bbee3125edd",
-    "original_checksum": "92f131b330bac31767f317cf5dfc9cd89ad67964020f3b99fb135bbee3125edd"
+    "current_checksum": "c59ef6481bfa9ed9ae724c6ee782976daed805003a34832a297f6d1d83fe561f",
+    "original_checksum": "c59ef6481bfa9ed9ae724c6ee782976daed805003a34832a297f6d1d83fe561f"
   },
   "lib/custom_code/actions/complete_onboarding.dart": {
     "old_identifier_name": "completeOnboarding",
     "new_identifier_name": "completeOnboarding",
     "type": "A",
     "is_deleted": false,
-    "current_checksum": "c304cae7db82ceb7f659adc142a0e237cf0c97abd2c9eb5a85690f83f7c7e1e3",
-    "original_checksum": "c304cae7db82ceb7f659adc142a0e237cf0c97abd2c9eb5a85690f83f7c7e1e3"
+    "current_checksum": "bd6f64f2c56b0206704959fe376f9cc4239af12930f77b4b56f484b0bec80ba2",
+    "original_checksum": "bd6f64f2c56b0206704959fe376f9cc4239af12930f77b4b56f484b0bec80ba2"
   },
   "lib/custom_code/actions/get_scheduled_reminders.dart": {
     "old_identifier_name": "getScheduledReminders",
     "new_identifier_name": "getScheduledReminders",
     "type": "A",
     "is_deleted": false,
-    "current_checksum": "d8494129b3f829ef0c2edb222a861cf1fbf6cb73338b9080ece68de45d08bfad",
-    "original_checksum": "d8494129b3f829ef0c2edb222a861cf1fbf6cb73338b9080ece68de45d08bfad"
+    "current_checksum": "25318780fafff261602856713e419aca4cd487a5b4256c3a56a45071e057210d",
+    "original_checksum": "25318780fafff261602856713e419aca4cd487a5b4256c3a56a45071e057210d"
   },
   "lib/custom_code/actions/has_completed_onboarding.dart": {
     "old_identifier_name": "hasCompletedOnboarding",
     "new_identifier_name": "hasCompletedOnboarding",
     "type": "A",
     "is_deleted": false,
-    "current_checksum": "623e8eb5209f6b06b1f4f35cd408959a271dae2fccbfbbbb7b7c37107336b1d3",
-    "original_checksum": "623e8eb5209f6b06b1f4f35cd408959a271dae2fccbfbbbb7b7c37107336b1d3"
+    "current_checksum": "2f8ba53a972941d2de60425b64dc676ea34d6d8cf683f65e9324eaceb9226108",
+    "original_checksum": "2f8ba53a972941d2de60425b64dc676ea34d6d8cf683f65e9324eaceb9226108"
   },
   "lib/custom_code/actions/schedule_release_notification.dart": {
     "old_identifier_name": "scheduleReleaseNotification",
     "new_identifier_name": "scheduleReleaseNotification",
     "type": "A",
     "is_deleted": false,
-    "current_checksum": "b3e35afbe0a60c61f9ef5dbe50bac2fdb4718970ee000518978713cc85767d61",
-    "original_checksum": "b3e35afbe0a60c61f9ef5dbe50bac2fdb4718970ee000518978713cc85767d61"
+    "current_checksum": "98f15902c6339543d22e1d751ac8baefcd71f8be4bed4900f349f4a2b9cd5816",
+    "original_checksum": "98f15902c6339543d22e1d751ac8baefcd71f8be4bed4900f349f4a2b9cd5816"
   },
   "lib/custom_code/actions/show_instant_notification.dart": {
     "old_identifier_name": "showInstantNotification",
     "new_identifier_name": "showInstantNotification",
     "type": "A",
     "is_deleted": false,
-    "current_checksum": "6b25b68b47a4636c69d4336196a7e3157d66d5023364ec14e4747d60ece29748",
-    "original_checksum": "6b25b68b47a4636c69d4336196a7e3157d66d5023364ec14e4747d60ece29748"
+    "current_checksum": "9240b6a33265ed6998b42d0ad843e6833043a92a2d7c3dc373e8b5bfc617811e",
+    "original_checksum": "9240b6a33265ed6998b42d0ad843e6833043a92a2d7c3dc373e8b5bfc617811e"
   },
   "lib/custom_code/actions/toggle_favorite.dart": {
     "old_identifier_name": "toggleFavorite",
     "new_identifier_name": "toggleFavorite",
     "type": "A",
     "is_deleted": false,
-    "current_checksum": "7569d997ca1a438a5b389f9598e0cb430b810ead881cecd6b4007e0f85736c4f",
-    "original_checksum": "7569d997ca1a438a5b389f9598e0cb430b810ead881cecd6b4007e0f85736c4f"
+    "current_checksum": "c720d07094b8801ae1968c3cdc06323ece29d3693f0654f700f22a5f2fa936fe",
+    "original_checksum": "c720d07094b8801ae1968c3cdc06323ece29d3693f0654f700f22a5f2fa936fe"
   },
   "lib/custom_code/widgets/media_card.dart": {
     "old_identifier_name": "MediaCard",
     "new_identifier_name": "MediaCard",
     "type": "W",
     "is_deleted": false,
-    "original_checksum": "651260b9875089f00ad543449afc37f9337b24fb6482e49096a4997ed3cb220c",
-    "current_checksum": "651260b9875089f00ad543449afc37f9337b24fb6482e49096a4997ed3cb220c"
+    "original_checksum": "2d7a1b2b15d848d48afa07db7d86f4713686618ecfc9c79d6fb0e119f716bf4f",
+    "current_checksum": "2d7a1b2b15d848d48afa07db7d86f4713686618ecfc9c79d6fb0e119f716bf4f"
   },
   "lib/custom_code/widgets/favorite_button.dart": {
     "old_identifier_name": "FavoriteButton",
     "new_identifier_name": "FavoriteButton",
     "type": "W",
     "is_deleted": false,
-    "current_checksum": "004a99aae89f721fcd11e43ecd3c14b9b367cca420e1c64bafe02895c1b45ec4",
-    "original_checksum": "004a99aae89f721fcd11e43ecd3c14b9b367cca420e1c64bafe02895c1b45ec4"
+    "current_checksum": "46e8e65df16d0011c04e6b52c73a47aaabcdd3fd71a6b32e74593e38069b7112",
+    "original_checksum": "46e8e65df16d0011c04e6b52c73a47aaabcdd3fd71a6b32e74593e38069b7112"
   },
   "lib/custom_code/widgets/catalog_browser.dart": {
     "old_identifier_name": "CatalogBrowser",
     "new_identifier_name": "CatalogBrowser",
     "type": "W",
     "is_deleted": false,
-    "current_checksum": "9c7c4e6d50a2d6e795a8c8a88966063015a6e69d079627f1d173ab9143cfe8cf",
-    "original_checksum": "9c7c4e6d50a2d6e795a8c8a88966063015a6e69d079627f1d173ab9143cfe8cf"
+    "current_checksum": "7df33ef13112bef269863f8907fd7fa15469a3340c9d09adb7344c63074a161c",
+    "original_checksum": "7df33ef13112bef269863f8907fd7fa15469a3340c9d09adb7344c63074a161c"
   },
   "lib/custom_code/widgets/upcoming_releases_list.dart": {
     "old_identifier_name": "UpcomingReleasesList",
     "new_identifier_name": "UpcomingReleasesList",
     "type": "W",
     "is_deleted": false,
-    "original_checksum": "6479b9e662c91722634151ac52d1209aea654ef7963ad1b8748168157aa7e71b",
-    "current_checksum": "6479b9e662c91722634151ac52d1209aea654ef7963ad1b8748168157aa7e71b"
+    "original_checksum": "b2016c553d6a777c147ba74dade2978dadcb24adfce94490b2472d44e4dd66a6",
+    "current_checksum": "b2016c553d6a777c147ba74dade2978dadcb24adfce94490b2472d44e4dd66a6"
   },
   "lib/custom_code/widgets/onboarding_walkthrough.dart": {
     "old_identifier_name": "OnboardingWalkthrough",
     "new_identifier_name": "OnboardingWalkthrough",
     "type": "W",
     "is_deleted": false,
-    "original_checksum": "11edb0cc18040b08184857598e16287b6b8549cda8d9f6fb990b822040b9f820",
-    "current_checksum": "11edb0cc18040b08184857598e16287b6b8549cda8d9f6fb990b822040b9f820"
+    "original_checksum": "ea08678ddfb3bd26855130dd422b6af859b53e8b67f4ca8694aab3c55d51aea8",
+    "current_checksum": "ea08678ddfb3bd26855130dd422b6af859b53e8b67f4ca8694aab3c55d51aea8"
   },
   "lib/custom_code/widgets/home_feed.dart": {
     "old_identifier_name": "HomeFeed",
     "new_identifier_name": "HomeFeed",
     "type": "W",
     "is_deleted": false,
-    "current_checksum": "dcfe3b4d4cb238df59c5a06072f82f3352a1ce3c26d9bc0ed119e59ee4302e22",
-    "original_checksum": "dcfe3b4d4cb238df59c5a06072f82f3352a1ce3c26d9bc0ed119e59ee4302e22"
+    "current_checksum": "fff021261b8ded4c589151ad08e539a1c1ece29819fb801c5a3ef1892c7e5415",
+    "original_checksum": "fff021261b8ded4c589151ad08e539a1c1ece29819fb801c5a3ef1892c7e5415"
   },
   "lib/custom_code/widgets/media_detail_view.dart": {
     "old_identifier_name": "MediaDetailView",
     "new_identifier_name": "MediaDetailView",
     "type": "W",
     "is_deleted": false,
-    "original_checksum": "92430a4f5be3d008db2103871cfbb3a4e4c88ec8ab17321349b69b11036bb57e",
-    "current_checksum": "92430a4f5be3d008db2103871cfbb3a4e4c88ec8ab17321349b69b11036bb57e"
+    "original_checksum": "fd2435934b9d36e1f06c979efcab4f62bcd80ae159b8b3eb9ca4904070cd66b5",
+    "current_checksum": "fd2435934b9d36e1f06c979efcab4f62bcd80ae159b8b3eb9ca4904070cd66b5"
   },
   "lib/custom_code/widgets/favorites_grid.dart": {
     "old_identifier_name": "FavoritesGrid",
     "new_identifier_name": "FavoritesGrid",
     "type": "W",
     "is_deleted": false,
-    "original_checksum": "57d5ad162008c0455f09483135832cf9cf4b95412352201f90d2d1afed4f35cb",
-    "current_checksum": "57d5ad162008c0455f09483135832cf9cf4b95412352201f90d2d1afed4f35cb"
+    "original_checksum": "9953b53d71610c5dce137659dc3cd2e87d3672cf4e8ae02205899c3dc23a0f31",
+    "current_checksum": "9953b53d71610c5dce137659dc3cd2e87d3672cf4e8ae02205899c3dc23a0f31"
   },
   "lib/custom_code/widgets/news_feed.dart": {
     "old_identifier_name": "NewsFeed",
     "new_identifier_name": "NewsFeed",
     "type": "W",
     "is_deleted": false,
-    "original_checksum": "df8fe8cf2d3dd6db2eac18a4c53cd2cab70b45fee46a3fd447eff58f26908c44",
-    "current_checksum": "df8fe8cf2d3dd6db2eac18a4c53cd2cab70b45fee46a3fd447eff58f26908c44"
+    "original_checksum": "f27c6fb72ea602630da838b9274146bcd096cfb5576916b172a2f2f1b3011dd7",
+    "current_checksum": "f27c6fb72ea602630da838b9274146bcd096cfb5576916b172a2f2f1b3011dd7"
   },
   "lib/custom_code/widgets/settings_panel.dart": {
     "old_identifier_name": "SettingsPanel",
     "new_identifier_name": "SettingsPanel",
     "type": "W",
     "is_deleted": false,
-    "original_checksum": "e15a7c4ab8911826310439178bbdb5e0f37886054a010dffbd733f75196aa516",
-    "current_checksum": "e15a7c4ab8911826310439178bbdb5e0f37886054a010dffbd733f75196aa516"
+    "original_checksum": "b0ae02e8039f30603d6b8d941a05201a4deb4d80ea21dfc5eabcced7d993f57c",
+    "current_checksum": "b0ae02e8039f30603d6b8d941a05201a4deb4d80ea21dfc5eabcced7d993f57c"
   },
   "lib/custom_code/actions/cine_models.dart": {
     "old_identifier_name": "cineModels",
     "new_identifier_name": "cineModels",
     "type": "A",
     "is_deleted": false,
-    "current_checksum": "aab7213b0140d3d583907c211a640a4f6f916245c8f7ea753b989ab27f113418",
-    "original_checksum": "aab7213b0140d3d583907c211a640a4f6f916245c8f7ea753b989ab27f113418"
-  },
-  "lib/custom_code/actions/supabase_service.dart": {
-    "old_identifier_name": "supabaseService",
-    "new_identifier_name": "supabaseService",
-    "type": "A",
-    "is_deleted": false,
-    "current_checksum": "16368a84d0dbaeffff285f2de347425391814f536c364a83550d036463338fc1",
-    "original_checksum": "16368a84d0dbaeffff285f2de347425391814f536c364a83550d036463338fc1"
+    "current_checksum": "42bd2ed1ca1be84e6443cf6208f9aad52f254e3e02d90ec88554b6ca1100b1ab",
+    "original_checksum": "42bd2ed1ca1be84e6443cf6208f9aad52f254e3e02d90ec88554b6ca1100b1ab"
   },
   "lib/custom_code/actions/auth_service.dart": {
     "old_identifier_name": "authService",
     "new_identifier_name": "authService",
     "type": "A",
     "is_deleted": false,
-    "original_checksum": "7bf9415beeee09ddcc7eeed19bc52a27d6fae6bd1a636e027c9209e8bb527ef0",
-    "current_checksum": "7bf9415beeee09ddcc7eeed19bc52a27d6fae6bd1a636e027c9209e8bb527ef0"
-  },
-  "lib/custom_code/widgets/login_form.dart": {
-    "old_identifier_name": "LoginForm",
-    "new_identifier_name": "LoginForm",
-    "type": "W",
-    "is_deleted": false,
-    "original_checksum": "67fa71bad2d59b19f8aaa57f9b8b0f352275110f3b5a633322c00ab0829783fd",
-    "current_checksum": "67fa71bad2d59b19f8aaa57f9b8b0f352275110f3b5a633322c00ab0829783fd"
-  },
-  "lib/custom_code/widgets/sign_up_form.dart": {
-    "old_identifier_name": "SignUpForm",
-    "new_identifier_name": "SignUpForm",
-    "type": "W",
-    "is_deleted": false,
-    "original_checksum": "72b9b82a264285d6e7e47248793cc0a8f98fe639577a7bfad9f653cce2d8eff1",
-    "current_checksum": "72b9b82a264285d6e7e47248793cc0a8f98fe639577a7bfad9f653cce2d8eff1"
-  },
-  "lib/custom_code/widgets/forgot_password_form.dart": {
-    "old_identifier_name": "ForgotPasswordForm",
-    "new_identifier_name": "ForgotPasswordForm",
-    "type": "W",
-    "is_deleted": false,
-    "original_checksum": "5f02339c32d372b9f893b7f630276fc933bb917445298380076fe498ab9325cd",
-    "current_checksum": "5f02339c32d372b9f893b7f630276fc933bb917445298380076fe498ab9325cd"
-  },
-  "lib/custom_code/widgets/new_password_form.dart": {
-    "old_identifier_name": "NewPasswordForm",
-    "new_identifier_name": "NewPasswordForm",
-    "type": "W",
-    "is_deleted": false,
-    "original_checksum": "2b32b0a83afcfefe2b0c4ec8559d4195aab935c11a28ad1d8353dcb82f08b88c",
-    "current_checksum": "2b32b0a83afcfefe2b0c4ec8559d4195aab935c11a28ad1d8353dcb82f08b88c"
+    "original_checksum": "5abe4c563dca43bb7815dce776097723513b14c77a4756151db740fb61b0307e",
+    "current_checksum": "5abe4c563dca43bb7815dce776097723513b14c77a4756151db740fb61b0307e"
   },
   "lib/custom_code/actions/auth_sign_in.dart": {
     "old_identifier_name": "authSignIn",
     "new_identifier_name": "authSignIn",
     "type": "A",
     "is_deleted": false,
-    "current_checksum": "832fbb6d11f53e01667965e4fac85bf433bc200cf2daa1155928ffbdc0649cb0",
-    "original_checksum": "832fbb6d11f53e01667965e4fac85bf433bc200cf2daa1155928ffbdc0649cb0"
+    "current_checksum": "effb0cc1564fca6fda81fe4d32e268c7abf3c953f3ca54d1f79b81e44ea55c38",
+    "original_checksum": "effb0cc1564fca6fda81fe4d32e268c7abf3c953f3ca54d1f79b81e44ea55c38"
   },
   "lib/custom_code/actions/auth_confirm_sign_up.dart": {
     "old_identifier_name": "authConfirmSignUp",
     "new_identifier_name": "authConfirmSignUp",
     "type": "A",
     "is_deleted": false,
-    "original_checksum": "9f5eed2abb63430fd386b332ea2a493716a0597ce09c0e04148d398cfc765331",
-    "current_checksum": "9f5eed2abb63430fd386b332ea2a493716a0597ce09c0e04148d398cfc765331"
+    "original_checksum": "8a975b1aee470a19a699c63e92a5cfb75156fa9a0a15fb8940ebe852b918884a",
+    "current_checksum": "8a975b1aee470a19a699c63e92a5cfb75156fa9a0a15fb8940ebe852b918884a"
   },
   "lib/custom_code/actions/auth_resend_code.dart": {
     "old_identifier_name": "authResendCode",
     "new_identifier_name": "authResendCode",
     "type": "A",
     "is_deleted": false,
-    "original_checksum": "067999c12dabc2b33b47b0e67df4c31bf6ee26eb2a7c5c09d2be088fe8b45e37",
-    "current_checksum": "067999c12dabc2b33b47b0e67df4c31bf6ee26eb2a7c5c09d2be088fe8b45e37"
+    "original_checksum": "a44fe809a0325f6fce0f605d58e50ee2545a19da3ae8293e12d2f69cf8a7a96f",
+    "current_checksum": "a44fe809a0325f6fce0f605d58e50ee2545a19da3ae8293e12d2f69cf8a7a96f"
   },
   "lib/custom_code/actions/auth_reset_password.dart": {
     "old_identifier_name": "authResetPassword",
     "new_identifier_name": "authResetPassword",
     "type": "A",
     "is_deleted": false,
-    "original_checksum": "0283670770c6eb584c6d3de7aa2e3415102a4cf7fd89edb9183867be170353ec",
-    "current_checksum": "0283670770c6eb584c6d3de7aa2e3415102a4cf7fd89edb9183867be170353ec"
+    "original_checksum": "d8155eb43db037b6a8789768542eff461c62acba7ddcc19d87b0c5a9cc0d568b",
+    "current_checksum": "d8155eb43db037b6a8789768542eff461c62acba7ddcc19d87b0c5a9cc0d568b"
   },
   "lib/custom_code/actions/auth_send_reset_code.dart": {
     "old_identifier_name": "authSendResetCode",
     "new_identifier_name": "authSendResetCode",
     "type": "A",
     "is_deleted": false,
-    "original_checksum": "4abf0c24bf2cb09d97bbb0c00788580b4d7333275f69fe61ca8012494e74b279",
-    "current_checksum": "4abf0c24bf2cb09d97bbb0c00788580b4d7333275f69fe61ca8012494e74b279"
+    "original_checksum": "ae1a868504a6060b92bba1187c0bbef187197ad87d6f5962a6d93dc52511ad54",
+    "current_checksum": "ae1a868504a6060b92bba1187c0bbef187197ad87d6f5962a6d93dc52511ad54"
   },
   "lib/custom_code/actions/auth_sign_up.dart": {
     "old_identifier_name": "authSignUp",
     "new_identifier_name": "authSignUp",
     "type": "A",
     "is_deleted": false,
-    "original_checksum": "3877e4a40b6130cb1989059bfb01130e92371b44286ca5de4e89849abca60bda",
-    "current_checksum": "3877e4a40b6130cb1989059bfb01130e92371b44286ca5de4e89849abca60bda"
+    "original_checksum": "c535430c89fdaddd8a8a19a882176df7499588af53f7c937e562ac7ed5125b37",
+    "current_checksum": "c535430c89fdaddd8a8a19a882176df7499588af53f7c937e562ac7ed5125b37"
   },
   "lib/custom_code/actions/update_my_profile.dart": {
     "old_identifier_name": "updateMyProfile",
     "new_identifier_name": "updateMyProfile",
     "type": "A",
     "is_deleted": false,
-    "current_checksum": "a5193c43b166853014bf9aaa7db441ec3a654bebdd37d05e415ae0417a18257a",
-    "original_checksum": "a5193c43b166853014bf9aaa7db441ec3a654bebdd37d05e415ae0417a18257a"
+    "current_checksum": "7b2ac814ea61740a5fc019b3f19451bd840f3faf6bf609acb1fdfd3ffd73004a",
+    "original_checksum": "7b2ac814ea61740a5fc019b3f19451bd840f3faf6bf609acb1fdfd3ffd73004a"
   },
   "lib/custom_code/actions/create_watchlist.dart": {
     "old_identifier_name": "createWatchlist",
     "new_identifier_name": "createWatchlist",
     "type": "A",
     "is_deleted": false,
-    "original_checksum": "96d51e0e037751e1b15288b7ae8c6ac7b5f52b6d98a49bd490feb868ce0681fe",
-    "current_checksum": "96d51e0e037751e1b15288b7ae8c6ac7b5f52b6d98a49bd490feb868ce0681fe"
+    "original_checksum": "33576430be8a160e4d9f350f80ea2d8ae25948fc23c26e52ef510a305f6a162c",
+    "current_checksum": "33576430be8a160e4d9f350f80ea2d8ae25948fc23c26e52ef510a305f6a162c"
   },
   "lib/custom_code/actions/rename_watchlist.dart": {
     "old_identifier_name": "renameWatchlist",
     "new_identifier_name": "renameWatchlist",
     "type": "A",
     "is_deleted": false,
-    "current_checksum": "2e487e86e91f596dbb51621a049a1b4cb8aeb1d1a492441fbc515ca1fd062f81",
-    "original_checksum": "2e487e86e91f596dbb51621a049a1b4cb8aeb1d1a492441fbc515ca1fd062f81"
+    "current_checksum": "99acc321592a3400a7f5eabd420186ac108f1c896d4b2de08e21f8f0bfe398c6",
+    "original_checksum": "99acc321592a3400a7f5eabd420186ac108f1c896d4b2de08e21f8f0bfe398c6"
   },
   "lib/custom_code/actions/add_to_watchlist.dart": {
     "old_identifier_name": "addToWatchlist",
     "new_identifier_name": "addToWatchlist",
     "type": "A",
     "is_deleted": false,
-    "current_checksum": "556f42a5005e71f3d53bcd38c1dffa39a5b00150815dcf357c54f70d6948ceb0",
-    "original_checksum": "556f42a5005e71f3d53bcd38c1dffa39a5b00150815dcf357c54f70d6948ceb0"
+    "current_checksum": "7e6cbd7281a3697483be85dbc280dc956e460c8c26b4af145b0da590317a8d26",
+    "original_checksum": "7e6cbd7281a3697483be85dbc280dc956e460c8c26b4af145b0da590317a8d26"
   },
   "lib/custom_code/actions/delete_watchlist.dart": {
     "old_identifier_name": "deleteWatchlist",
     "new_identifier_name": "deleteWatchlist",
     "type": "A",
     "is_deleted": false,
-    "current_checksum": "bc80085cdda80e1b0700fd12ac52b4af06adf7f77edebaa5f8ef96e5d78546f8",
-    "original_checksum": "bc80085cdda80e1b0700fd12ac52b4af06adf7f77edebaa5f8ef96e5d78546f8"
+    "current_checksum": "45eb8a1fc3d3fcf81319a36f167a0526664b6148694d2544a1b712face9be74f",
+    "original_checksum": "45eb8a1fc3d3fcf81319a36f167a0526664b6148694d2544a1b712face9be74f"
   },
   "lib/custom_code/actions/remove_watchlist_item.dart": {
     "old_identifier_name": "removeWatchlistItem",
     "new_identifier_name": "removeWatchlistItem",
     "type": "A",
     "is_deleted": false,
-    "current_checksum": "29728d7c3bbcea473c69c6461d79f87e63ce0aec4d75d71d2d86d87c2884e045",
-    "original_checksum": "29728d7c3bbcea473c69c6461d79f87e63ce0aec4d75d71d2d86d87c2884e045"
+    "current_checksum": "03ac09ce0bdac3f6cdc33c5fb1106d74a55655d6bee5e4b1ffdbca6f3426e7f9",
+    "original_checksum": "03ac09ce0bdac3f6cdc33c5fb1106d74a55655d6bee5e4b1ffdbca6f3426e7f9"
   },
   "lib/custom_code/widgets/add_to_watchlist_button.dart": {
     "old_identifier_name": "AddToWatchlistButton",
     "new_identifier_name": "AddToWatchlistButton",
     "type": "W",
     "is_deleted": false,
-    "current_checksum": "9d4006ee8610c8faeb40daaae332b0188e029dd9d98c311b56677af43937e011",
-    "original_checksum": "9d4006ee8610c8faeb40daaae332b0188e029dd9d98c311b56677af43937e011"
+    "current_checksum": "08624507c2b494a6d10789b5bb0352e439d92ef19ad636500c721e8280e1d0ad",
+    "original_checksum": "08624507c2b494a6d10789b5bb0352e439d92ef19ad636500c721e8280e1d0ad"
   },
   "lib/custom_code/actions/toggle_watched.dart": {
     "old_identifier_name": "toggleWatched",
     "new_identifier_name": "toggleWatched",
     "type": "A",
     "is_deleted": false,
-    "current_checksum": "7bebde08ffacaba08a7a4591cceb0a0f9e815bdf194b7c1ae415c2b63a8bec1b",
-    "original_checksum": "7bebde08ffacaba08a7a4591cceb0a0f9e815bdf194b7c1ae415c2b63a8bec1b"
+    "current_checksum": "3e2e1784e16335435c3c343e7a8cd1f320289452d4927fe911a983b868936724",
+    "original_checksum": "3e2e1784e16335435c3c343e7a8cd1f320289452d4927fe911a983b868936724"
   },
   "lib/custom_code/widgets/mark_watched_button.dart": {
     "old_identifier_name": "MarkWatchedButton",
     "new_identifier_name": "MarkWatchedButton",
     "type": "W",
     "is_deleted": false,
-    "current_checksum": "ea78f57e9bb69bf1150a3f8bbf1d1c085a2b5c41889810c2b6738c1eb21a451f",
-    "original_checksum": "ea78f57e9bb69bf1150a3f8bbf1d1c085a2b5c41889810c2b6738c1eb21a451f"
+    "current_checksum": "6347ad96803b8314f6701947ecca92f193c9d375b10a1014d4c22356a07e4f42",
+    "original_checksum": "6347ad96803b8314f6701947ecca92f193c9d375b10a1014d4c22356a07e4f42"
   },
   "lib/custom_code/widgets/avatar_picker.dart": {
     "old_identifier_name": "AvatarPicker",
     "new_identifier_name": "AvatarPicker",
     "type": "W",
     "is_deleted": false,
-    "current_checksum": "565b1d21ea5a0cd6cf7454ae95ae0ecbccb6df2cb0337aa73bb8244f2777d7a1",
-    "original_checksum": "565b1d21ea5a0cd6cf7454ae95ae0ecbccb6df2cb0337aa73bb8244f2777d7a1"
+    "current_checksum": "aa94e66abec36c362cf8da43ee2361e85b56e2c1614c2cc6870526a7edc3f227",
+    "original_checksum": "aa94e66abec36c362cf8da43ee2361e85b56e2c1614c2cc6870526a7edc3f227"
   },
   "lib/custom_code/actions/delete_my_account.dart": {
     "old_identifier_name": "deleteMyAccount",
     "new_identifier_name": "deleteMyAccount",
     "type": "A",
     "is_deleted": false,
-    "current_checksum": "0063433c7d19dcebd084f070c5da30fd5b344db09f1bc4224cce8ee96dec47e5",
-    "original_checksum": "0063433c7d19dcebd084f070c5da30fd5b344db09f1bc4224cce8ee96dec47e5"
+    "current_checksum": "c78d1870f9333b2949cdb8a946a11d5cf7926274ddb0c603e60dd34a9e11b89c",
+    "original_checksum": "c78d1870f9333b2949cdb8a946a11d5cf7926274ddb0c603e60dd34a9e11b89c"
   },
   "lib/custom_code/actions/sync_tmdb_catalog.dart": {
     "old_identifier_name": "syncTmdbCatalog",
     "new_identifier_name": "syncTmdbCatalog",
     "type": "A",
     "is_deleted": false,
-    "current_checksum": "b6804111e8b82e6f672bc5d82ba8c30e9809605c270736e0fcb6340bb2bf18c7",
-    "original_checksum": "b6804111e8b82e6f672bc5d82ba8c30e9809605c270736e0fcb6340bb2bf18c7"
+    "current_checksum": "5c4528b0cd8e8dedc220de4820fa5259d0f9aeec52374994fbcb9b674160152e",
+    "original_checksum": "5c4528b0cd8e8dedc220de4820fa5259d0f9aeec52374994fbcb9b674160152e"
   },
   "lib/custom_code/widgets/trailer_player.dart": {
     "old_identifier_name": "TrailerPlayer",
     "new_identifier_name": "TrailerPlayer",
     "type": "W",
     "is_deleted": false,
-    "current_checksum": "355b5995d84047fc5920e43f055430a05e3eb8fc667774b6b68e35796a588d9e",
-    "original_checksum": "355b5995d84047fc5920e43f055430a05e3eb8fc667774b6b68e35796a588d9e"
+    "current_checksum": "380d2d5cb270eafef5899d8283383a58142e5a3a06e4039d45181a97ec28ea43",
+    "original_checksum": "380d2d5cb270eafef5899d8283383a58142e5a3a06e4039d45181a97ec28ea43"
+  },
+  "lib/custom_code/actions/firestore_service.dart": {
+    "old_identifier_name": "firestoreService",
+    "new_identifier_name": "firestoreService",
+    "type": "A",
+    "is_deleted": false,
+    "current_checksum": "660848ae9416d4c87c75c4048d4e6ede27c5da000420407a5c6c30dbc8db7d69",
+    "original_checksum": "660848ae9416d4c87c75c4048d4e6ede27c5da000420407a5c6c30dbc8db7d69"
   }
 }

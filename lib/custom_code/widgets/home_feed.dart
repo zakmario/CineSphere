@@ -1,5 +1,5 @@
 // Automatic FlutterFlow imports
-import '/backend/supabase/supabase.dart';
+import '/backend/backend.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import 'index.dart'; // Imports other custom widgets
@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 // Begin custom widget code
 // DO NOT REMOVE OR MODIFY THE CODE ABOVE!
 
+import '/custom_code/actions/firestore_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 /// Contenu complet de la page d'accueil : sections horizontales
@@ -42,9 +43,6 @@ class _Section {
   final List<Map<String, dynamic>> items;
 }
 
-const _homeColumns =
-    'id, media_type, title, poster_url, rating, release_date, status';
-
 class _HomeFeedState extends State<HomeFeed> {
   List<_Section> _sections = [];
   bool _loading = true;
@@ -74,32 +72,34 @@ class _HomeFeedState extends State<HomeFeed> {
     try {
       final prefs = await SharedPreferences.getInstance();
       final genres = prefs.getStringList('cs_favorite_genres') ?? <String>[];
-      final media = SupaFlow.client.from('media');
+      final media = await FirestoreService.instance.catalog();
 
-      final results = await Future.wait([
+      /// Les 10 premiers titres retenus par [keep], triés par [key].
+      List<Map<String, dynamic>> top(
+        bool Function(Map<String, dynamic> row) keep,
+        String key, {
+        bool ascending = false,
+      }) {
+        final rows = media.where((r) => keep(r) && r[key] != null).toList()
+          ..sort((a, b) {
+            final c = (a[key] as Comparable).compareTo(b[key] as Comparable);
+            return ascending ? c : -c;
+          });
+        return rows.take(10).toList();
+      }
+
+      final results = [
         genres.isEmpty
-            ? Future.value(<Map<String, dynamic>>[])
-            : media
-                .select(_homeColumns)
-                .overlaps('genres', genres)
-                .neq('status', 'upcoming')
-                .order('rating', ascending: false)
-                .limit(10),
-        media
-            .select(_homeColumns)
-            .order('popularity', ascending: false)
-            .limit(10),
-        media
-            .select(_homeColumns)
-            .eq('status', 'upcoming')
-            .order('release_date', ascending: true)
-            .limit(10),
-        media
-            .select(_homeColumns)
-            .gt('rating', 0)
-            .order('rating', ascending: false)
-            .limit(10),
-      ]);
+            ? <Map<String, dynamic>>[]
+            : top(
+                (r) =>
+                    r['status'] != 'upcoming' &&
+                    ((r['genres'] as List?) ?? []).any(genres.contains),
+                'rating'),
+        top((_) => true, 'popularity'),
+        top((r) => r['status'] == 'upcoming', 'release_date', ascending: true),
+        top((r) => ((r['rating'] as num?) ?? 0) > 0, 'rating'),
+      ];
 
       if (!mounted) {
         return;

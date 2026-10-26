@@ -1,5 +1,5 @@
 // Automatic FlutterFlow imports
-import '/backend/supabase/supabase.dart';
+import '/backend/backend.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import 'index.dart'; // Imports other custom widgets
@@ -10,7 +10,7 @@ import 'package:flutter/material.dart';
 // DO NOT REMOVE OR MODIFY THE CODE ABOVE!
 
 import '/custom_code/actions/cine_models.dart';
-import '/custom_code/actions/supabase_service.dart';
+import '/custom_code/actions/firestore_service.dart';
 
 /// Bouton « Ajouter à une liste » de la fiche d'un titre (membre 1).
 /// Ouvre une feuille avec les listes du membre connecté ; on peut aussi
@@ -33,7 +33,7 @@ class AddToWatchlistButton extends StatefulWidget {
 
 class _AddToWatchlistButtonState extends State<AddToWatchlistButton> {
   void _open() {
-    if (SupabaseService.instance.currentUserId == null) {
+    if (FirestoreService.instance.currentUserId == null) {
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
         content: Text('Connectez-vous pour gérer vos listes.'),
       ));
@@ -76,7 +76,7 @@ class _WatchlistSheet extends StatefulWidget {
 }
 
 class _WatchlistSheetState extends State<_WatchlistSheet> {
-  final _service = SupabaseService.instance;
+  final _service = FirestoreService.instance;
   final _name = TextEditingController();
   List<Watchlist> _lists = const [];
   Set<String> _containing = const {};

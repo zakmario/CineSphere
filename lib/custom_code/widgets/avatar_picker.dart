@@ -1,5 +1,5 @@
 // Automatic FlutterFlow imports
-import '/backend/supabase/supabase.dart';
+import '/backend/backend.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import 'index.dart'; // Imports other custom widgets
@@ -9,14 +9,19 @@ import 'package:flutter/material.dart';
 // Begin custom widget code
 // DO NOT REMOVE OR MODIFY THE CODE ABOVE!
 
+import 'dart:convert';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:image_picker/image_picker.dart';
 
-import '/custom_code/actions/supabase_service.dart';
+import '/custom_code/actions/firestore_service.dart';
 
 /// Photo de profil du membre connecté (membre 1). Un appui ouvre la
-/// galerie ; l'image, réduite à 512 px, est envoyée dans le bucket
-/// `avatars` puis enregistrée dans `profiles.avatar_url`.
+/// galerie ; l'image, réduite à 256 px, est enregistrée en base64 dans
+/// `users/{uid}.avatarData` (le forfait gratuit de Firebase n'inclut pas
+/// Storage).
+///
+/// [avatarUrl] accepte une URL http(s) ou l'image en base64 (avatarData).
 class AvatarPicker extends StatefulWidget {
   const AvatarPicker({
     super.key,
@@ -29,14 +34,12 @@ class AvatarPicker extends StatefulWidget {
   final double? width;
   final double? height;
   final String? avatarUrl;
+  /// Reçoit la nouvelle image en base64.
   final Future Function(String avatarUrl)? onChanged;
 
   @override
   State<AvatarPicker> createState() => _AvatarPickerState();
 }
-
-/// Taille maximale acceptée par le bucket `avatars` (2 Mo).
-const _kMaxAvatarBytes = 2 * 1024 * 1024;
 
 class _AvatarPickerState extends State<AvatarPicker> {
   String? _url;
@@ -56,6 +59,15 @@ class _AvatarPickerState extends State<AvatarPicker> {
     }
   }
 
+  /// Image base64 -> octets (vide si la chaîne est invalide).
+  static Uint8List _decode(String data) {
+    try {
+      return base64Decode(data);
+    } on FormatException {
+      return Uint8List(0);
+    }
+  }
+
   void _message(String text) {
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(text)));
   }
@@ -65,9 +77,9 @@ class _AvatarPickerState extends State<AvatarPicker> {
     try {
       file = await ImagePicker().pickImage(
         source: ImageSource.gallery,
-        maxWidth: 512,
-        maxHeight: 512,
-        imageQuality: 85,
+        maxWidth: 256,
+        maxHeight: 256,
+        imageQuality: 75,
       );
     } catch (_) {
       _message('Impossible d’ouvrir la galerie.');
@@ -79,24 +91,18 @@ class _AvatarPickerState extends State<AvatarPicker> {
     setState(() => _busy = true);
     try {
       final bytes = await file.readAsBytes();
-      if (bytes.length > _kMaxAvatarBytes) {
-        throw const CineFailure(
-            CineFailureKind.invalid, 'L’image dépasse 2 Mo.');
+      if (bytes.length > kMaxAvatarBytes) {
+        throw const CineFailure(CineFailureKind.invalid,
+            'Image trop lourde : choisissez-en une autre.');
       }
-      final name = file.mimeType ?? file.name;
-      final extension = name.contains('png')
-          ? 'png'
-          : name.contains('webp')
-              ? 'webp'
-              : 'jpg';
-      final url = await SupabaseService.instance
-          .uploadAvatar(bytes, extension: extension);
+      await FirestoreService.instance.uploadAvatar(bytes);
+      final data = base64Encode(bytes);
       if (!mounted) {
         return;
       }
-      setState(() => _url = url);
+      setState(() => _url = data);
       _message('Photo de profil mise à jour');
-      await widget.onChanged?.call(url);
+      await widget.onChanged?.call(data);
     } on CineFailure catch (e) {
       if (mounted) {
         _message(e.message);
@@ -156,12 +162,19 @@ class _AvatarPickerState extends State<AvatarPicker> {
                       children: [
                         if (url == null || url.isEmpty)
                           placeholder
-                        else
+                        else if (url.startsWith('http'))
                           CachedNetworkImage(
                             imageUrl: url,
                             fit: BoxFit.cover,
                             placeholder: (_, __) => placeholder,
                             errorWidget: (_, __, ___) => placeholder,
+                          )
+                        else
+                          Image.memory(
+                            _decode(url),
+                            fit: BoxFit.cover,
+                            gaplessPlayback: true,
+                            errorBuilder: (_, __, ___) => placeholder,
                           ),
                         if (_busy)
                           const ColoredBox(

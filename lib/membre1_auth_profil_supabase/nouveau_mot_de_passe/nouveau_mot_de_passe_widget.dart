@@ -4,14 +4,13 @@ import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
 import 'dart:ui';
 import '/custom_code/actions/index.dart' as actions;
-import '/index.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'nouveau_mot_de_passe_model.dart';
 export 'nouveau_mot_de_passe_model.dart';
 
-/// Membre 1 — code + nouveau mot de passe
+/// Membre 1 — changement du mot de passe
 class NouveauMotDePasseWidget extends StatefulWidget {
   const NouveauMotDePasseWidget({
     super.key,
@@ -37,9 +36,6 @@ class _NouveauMotDePasseWidgetState extends State<NouveauMotDePasseWidget> {
   void initState() {
     super.initState();
     _model = createModel(context, () => NouveauMotDePasseModel());
-
-    _model.codeFieldTextController ??= TextEditingController();
-    _model.codeFieldFocusNode ??= FocusNode();
 
     _model.passwordFieldTextController ??= TextEditingController();
     _model.passwordFieldFocusNode ??= FocusNode();
@@ -151,7 +147,7 @@ class _NouveauMotDePasseWidgetState extends State<NouveauMotDePasseWidget> {
                     decoration: BoxDecoration(),
                   ),
                   Text(
-                    'Saisissez le code envoyé à',
+                    'Choisissez le nouveau mot de passe du compte',
                     textAlign: TextAlign.center,
                     style: FlutterFlowTheme.of(context).bodyMedium.override(
                           font: GoogleFonts.inter(
@@ -219,164 +215,6 @@ class _NouveauMotDePasseWidgetState extends State<NouveauMotDePasseWidget> {
                               mainAxisAlignment: MainAxisAlignment.start,
                               crossAxisAlignment: CrossAxisAlignment.stretch,
                               children: [
-                                Container(
-                                  width: double.infinity,
-                                  child: TextFormField(
-                                    controller: _model.codeFieldTextController,
-                                    focusNode: _model.codeFieldFocusNode,
-                                    obscureText: false,
-                                    decoration: InputDecoration(
-                                      labelText: 'Code reçu par e-mail',
-                                      labelStyle: FlutterFlowTheme.of(context)
-                                          .bodyMedium
-                                          .override(
-                                            font: GoogleFonts.inter(
-                                              fontWeight:
-                                                  FlutterFlowTheme.of(context)
-                                                      .bodyMedium
-                                                      .fontWeight,
-                                              fontStyle:
-                                                  FlutterFlowTheme.of(context)
-                                                      .bodyMedium
-                                                      .fontStyle,
-                                            ),
-                                            color: Color(0xFFA0A0B2),
-                                            fontSize: 14.0,
-                                            letterSpacing: 0.0,
-                                            fontWeight:
-                                                FlutterFlowTheme.of(context)
-                                                    .bodyMedium
-                                                    .fontWeight,
-                                            fontStyle:
-                                                FlutterFlowTheme.of(context)
-                                                    .bodyMedium
-                                                    .fontStyle,
-                                          ),
-                                      hintStyle: FlutterFlowTheme.of(context)
-                                          .bodyMedium
-                                          .override(
-                                            font: GoogleFonts.inter(
-                                              fontWeight:
-                                                  FlutterFlowTheme.of(context)
-                                                      .bodyMedium
-                                                      .fontWeight,
-                                              fontStyle:
-                                                  FlutterFlowTheme.of(context)
-                                                      .bodyMedium
-                                                      .fontStyle,
-                                            ),
-                                            color: Color(0xFF5E5E70),
-                                            fontSize: 14.0,
-                                            letterSpacing: 0.0,
-                                            fontWeight:
-                                                FlutterFlowTheme.of(context)
-                                                    .bodyMedium
-                                                    .fontWeight,
-                                            fontStyle:
-                                                FlutterFlowTheme.of(context)
-                                                    .bodyMedium
-                                                    .fontStyle,
-                                          ),
-                                      errorStyle: FlutterFlowTheme.of(context)
-                                          .bodySmall
-                                          .override(
-                                            font: GoogleFonts.inter(
-                                              fontWeight:
-                                                  FlutterFlowTheme.of(context)
-                                                      .bodySmall
-                                                      .fontWeight,
-                                              fontStyle:
-                                                  FlutterFlowTheme.of(context)
-                                                      .bodySmall
-                                                      .fontStyle,
-                                            ),
-                                            color: Color(0xFFFF4D5E),
-                                            fontSize: 12.0,
-                                            letterSpacing: 0.0,
-                                            fontWeight:
-                                                FlutterFlowTheme.of(context)
-                                                    .bodySmall
-                                                    .fontWeight,
-                                            fontStyle:
-                                                FlutterFlowTheme.of(context)
-                                                    .bodySmall
-                                                    .fontStyle,
-                                          ),
-                                      enabledBorder: OutlineInputBorder(
-                                        borderSide: BorderSide(
-                                          color: Color(0xFF2A2A3A),
-                                          width: 1.0,
-                                        ),
-                                        borderRadius:
-                                            BorderRadius.circular(12.0),
-                                      ),
-                                      focusedBorder: OutlineInputBorder(
-                                        borderSide: BorderSide(
-                                          color: Color(0xFFF5B841),
-                                          width: 1.0,
-                                        ),
-                                        borderRadius:
-                                            BorderRadius.circular(12.0),
-                                      ),
-                                      errorBorder: OutlineInputBorder(
-                                        borderSide: BorderSide(
-                                          color: Color(0xFFFF4D5E),
-                                          width: 1.0,
-                                        ),
-                                        borderRadius:
-                                            BorderRadius.circular(12.0),
-                                      ),
-                                      focusedErrorBorder: OutlineInputBorder(
-                                        borderSide: BorderSide(
-                                          color: Color(0xFFFF4D5E),
-                                          width: 1.0,
-                                        ),
-                                        borderRadius:
-                                            BorderRadius.circular(12.0),
-                                      ),
-                                      filled: true,
-                                      fillColor: Color(0xFF1E1E2A),
-                                      contentPadding:
-                                          EdgeInsetsDirectional.fromSTEB(
-                                              16.0, 18.0, 16.0, 18.0),
-                                      prefixIcon: Icon(
-                                        Icons.pin_outlined,
-                                        color: Color(0xFFA0A0B2),
-                                        size: 20.0,
-                                      ),
-                                    ),
-                                    style: FlutterFlowTheme.of(context)
-                                        .bodyMedium
-                                        .override(
-                                          font: GoogleFonts.inter(
-                                            fontWeight:
-                                                FlutterFlowTheme.of(context)
-                                                    .bodyMedium
-                                                    .fontWeight,
-                                            fontStyle:
-                                                FlutterFlowTheme.of(context)
-                                                    .bodyMedium
-                                                    .fontStyle,
-                                          ),
-                                          color: Color(0xFFF5F5F7),
-                                          fontSize: 15.0,
-                                          letterSpacing: 0.0,
-                                          fontWeight:
-                                              FlutterFlowTheme.of(context)
-                                                  .bodyMedium
-                                                  .fontWeight,
-                                          fontStyle:
-                                              FlutterFlowTheme.of(context)
-                                                  .bodyMedium
-                                                  .fontStyle,
-                                        ),
-                                    keyboardType: TextInputType.number,
-                                    cursorColor: Color(0xFFF5B841),
-                                    validator: _model
-                                        .codeFieldTextControllerValidator
-                                        .asValidator(context),
-                                  ),
-                                ),
                                 Container(
                                   width: double.infinity,
                                   child: TextFormField(
@@ -738,7 +576,7 @@ class _NouveauMotDePasseWidgetState extends State<NouveauMotDePasseWidget> {
                               _model.reinitialisation =
                                   await actions.authResetPassword(
                                 widget!.email!,
-                                _model.codeFieldTextController.text,
+                                '',
                                 _model.passwordFieldTextController.text,
                                 _model.confirmFieldTextController.text,
                               );
@@ -747,7 +585,7 @@ class _NouveauMotDePasseWidgetState extends State<NouveauMotDePasseWidget> {
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   SnackBar(
                                     content: Text(
-                                      'Mot de passe modifié, vous êtes connecté.',
+                                      'Mot de passe modifié.',
                                       style: TextStyle(
                                         color: Color(0xFFF5F5F7),
                                       ),
@@ -756,8 +594,7 @@ class _NouveauMotDePasseWidgetState extends State<NouveauMotDePasseWidget> {
                                     backgroundColor: Color(0xFF2ECC71),
                                   ),
                                 );
-
-                                context.goNamed(HomePageWidget.routeName);
+                                context.pop();
                               } else {
                                 ScaffoldMessenger.of(context).clearSnackBars();
                                 ScaffoldMessenger.of(context).showSnackBar(
@@ -805,108 +642,6 @@ class _NouveauMotDePasseWidgetState extends State<NouveauMotDePasseWidget> {
                               elevation: 0.0,
                               borderRadius: BorderRadius.circular(24.0),
                             ),
-                          ),
-                          Row(
-                            mainAxisSize: MainAxisSize.max,
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              Text(
-                                'Code non reçu ?',
-                                style: FlutterFlowTheme.of(context)
-                                    .bodyMedium
-                                    .override(
-                                      font: GoogleFonts.inter(
-                                        fontWeight: FontWeight.normal,
-                                        fontStyle: FlutterFlowTheme.of(context)
-                                            .bodyMedium
-                                            .fontStyle,
-                                      ),
-                                      color: Color(0xFFA0A0B2),
-                                      fontSize: 14.0,
-                                      letterSpacing: 0.0,
-                                      fontWeight: FontWeight.normal,
-                                      fontStyle: FlutterFlowTheme.of(context)
-                                          .bodyMedium
-                                          .fontStyle,
-                                    ),
-                              ),
-                              Padding(
-                                padding: EdgeInsetsDirectional.fromSTEB(
-                                    6.0, 8.0, 6.0, 8.0),
-                                child: InkWell(
-                                  splashColor: Colors.transparent,
-                                  focusColor: Colors.transparent,
-                                  hoverColor: Colors.transparent,
-                                  highlightColor: Colors.transparent,
-                                  onTap: () async {
-                                    _model.renvoi =
-                                        await actions.authSendResetCode(
-                                      widget!.email!,
-                                    );
-                                    if (_model.renvoi == '') {
-                                      ScaffoldMessenger.of(context)
-                                          .clearSnackBars();
-                                      ScaffoldMessenger.of(context)
-                                          .showSnackBar(
-                                        SnackBar(
-                                          content: Text(
-                                            'Un nouveau code vous a été envoyé.',
-                                            style: TextStyle(
-                                              color: Color(0xFFF5F5F7),
-                                            ),
-                                          ),
-                                          duration:
-                                              Duration(milliseconds: 4000),
-                                          backgroundColor: Color(0xFF2ECC71),
-                                        ),
-                                      );
-                                    } else {
-                                      ScaffoldMessenger.of(context)
-                                          .clearSnackBars();
-                                      ScaffoldMessenger.of(context)
-                                          .showSnackBar(
-                                        SnackBar(
-                                          content: Text(
-                                            _model.renvoi!,
-                                            style: TextStyle(
-                                              color: Color(0xFFF5F5F7),
-                                            ),
-                                          ),
-                                          duration:
-                                              Duration(milliseconds: 4000),
-                                          backgroundColor: Color(0xFF1E1E2A),
-                                        ),
-                                      );
-                                    }
-
-                                    safeSetState(() {});
-                                  },
-                                  child: Text(
-                                    'Renvoyer le code',
-                                    style: FlutterFlowTheme.of(context)
-                                        .bodyMedium
-                                        .override(
-                                          font: GoogleFonts.inter(
-                                            fontWeight: FontWeight.w600,
-                                            fontStyle:
-                                                FlutterFlowTheme.of(context)
-                                                    .bodyMedium
-                                                    .fontStyle,
-                                          ),
-                                          color: Color(0xFFF5B841),
-                                          fontSize: 14.0,
-                                          letterSpacing: 0.0,
-                                          fontWeight: FontWeight.w600,
-                                          fontStyle:
-                                              FlutterFlowTheme.of(context)
-                                                  .bodyMedium
-                                                  .fontStyle,
-                                        ),
-                                  ),
-                                ),
-                              ),
-                            ],
                           ),
                         ].divide(SizedBox(height: 16.0)),
                       ),

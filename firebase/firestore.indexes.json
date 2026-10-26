@@ -4,81 +4,176 @@
       "collectionGroup": "favorites",
       "queryScope": "COLLECTION",
       "fields": [
-        { "fieldPath": "userId", "order": "ASCENDING" },
-        { "fieldPath": "createdAt", "order": "DESCENDING" }
+        {
+          "fieldPath": "userId",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "createdAt",
+          "order": "DESCENDING"
+        }
       ]
     },
     {
       "collectionGroup": "watched",
       "queryScope": "COLLECTION",
       "fields": [
-        { "fieldPath": "userId", "order": "ASCENDING" },
-        { "fieldPath": "watchedAt", "order": "DESCENDING" }
+        {
+          "fieldPath": "userId",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "watchedAt",
+          "order": "DESCENDING"
+        }
       ]
     },
     {
       "collectionGroup": "watchlists",
       "queryScope": "COLLECTION",
       "fields": [
-        { "fieldPath": "userId", "order": "ASCENDING" },
-        { "fieldPath": "createdAt", "order": "DESCENDING" }
+        {
+          "fieldPath": "userId",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "createdAt",
+          "order": "DESCENDING"
+        }
       ]
     },
     {
       "collectionGroup": "watchlist_items",
       "queryScope": "COLLECTION",
       "fields": [
-        { "fieldPath": "watchlistId", "order": "ASCENDING" },
-        { "fieldPath": "addedAt", "order": "DESCENDING" }
+        {
+          "fieldPath": "watchlistId",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "addedAt",
+          "order": "DESCENDING"
+        }
       ]
     },
     {
       "collectionGroup": "watchlist_items",
       "queryScope": "COLLECTION",
       "fields": [
-        { "fieldPath": "userId", "order": "ASCENDING" },
-        { "fieldPath": "mediaId", "order": "ASCENDING" }
+        {
+          "fieldPath": "userId",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "mediaId",
+          "order": "ASCENDING"
+        }
       ]
     },
     {
       "collectionGroup": "media",
       "queryScope": "COLLECTION",
       "fields": [
-        { "fieldPath": "mediaType", "order": "ASCENDING" },
-        { "fieldPath": "popularity", "order": "DESCENDING" }
+        {
+          "fieldPath": "mediaType",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "popularity",
+          "order": "DESCENDING"
+        }
       ]
     },
     {
       "collectionGroup": "media",
       "queryScope": "COLLECTION",
       "fields": [
-        { "fieldPath": "genres", "arrayConfig": "CONTAINS" },
-        { "fieldPath": "popularity", "order": "DESCENDING" }
+        {
+          "fieldPath": "genres",
+          "arrayConfig": "CONTAINS"
+        },
+        {
+          "fieldPath": "popularity",
+          "order": "DESCENDING"
+        }
       ]
     },
     {
       "collectionGroup": "media",
       "queryScope": "COLLECTION",
       "fields": [
-        { "fieldPath": "mediaType", "order": "ASCENDING" },
-        { "fieldPath": "genres", "arrayConfig": "CONTAINS" },
-        { "fieldPath": "popularity", "order": "DESCENDING" }
+        {
+          "fieldPath": "mediaType",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "genres",
+          "arrayConfig": "CONTAINS"
+        },
+        {
+          "fieldPath": "popularity",
+          "order": "DESCENDING"
+        }
       ]
     },
     {
       "collectionGroup": "notifications",
       "queryScope": "COLLECTION",
       "fields": [
-        { "fieldPath": "userId", "order": "ASCENDING" },
-        { "fieldPath": "createdAt", "order": "DESCENDING" }
+        {
+          "fieldPath": "userId",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "createdAt",
+          "order": "DESCENDING"
+        }
       ]
     },
     {
       "collectionGroup": "search_history",
       "queryScope": "COLLECTION",
       "fields": [
-        { "fieldPath": "userId", "order": "ASCENDING" },
-        { "fieldPath": "createdAt", "order": "DESCENDING" }
+        {
+          "fieldPath": "userId",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "createdAt",
+          "order": "DESCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "release_events",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "mediaId",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "releaseAt",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "watchlist_items",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "watchlistId",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "userId",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "addedAt",
+          "order": "DESCENDING"
+        }
       ]
     }
   ],

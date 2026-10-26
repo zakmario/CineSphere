@@ -11,7 +11,7 @@ import 'package:provider/provider.dart';
 import 'confirmation_email_model.dart';
 export 'confirmation_email_model.dart';
 
-/// Membre 1 — saisie du code reçu par e-mail
+/// Membre 1 — confirmation de l'adresse par le lien Firebase
 class ConfirmationEmailWidget extends StatefulWidget {
   const ConfirmationEmailWidget({
     super.key,
@@ -37,9 +37,6 @@ class _ConfirmationEmailWidgetState extends State<ConfirmationEmailWidget> {
   void initState() {
     super.initState();
     _model = createModel(context, () => ConfirmationEmailModel());
-
-    _model.codeFieldTextController ??= TextEditingController();
-    _model.codeFieldFocusNode ??= FocusNode();
   }
 
   @override
@@ -145,7 +142,7 @@ class _ConfirmationEmailWidgetState extends State<ConfirmationEmailWidget> {
                     decoration: BoxDecoration(),
                   ),
                   Text(
-                    'Saisissez le code à 6 chiffres envoyé à',
+                    'Cliquez sur le lien de confirmation envoyé à',
                     textAlign: TextAlign.center,
                     style: FlutterFlowTheme.of(context).bodyMedium.override(
                           font: GoogleFonts.inter(
@@ -205,164 +202,34 @@ class _ConfirmationEmailWidgetState extends State<ConfirmationEmailWidget> {
                         mainAxisAlignment: MainAxisAlignment.start,
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
-                          Form(
-                            key: _model.formKey,
-                            autovalidateMode: AutovalidateMode.disabled,
-                            child: Container(
-                              width: double.infinity,
-                              child: TextFormField(
-                                controller: _model.codeFieldTextController,
-                                focusNode: _model.codeFieldFocusNode,
-                                obscureText: false,
-                                decoration: InputDecoration(
-                                  labelText: 'Code de vérification',
-                                  labelStyle: FlutterFlowTheme.of(context)
+                          Text(
+                            'Une fois le lien ouvert, revenez ici et appuyez sur le bouton ci-dessous.',
+                            textAlign: TextAlign.center,
+                            style: FlutterFlowTheme.of(context)
+                                .bodyMedium
+                                .override(
+                                  font: GoogleFonts.inter(
+                                    fontWeight: FontWeight.normal,
+                                    fontStyle: FlutterFlowTheme.of(context)
+                                        .bodyMedium
+                                        .fontStyle,
+                                  ),
+                                  color: Color(0xFFA0A0B2),
+                                  fontSize: 14.0,
+                                  letterSpacing: 0.0,
+                                  fontWeight: FontWeight.normal,
+                                  fontStyle: FlutterFlowTheme.of(context)
                                       .bodyMedium
-                                      .override(
-                                        font: GoogleFonts.inter(
-                                          fontWeight:
-                                              FlutterFlowTheme.of(context)
-                                                  .bodyMedium
-                                                  .fontWeight,
-                                          fontStyle:
-                                              FlutterFlowTheme.of(context)
-                                                  .bodyMedium
-                                                  .fontStyle,
-                                        ),
-                                        color: Color(0xFFA0A0B2),
-                                        fontSize: 14.0,
-                                        letterSpacing: 0.0,
-                                        fontWeight: FlutterFlowTheme.of(context)
-                                            .bodyMedium
-                                            .fontWeight,
-                                        fontStyle: FlutterFlowTheme.of(context)
-                                            .bodyMedium
-                                            .fontStyle,
-                                      ),
-                                  hintStyle: FlutterFlowTheme.of(context)
-                                      .bodyMedium
-                                      .override(
-                                        font: GoogleFonts.inter(
-                                          fontWeight:
-                                              FlutterFlowTheme.of(context)
-                                                  .bodyMedium
-                                                  .fontWeight,
-                                          fontStyle:
-                                              FlutterFlowTheme.of(context)
-                                                  .bodyMedium
-                                                  .fontStyle,
-                                        ),
-                                        color: Color(0xFF5E5E70),
-                                        fontSize: 14.0,
-                                        letterSpacing: 0.0,
-                                        fontWeight: FlutterFlowTheme.of(context)
-                                            .bodyMedium
-                                            .fontWeight,
-                                        fontStyle: FlutterFlowTheme.of(context)
-                                            .bodyMedium
-                                            .fontStyle,
-                                      ),
-                                  errorStyle: FlutterFlowTheme.of(context)
-                                      .bodySmall
-                                      .override(
-                                        font: GoogleFonts.inter(
-                                          fontWeight:
-                                              FlutterFlowTheme.of(context)
-                                                  .bodySmall
-                                                  .fontWeight,
-                                          fontStyle:
-                                              FlutterFlowTheme.of(context)
-                                                  .bodySmall
-                                                  .fontStyle,
-                                        ),
-                                        color: Color(0xFFFF4D5E),
-                                        fontSize: 12.0,
-                                        letterSpacing: 0.0,
-                                        fontWeight: FlutterFlowTheme.of(context)
-                                            .bodySmall
-                                            .fontWeight,
-                                        fontStyle: FlutterFlowTheme.of(context)
-                                            .bodySmall
-                                            .fontStyle,
-                                      ),
-                                  enabledBorder: OutlineInputBorder(
-                                    borderSide: BorderSide(
-                                      color: Color(0xFF2A2A3A),
-                                      width: 1.0,
-                                    ),
-                                    borderRadius: BorderRadius.circular(12.0),
-                                  ),
-                                  focusedBorder: OutlineInputBorder(
-                                    borderSide: BorderSide(
-                                      color: Color(0xFFF5B841),
-                                      width: 1.0,
-                                    ),
-                                    borderRadius: BorderRadius.circular(12.0),
-                                  ),
-                                  errorBorder: OutlineInputBorder(
-                                    borderSide: BorderSide(
-                                      color: Color(0xFFFF4D5E),
-                                      width: 1.0,
-                                    ),
-                                    borderRadius: BorderRadius.circular(12.0),
-                                  ),
-                                  focusedErrorBorder: OutlineInputBorder(
-                                    borderSide: BorderSide(
-                                      color: Color(0xFFFF4D5E),
-                                      width: 1.0,
-                                    ),
-                                    borderRadius: BorderRadius.circular(12.0),
-                                  ),
-                                  filled: true,
-                                  fillColor: Color(0xFF1E1E2A),
-                                  contentPadding:
-                                      EdgeInsetsDirectional.fromSTEB(
-                                          16.0, 18.0, 16.0, 18.0),
-                                  prefixIcon: Icon(
-                                    Icons.pin_outlined,
-                                    color: Color(0xFFA0A0B2),
-                                    size: 20.0,
-                                  ),
+                                      .fontStyle,
+                                  lineHeight: 1.45,
                                 ),
-                                style: FlutterFlowTheme.of(context)
-                                    .bodyMedium
-                                    .override(
-                                      font: GoogleFonts.inter(
-                                        fontWeight: FlutterFlowTheme.of(context)
-                                            .bodyMedium
-                                            .fontWeight,
-                                        fontStyle: FlutterFlowTheme.of(context)
-                                            .bodyMedium
-                                            .fontStyle,
-                                      ),
-                                      color: Color(0xFFF5F5F7),
-                                      fontSize: 15.0,
-                                      letterSpacing: 0.0,
-                                      fontWeight: FlutterFlowTheme.of(context)
-                                          .bodyMedium
-                                          .fontWeight,
-                                      fontStyle: FlutterFlowTheme.of(context)
-                                          .bodyMedium
-                                          .fontStyle,
-                                    ),
-                                keyboardType: TextInputType.number,
-                                cursorColor: Color(0xFFF5B841),
-                                validator: _model
-                                    .codeFieldTextControllerValidator
-                                    .asValidator(context),
-                              ),
-                            ),
                           ),
                           FFButtonWidget(
                             onPressed: () async {
-                              if (_model.formKey.currentState == null ||
-                                  !_model.formKey.currentState!.validate()) {
-                                return;
-                              }
                               _model.verification =
                                   await actions.authConfirmSignUp(
                                 widget!.email!,
-                                _model.codeFieldTextController.text,
+                                '',
                               );
                               if (_model.verification == '') {
                                 ScaffoldMessenger.of(context).clearSnackBars();
@@ -401,7 +268,7 @@ class _ConfirmationEmailWidgetState extends State<ConfirmationEmailWidget> {
 
                               safeSetState(() {});
                             },
-                            text: 'Valider le code',
+                            text: 'J\'ai confirmé mon adresse',
                             options: FFButtonOptions(
                               width: double.infinity,
                               height: 52.0,
@@ -437,7 +304,7 @@ class _ConfirmationEmailWidgetState extends State<ConfirmationEmailWidget> {
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
                               Text(
-                                'Code non reçu ?',
+                                'E-mail non reçu ?',
                                 style: FlutterFlowTheme.of(context)
                                     .bodyMedium
                                     .override(
@@ -476,7 +343,7 @@ class _ConfirmationEmailWidgetState extends State<ConfirmationEmailWidget> {
                                           .showSnackBar(
                                         SnackBar(
                                           content: Text(
-                                            'Un nouveau code vous a été envoyé.',
+                                            'Un nouveau lien vous a été envoyé.',
                                             style: TextStyle(
                                               color: Color(0xFFF5F5F7),
                                             ),
@@ -508,7 +375,7 @@ class _ConfirmationEmailWidgetState extends State<ConfirmationEmailWidget> {
                                     safeSetState(() {});
                                   },
                                   child: Text(
-                                    'Renvoyer le code',
+                                    'Renvoyer le lien',
                                     style: FlutterFlowTheme.of(context)
                                         .bodyMedium
                                         .override(
@@ -542,7 +409,7 @@ class _ConfirmationEmailWidgetState extends State<ConfirmationEmailWidget> {
                     decoration: BoxDecoration(),
                   ),
                   Text(
-                    'Pensez à vérifier vos spams. Le code expire au bout d\'une heure.',
+                    'Pensez à vérifier vos spams.',
                     textAlign: TextAlign.center,
                     style: FlutterFlowTheme.of(context).bodyMedium.override(
                           font: GoogleFonts.inter(

@@ -1,5 +1,5 @@
 // Automatic FlutterFlow imports
-import '/backend/supabase/supabase.dart';
+import '/backend/backend.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import 'index.dart'; // Imports other custom actions
@@ -9,12 +9,13 @@ import 'package:flutter/material.dart';
 // DO NOT REMOVE OR MODIFY THE CODE ABOVE!
 
 import '/custom_code/actions/auth_service.dart';
-import '/custom_code/actions/supabase_service.dart';
+import '/custom_code/actions/firestore_service.dart';
 
 /// Création de compte, pour le bouton « Créer mon compte ».
 ///
-/// Retourne "" si le membre est connecté, [kAuthNeedsCode] s'il doit saisir
-/// le code reçu par e-mail, sinon le message d'erreur à afficher.
+/// Retourne "" si le membre est connecté, [kAuthNeedsCode] s'il doit
+/// confirmer son adresse avec le lien reçu par e-mail, sinon le message
+/// d'erreur à afficher.
 Future<String> authSignUp(
   String username,
   String email,

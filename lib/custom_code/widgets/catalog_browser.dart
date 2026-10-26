@@ -1,5 +1,5 @@
 // Automatic FlutterFlow imports
-import '/backend/supabase/supabase.dart';
+import '/backend/backend.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import 'index.dart'; // Imports other custom widgets
@@ -9,13 +9,15 @@ import 'package:flutter/material.dart';
 // Begin custom widget code
 // DO NOT REMOVE OR MODIFY THE CODE ABOVE!
 
+import '/custom_code/actions/firestore_service.dart';
 import 'dart:async';
 
 /// Catalogue films + séries avec :
 /// - recherche par contenu (titre et synopsis, avec délai de saisie),
 /// - filtres (type, genre, note minimale, statut),
 /// - tri (popularité, note, date, alphabétique),
-/// - pagination Supabase avec chargement progressif (scroll infini).
+/// - pagination avec chargement progressif (scroll infini) sur le catalogue
+///   Firestore gardé en mémoire (FirestoreService.catalog).
 ///
 /// Dans FlutterFlow, donnez-lui une hauteur (ou cochez "Expanded") car la
 /// grille défile à l'intérieur du widget.
@@ -108,11 +110,10 @@ class _CatalogBrowserState extends State<CatalogBrowser> {
 
   Future<void> _loadGenres() async {
     try {
-      final rows =
-          await SupaFlow.client.from('genres').select('name').order('name');
+      final genres = await FirestoreService.instance.fetchGenres();
       if (mounted) {
         setState(() {
-          _genres = rows.map((r) => r['name'] as String).toList();
+          _genres = genres.map((g) => g.name).toList();
         });
       }
     } catch (_) {
@@ -194,40 +195,50 @@ class _CatalogBrowserState extends State<CatalogBrowser> {
   }
 
   /// Charge les lignes [from]..[to] du catalogue avec la recherche, les
-  /// filtres et le tri en cours.
-  Future<List<Map<String, dynamic>>> _fetchPage(int from, int to) {
-    var query = SupaFlow.client.from('media').select(
-        'id, media_type, title, poster_url, rating, release_date, status');
-
-    if (_query.isNotEmpty) {
-      // Les caractères , ( ) ont un sens dans la syntaxe PostgREST "or",
-      // % et _ sont des jokers de ilike.
-      final safe = _query
-          .replaceAll(RegExp(r'[,()]'), ' ')
-          .replaceAll(r'\', r'\\')
-          .replaceAll('%', r'\%')
-          .replaceAll('_', r'\_');
-      query = query.or('title.ilike.%$safe%,overview.ilike.%$safe%');
-    }
-    if (_mediaType != null) {
-      query = query.eq('media_type', _mediaType!);
-    }
-    if (_genre != null) {
-      query = query.contains('genres', [_genre!]);
-    }
-    if (_minRating > 0) {
-      query = query.gte('rating', _minRating);
-    }
-    if (_status != null) {
-      query = query.eq('status', _status!);
-    }
+  /// filtres et le tri en cours. Firestore n'a pas de recherche « contient »
+  /// (ilike) : on filtre la copie du catalogue gardée en mémoire.
+  Future<List<Map<String, dynamic>>> _fetchPage(int from, int to) async {
+    final query = _query.toLowerCase();
+    bool contains(Object? text) =>
+        text is String && text.toLowerCase().contains(query);
+    final rows = (await FirestoreService.instance.catalog()).where((row) {
+      if (query.isNotEmpty &&
+          !contains(row['title']) &&
+          !contains(row['overview'])) {
+        return false;
+      }
+      if (_mediaType != null && row['media_type'] != _mediaType) {
+        return false;
+      }
+      if (_genre != null && !((row['genres'] as List?) ?? []).contains(_genre)) {
+        return false;
+      }
+      if (_minRating > 0 && ((row['rating'] as num?) ?? 0) < _minRating) {
+        return false;
+      }
+      return _status == null || row['status'] == _status;
+    }).toList();
 
     final sort = _sortOptions[_sort]!;
-    // Le tri secondaire sur id garantit une pagination stable (pas de doublons).
-    return query
-        .order(sort.column, ascending: sort.ascending, nullsFirst: false)
-        .order('id', ascending: true)
-        .range(from, to);
+    // Valeurs manquantes en dernier, puis id : pagination stable.
+    rows.sort((a, b) {
+      final va = a[sort.column] as Comparable?;
+      final vb = b[sort.column] as Comparable?;
+      if (va == null || vb == null) {
+        if (va != vb) {
+          return va == null ? 1 : -1;
+        }
+      } else {
+        final c = sort.column == 'title'
+            ? '$va'.toLowerCase().compareTo('$vb'.toLowerCase())
+            : va.compareTo(vb);
+        if (c != 0) {
+          return sort.ascending ? c : -c;
+        }
+      }
+      return '${a['id']}'.compareTo('${b['id']}');
+    });
+    return rows.sublist(min(from, rows.length), min(to + 1, rows.length));
   }
 
   void _clearFilters() {

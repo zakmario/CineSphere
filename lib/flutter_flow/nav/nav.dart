@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
+import '/backend/backend.dart';
 
 import '/backend/supabase/supabase.dart';
 
@@ -136,48 +137,6 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
               : ActualitesWidget(),
         ),
         FFRoute(
-          name: MotDePasseOublieWidget.routeName,
-          path: MotDePasseOublieWidget.routePath,
-          builder: (context, params) => MotDePasseOublieWidget(),
-        ),
-        FFRoute(
-          name: NouveauMotDePasseWidget.routeName,
-          path: NouveauMotDePasseWidget.routePath,
-          builder: (context, params) => NouveauMotDePasseWidget(
-            email: params.getParam(
-              'email',
-              ParamType.String,
-            ),
-          ),
-        ),
-        FFRoute(
-          name: DetailListeWidget.routeName,
-          path: DetailListeWidget.routePath,
-          builder: (context, params) => DetailListeWidget(
-            watchlistId: params.getParam(
-              'watchlistId',
-              ParamType.String,
-            ),
-          ),
-        ),
-        FFRoute(
-          name: FavorisWidget.routeName,
-          path: FavorisWidget.routePath,
-          builder: (context, params) => params.isEmpty
-              ? NavBarPage(initialPage: 'Favoris')
-              : FavorisWidget(
-                  onglet: params.getParam(
-                    'onglet',
-                    ParamType.int,
-                  ),
-                ),
-        ),
-        FFRoute(
-          name: ProfilWidget.routeName,
-          path: ProfilWidget.routePath,
-          builder: (context, params) => ProfilWidget(),
-        ),
-        FFRoute(
           name: LoginWidget.routeName,
           path: LoginWidget.routePath,
           builder: (context, params) => LoginWidget(),
@@ -198,11 +157,53 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
           builder: (context, params) => InscriptionWidget(),
         ),
         FFRoute(
+          name: MotDePasseOublieWidget.routeName,
+          path: MotDePasseOublieWidget.routePath,
+          builder: (context, params) => MotDePasseOublieWidget(),
+        ),
+        FFRoute(
+          name: NouveauMotDePasseWidget.routeName,
+          path: NouveauMotDePasseWidget.routePath,
+          builder: (context, params) => NouveauMotDePasseWidget(
+            email: params.getParam(
+              'email',
+              ParamType.String,
+            ),
+          ),
+        ),
+        FFRoute(
           name: ParametresWidget.routeName,
           path: ParametresWidget.routePath,
           builder: (context, params) => params.isEmpty
               ? NavBarPage(initialPage: 'Parametres')
               : ParametresWidget(),
+        ),
+        FFRoute(
+          name: ProfilWidget.routeName,
+          path: ProfilWidget.routePath,
+          builder: (context, params) => ProfilWidget(),
+        ),
+        FFRoute(
+          name: FavorisWidget.routeName,
+          path: FavorisWidget.routePath,
+          builder: (context, params) => params.isEmpty
+              ? NavBarPage(initialPage: 'Favoris')
+              : FavorisWidget(
+                  onglet: params.getParam(
+                    'onglet',
+                    ParamType.int,
+                  ),
+                ),
+        ),
+        FFRoute(
+          name: DetailListeWidget.routeName,
+          path: DetailListeWidget.routePath,
+          builder: (context, params) => DetailListeWidget(
+            watchlistId: params.getParam(
+              'watchlistId',
+              ParamType.String,
+            ),
+          ),
         ),
         FFRoute(
           name: BandeAnnonceWidget.routeName,
@@ -332,6 +333,7 @@ class FFParameters {
     String paramName,
     ParamType type, {
     bool isList = false,
+    List<String>? collectionNamePath,
   }) {
     if (futureParamValues.containsKey(paramName)) {
       return futureParamValues[paramName];
@@ -349,6 +351,7 @@ class FFParameters {
       param,
       type,
       isList,
+      collectionNamePath: collectionNamePath,
     );
   }
 }

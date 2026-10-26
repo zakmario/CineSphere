@@ -1,5 +1,5 @@
-import '/auth/supabase_auth/auth_util.dart';
-import '/backend/supabase/supabase.dart';
+import '/auth/firebase_auth/auth_util.dart';
+import '/backend/backend.dart';
 import '/flutter_flow/flutter_flow_button_tabbar.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
@@ -32,7 +32,7 @@ class FavorisModel extends FlutterFlowModel<FavorisWidget> {
       watchlistNameFieldTextControllerValidator;
   // Stores action output result for [Custom Action - createWatchlist] action in CreateWatchlistButton widget.
   String? creation;
-  Completer<List<WatchlistsRow>>? requestCompleter;
+  Completer<List<WatchlistsRecord>>? firestoreRequestCompleter;
 
   @override
   void initState(BuildContext context) {}
@@ -45,7 +45,7 @@ class FavorisModel extends FlutterFlowModel<FavorisWidget> {
   }
 
   /// Additional helper methods.
-  Future waitForRequestCompleted({
+  Future waitForFirestoreRequestCompleted({
     double minWait = 0,
     double maxWait = double.infinity,
   }) async {
@@ -53,7 +53,7 @@ class FavorisModel extends FlutterFlowModel<FavorisWidget> {
     while (true) {
       await Future.delayed(Duration(milliseconds: 50));
       final timeElapsed = stopwatch.elapsedMilliseconds;
-      final requestComplete = requestCompleter?.isCompleted ?? false;
+      final requestComplete = firestoreRequestCompleter?.isCompleted ?? false;
       if (timeElapsed > maxWait || (requestComplete && timeElapsed > minWait)) {
         break;
       }

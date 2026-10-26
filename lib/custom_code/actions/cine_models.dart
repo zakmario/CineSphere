@@ -1,5 +1,5 @@
 // Automatic FlutterFlow imports
-import '/backend/supabase/supabase.dart';
+import '/backend/backend.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import 'index.dart'; // Imports other custom actions
@@ -12,7 +12,7 @@ import 'dart:convert';
 
 import 'package:collection/collection.dart';
 
-/// Modèles des tables Supabase de CinéSphère (supabase/migrations).
+/// Modèles des collections Firestore de CinéSphère (firebase/firestore.rules).
 ///
 /// FlutterFlow ne synchronise que les fichiers d'actions, de widgets et de
 /// fonctions : ce fichier est donc une action dont la fonction ci-dessous
@@ -35,7 +35,7 @@ abstract class CineModel {
   /// Valeurs comparées par [==] et [hashCode].
   List<Object?> get props;
 
-  /// Représentation JSON Supabase (colonnes en snake_case).
+  /// Représentation JSON (clés snake_case ; voir cineRow dans firestore_service).
   Map<String, dynamic> toJson();
 
   /// Représentation SQLite : booléens en 0/1, listes en JSON.
@@ -161,7 +161,7 @@ mixin MediaTarget {
   MediaType get mediaType =>
       movieId != null ? MediaType.movie : MediaType.series;
 
-  /// Identifiant Supabase du film ou de la série.
+  /// Identifiant Firestore du film ou de la série.
   String get targetId => movieId ?? seriesId ?? '';
 }
 
@@ -462,7 +462,7 @@ class Movie extends CineModel {
     this.createdAt,
   });
 
-  /// Identifiant Supabase (null tant que le film n'est pas mis en cache).
+  /// Identifiant Firestore (null tant que le film n'est pas mis en cache).
   final String? id;
   final int tmdbId;
   final String title;

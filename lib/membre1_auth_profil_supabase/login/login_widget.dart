@@ -10,7 +10,7 @@ import 'package:provider/provider.dart';
 import 'login_model.dart';
 export 'login_model.dart';
 
-/// Membre 1 — connexion (Supabase Auth)
+/// Membre 1 — connexion (Firebase Auth)
 class LoginWidget extends StatefulWidget {
   const LoginWidget({super.key});
 

@@ -1,5 +1,5 @@
 // Automatic FlutterFlow imports
-import '/backend/supabase/supabase.dart';
+import '/backend/backend.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import 'index.dart'; // Imports other custom widgets
@@ -8,6 +8,8 @@ import '/flutter_flow/custom_functions.dart'; // Imports custom functions
 import 'package:flutter/material.dart';
 // Begin custom widget code
 // DO NOT REMOVE OR MODIFY THE CODE ABOVE!
+
+import '/custom_code/actions/firestore_service.dart';
 
 /// Bouton « Marquer comme vu » de la fiche d'un titre (membre 1), relié à
 /// la table `watched`. Charge son état tout seul et appelle [onChanged]
@@ -52,8 +54,7 @@ class _MarkWatchedButtonState extends State<MarkWatchedButton> {
     if (!mounted) {
       return;
     }
-    final userId = SupaFlow.client.auth.currentUser?.id;
-    if (userId == null) {
+    if (FirestoreService.instance.currentUserId == null) {
       setState(() {
         _isWatched = false;
         _busy = false;
@@ -62,14 +63,9 @@ class _MarkWatchedButtonState extends State<MarkWatchedButton> {
     }
     setState(() => _busy = true);
     try {
-      final row = await SupaFlow.client
-          .from('watched')
-          .select('id')
-          .eq('user_id', userId)
-          .eq('media_id', widget.mediaId)
-          .maybeSingle();
+      final value = await FirestoreService.instance.isWatched(widget.mediaId);
       if (mounted) {
-        setState(() => _isWatched = row != null);
+        setState(() => _isWatched = value);
       }
     } catch (_) {
       // On affiche « non vu » en cas d'erreur réseau.

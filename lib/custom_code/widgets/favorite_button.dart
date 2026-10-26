@@ -1,5 +1,5 @@
 // Automatic FlutterFlow imports
-import '/backend/supabase/supabase.dart';
+import '/backend/backend.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import 'index.dart'; // Imports other custom widgets
@@ -9,7 +9,9 @@ import 'package:flutter/material.dart';
 // Begin custom widget code
 // DO NOT REMOVE OR MODIFY THE CODE ABOVE!
 
-/// Bouton cœur relié à la table `favorites` de Supabase.
+import '/custom_code/actions/firestore_service.dart';
+
+/// Bouton cœur relié à la collection `favorites` de Firestore.
 /// Charge son état tout seul et appelle [onChanged] après chaque changement.
 class FavoriteButton extends StatefulWidget {
   const FavoriteButton({
@@ -53,8 +55,7 @@ class _FavoriteButtonState extends State<FavoriteButton> {
     if (!mounted) {
       return;
     }
-    final userId = SupaFlow.client.auth.currentUser?.id;
-    if (userId == null) {
+    if (FirestoreService.instance.currentUserId == null) {
       setState(() {
         _isFavorite = false;
         _busy = false;
@@ -63,14 +64,9 @@ class _FavoriteButtonState extends State<FavoriteButton> {
     }
     setState(() => _busy = true);
     try {
-      final row = await SupaFlow.client
-          .from('favorites')
-          .select('media_id')
-          .eq('user_id', userId)
-          .eq('media_id', widget.mediaId)
-          .maybeSingle();
+      final value = await FirestoreService.instance.isFavorite(widget.mediaId);
       if (mounted) {
-        setState(() => _isFavorite = row != null);
+        setState(() => _isFavorite = value);
       }
     } catch (_) {
       // On laisse le cœur vide en cas d'erreur réseau.

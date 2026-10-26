@@ -1,5 +1,5 @@
 // Automatic FlutterFlow imports
-import '/backend/supabase/supabase.dart';
+import '/backend/backend.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import 'index.dart'; // Imports other custom actions
@@ -9,10 +9,11 @@ import 'package:flutter/material.dart';
 // DO NOT REMOVE OR MODIFY THE CODE ABOVE!
 
 import '/custom_code/actions/auth_service.dart';
-import '/custom_code/actions/supabase_service.dart';
+import '/custom_code/actions/firestore_service.dart';
 
-/// Vérifie le code de réinitialisation puis enregistre le nouveau mot de
-/// passe (le membre est alors connecté).
+/// Enregistre un nouveau mot de passe pour le membre connecté. Le mot de
+/// passe oublié passe par le lien Firebase reçu par e-mail ; [email] et
+/// [code] restent dans la signature pour les pages existantes.
 /// Retourne "" en cas de succès, sinon le message d'erreur à afficher.
 Future<String> authResetPassword(
   String email,
@@ -25,8 +26,7 @@ Future<String> authResetPassword(
     return mismatch;
   }
   try {
-    await AuthService.instance
-        .resetPassword(email: email, code: code, newPassword: newPassword);
+    await AuthService.instance.changePassword(newPassword);
     return '';
   } on CineFailure catch (failure) {
     return failure.message;

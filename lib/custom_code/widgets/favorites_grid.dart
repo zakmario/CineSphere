@@ -1,5 +1,5 @@
 // Automatic FlutterFlow imports
-import '/backend/supabase/supabase.dart';
+import '/backend/backend.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import 'index.dart'; // Imports other custom widgets
@@ -9,8 +9,11 @@ import 'package:flutter/material.dart';
 // Begin custom widget code
 // DO NOT REMOVE OR MODIFY THE CODE ABOVE!
 
+import '/custom_code/actions/firestore_service.dart';
+
 /// Grille paginée des favoris de l'utilisateur connecté
-/// (table `favorites` jointe à `media`), du plus récent au plus ancien.
+/// (collection `favorites`, titres lus dans `media`), du plus récent au
+/// plus ancien.
 class FavoritesGrid extends StatefulWidget {
   const FavoritesGrid({
     super.key,
@@ -37,6 +40,9 @@ class _FavoritesGridState extends State<FavoritesGrid> {
   String? _error;
   int _requestId = 0;
 
+  /// Dernier favori chargé : la page suivante commence après lui.
+  DocumentSnapshot? _lastFavorite;
+
   int get _pageSize => (widget.pageSize ?? 20).clamp(5, 100);
 
   @override
@@ -61,6 +67,7 @@ class _FavoritesGridState extends State<FavoritesGrid> {
     _requestId++;
     setState(() {
       _items.clear();
+      _lastFavorite = null;
       _hasMore = true;
       _loading = false;
       _error = null;
@@ -72,7 +79,7 @@ class _FavoritesGridState extends State<FavoritesGrid> {
     if (!mounted || _loading || !_hasMore) {
       return;
     }
-    final userId = SupaFlow.client.auth.currentUser?.id;
+    final userId = FirestoreService.instance.currentUserId;
     if (userId == null) {
       setState(() {
         _hasMore = false;
@@ -86,23 +93,31 @@ class _FavoritesGridState extends State<FavoritesGrid> {
       _error = null;
     });
     try {
-      final from = _items.length;
-      final rows = await SupaFlow.client
-          .from('favorites')
-          .select(
-              'created_at, media(id, media_type, title, poster_url, rating, release_date)')
-          .eq('user_id', userId)
-          .order('created_at', ascending: false)
-          .order('media_id', ascending: true)
-          .range(from, from + _pageSize - 1);
+      var query = FirestoreService.instance
+          .col('favorites')
+          .where('userId', isEqualTo: userId)
+          .orderBy('createdAt', descending: true)
+          .limit(_pageSize);
+      final last = _lastFavorite;
+      if (last != null) {
+        query = query.startAfterDocument(last);
+      }
+      final page = await query.get();
+      final media = await FirestoreService.instance.fetchMediaByIds(
+          page.docs.map((d) => d.data()['mediaId'] as String));
       if (!mounted || requestId != _requestId) {
         return;
       }
       setState(() {
-        _items.addAll(rows
-            .map((r) => r['media'])
-            .whereType<Map<String, dynamic>>());
-        _hasMore = rows.length == _pageSize;
+        if (page.docs.isNotEmpty) {
+          _lastFavorite = page.docs.last;
+        }
+        _items.addAll([
+          for (final doc in page.docs)
+            if (media[doc.data()['mediaId']] != null)
+              media[doc.data()['mediaId']]!,
+        ]);
+        _hasMore = page.docs.length == _pageSize;
         _loading = false;
       });
     } catch (e) {

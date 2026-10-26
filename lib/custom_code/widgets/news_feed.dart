@@ -1,5 +1,5 @@
 // Automatic FlutterFlow imports
-import '/backend/supabase/supabase.dart';
+import '/backend/backend.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import 'index.dart'; // Imports other custom widgets
@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 // Begin custom widget code
 // DO NOT REMOVE OR MODIFY THE CODE ABOVE!
 
+import '/custom_code/actions/firestore_service.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
@@ -37,6 +38,9 @@ class _NewsFeedState extends State<NewsFeed> {
   final List<Map<String, dynamic>> _items = [];
   bool _loading = false;
   bool _hasMore = true;
+
+  /// Dernier document chargé : la page suivante commence après lui.
+  DocumentSnapshot? _lastDoc;
   String? _error;
 
   int get _pageSize => (widget.pageSize ?? 10).clamp(5, 50);
@@ -63,6 +67,7 @@ class _NewsFeedState extends State<NewsFeed> {
   Future<void> _refresh() async {
     setState(() {
       _items.clear();
+      _lastDoc = null;
       _hasMore = true;
       _error = null;
     });
@@ -78,19 +83,24 @@ class _NewsFeedState extends State<NewsFeed> {
       _error = null;
     });
     try {
-      final from = _items.length;
-      final rows = await SupaFlow.client
-          .from('news')
-          .select('id, media_id, title, summary, image_url, published_at')
-          .order('published_at', ascending: false)
-          .order('id', ascending: true)
-          .range(from, from + _pageSize - 1);
+      var query = FirestoreService.instance
+          .col('news')
+          .orderBy('publishedAt', descending: true)
+          .limit(_pageSize);
+      final last = _lastDoc;
+      if (last != null) {
+        query = query.startAfterDocument(last);
+      }
+      final page = await query.get();
       if (!mounted) {
         return;
       }
       setState(() {
-        _items.addAll(rows);
-        _hasMore = rows.length == _pageSize;
+        if (page.docs.isNotEmpty) {
+          _lastDoc = page.docs.last;
+        }
+        _items.addAll(page.docs.map(cineRow));
+        _hasMore = page.docs.length == _pageSize;
         _loading = false;
       });
     } catch (e) {

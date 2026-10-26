@@ -3,6 +3,8 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:from_css_color/from_css_color.dart';
 
+import '/backend/backend.dart';
+
 import '/backend/supabase/supabase.dart';
 
 import '../../flutter_flow/lat_lng.dart';
@@ -34,6 +36,19 @@ String placeToString(FFPlace place) => jsonEncode({
 
 String uploadedFileToString(FFUploadedFile uploadedFile) =>
     uploadedFile.serialize();
+
+const _kDocIdDelimeter = '|';
+String _serializeDocumentReference(DocumentReference ref) {
+  final docIds = <String>[];
+  DocumentReference? currentRef = ref;
+  while (currentRef != null) {
+    docIds.add(currentRef.id);
+    // Get the parent document (catching any errors that arise).
+    currentRef = safeGet<DocumentReference?>(() => currentRef?.parent.parent);
+  }
+  // Reverse the list to get the correct ordering.
+  return docIds.reversed.join(_kDocIdDelimeter);
+}
 
 String? serializeParam(
   dynamic param,
@@ -76,6 +91,11 @@ String? serializeParam(
         data = uploadedFileToString(param as FFUploadedFile);
       case ParamType.JSON:
         data = json.encode(param);
+      case ParamType.DocumentReference:
+        data = _serializeDocumentReference(param as DocumentReference);
+      case ParamType.Document:
+        final reference = (param as FirestoreRecord).reference;
+        data = _serializeDocumentReference(reference);
 
       case ParamType.SupabaseRow:
         return json.encode((param as SupabaseDataRow).data);
@@ -175,6 +195,18 @@ FFPlace placeFromString(String placeStr) {
 FFUploadedFile uploadedFileFromString(String uploadedFileStr) =>
     FFUploadedFile.deserialize(uploadedFileStr);
 
+DocumentReference _deserializeDocumentReference(
+  String refStr,
+  List<String> collectionNamePath,
+) {
+  var path = '';
+  final docIds = refStr.split(_kDocIdDelimeter);
+  for (int i = 0; i < docIds.length && i < collectionNamePath.length; i++) {
+    path += '/${collectionNamePath[i]}/${docIds[i]}';
+  }
+  return FirebaseFirestore.instance.doc(path);
+}
+
 enum ParamType {
   int,
   double,
@@ -188,14 +220,17 @@ enum ParamType {
   FFUploadedFile,
   JSON,
 
+  Document,
+  DocumentReference,
   SupabaseRow,
 }
 
 dynamic deserializeParam<T>(
   String? param,
   ParamType paramType,
-  bool isList,
-) {
+  bool isList, {
+  List<String>? collectionNamePath,
+}) {
   try {
     if (param == null) {
       return null;
@@ -208,7 +243,8 @@ dynamic deserializeParam<T>(
       return paramValues
           .where((p) => p is String)
           .map((p) => p as String)
-          .map((p) => deserializeParam<T>(p, paramType, false))
+          .map((p) => deserializeParam<T>(p, paramType, false,
+              collectionNamePath: collectionNamePath))
           .where((p) => p != null)
           .map((p) => p! as T)
           .toList();
@@ -236,6 +272,8 @@ dynamic deserializeParam<T>(
         return uploadedFileFromString(param);
       case ParamType.JSON:
         return json.decode(param);
+      case ParamType.DocumentReference:
+        return _deserializeDocumentReference(param, collectionNamePath ?? []);
 
       case ParamType.SupabaseRow:
         final data = json.decode(param) as Map<String, dynamic>;
@@ -246,12 +284,38 @@ dynamic deserializeParam<T>(
             return GenresRow(data);
           case MediaRow:
             return MediaRow(data);
+          case MovieGenresRow:
+            return MovieGenresRow(data);
+          case MoviesRow:
+            return MoviesRow(data);
           case NewsRow:
             return NewsRow(data);
+          case NotificationsRow:
+            return NotificationsRow(data);
+          case PlatformsRow:
+            return PlatformsRow(data);
           case ProfilesRow:
             return ProfilesRow(data);
           case ReleaseEventsRow:
             return ReleaseEventsRow(data);
+          case ReviewLikesRow:
+            return ReviewLikesRow(data);
+          case ReviewsRow:
+            return ReviewsRow(data);
+          case SearchHistoryRow:
+            return SearchHistoryRow(data);
+          case SeriesRow:
+            return SeriesRow(data);
+          case SeriesGenresRow:
+            return SeriesGenresRow(data);
+          case UserPreferencesRow:
+            return UserPreferencesRow(data);
+          case WatchedRow:
+            return WatchedRow(data);
+          case WatchlistItemsRow:
+            return WatchlistItemsRow(data);
+          case WatchlistsRow:
+            return WatchlistsRow(data);
           default:
             return null;
         }
@@ -263,4 +327,33 @@ dynamic deserializeParam<T>(
     print('Error deserializing parameter: $e');
     return null;
   }
+}
+
+Future<dynamic> Function(String) getDoc(
+  List<String> collectionNamePath,
+  RecordBuilder recordBuilder,
+) {
+  return (String ids) => _deserializeDocumentReference(ids, collectionNamePath)
+      .get()
+      .then((s) => recordBuilder(s));
+}
+
+Future<List<T>> Function(String) getDocList<T>(
+  List<String> collectionNamePath,
+  RecordBuilder<T> recordBuilder,
+) {
+  return (String idsList) {
+    List<String> docIds = [];
+    try {
+      final ids = json.decode(idsList) as Iterable;
+      docIds = ids.where((d) => d is String).map((d) => d as String).toList();
+    } catch (_) {}
+    return Future.wait(
+      docIds.map(
+        (ids) => _deserializeDocumentReference(ids, collectionNamePath)
+            .get()
+            .then((s) => recordBuilder(s)),
+      ),
+    ).then((docs) => docs.where((d) => d != null).map((d) => d!).toList());
+  };
 }

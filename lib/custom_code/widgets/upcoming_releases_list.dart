@@ -1,5 +1,5 @@
 // Automatic FlutterFlow imports
-import '/backend/supabase/supabase.dart';
+import '/backend/backend.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import 'index.dart'; // Imports other custom widgets
@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 // Begin custom widget code
 // DO NOT REMOVE OR MODIFY THE CODE ABOVE!
 
+import '/custom_code/actions/firestore_service.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
 /// Calendrier des prochaines sorties (table `release_events`), groupé par jour,
@@ -46,6 +47,9 @@ class _UpcomingReleasesListState extends State<UpcomingReleasesList> {
   Set<String> _reminders = {};
   bool _loading = false;
   bool _hasMore = true;
+
+  /// Dernier document chargé : la page suivante commence après lui.
+  DocumentSnapshot? _lastDoc;
   String? _error;
 
   int get _pageSize => (widget.pageSize ?? 15).clamp(5, 100);
@@ -81,6 +85,7 @@ class _UpcomingReleasesListState extends State<UpcomingReleasesList> {
   Future<void> _refresh() async {
     setState(() {
       _events.clear();
+      _lastDoc = null;
       _hasMore = true;
       _error = null;
     });
@@ -97,25 +102,36 @@ class _UpcomingReleasesListState extends State<UpcomingReleasesList> {
       _error = null;
     });
     try {
-      var query = SupaFlow.client
-          .from('release_events')
-          .select(
-              'id, title, release_at, platform, media(id, title, poster_url, media_type)')
-          .gte('release_at', DateTime.now().toUtc().toIso8601String());
+      final service = FirestoreService.instance;
+      Query<Map<String, dynamic>> query = service.col('release_events');
       if (widget.mediaId != null && widget.mediaId!.isNotEmpty) {
-        query = query.eq('media_id', widget.mediaId!);
+        query = query.where('mediaId', isEqualTo: widget.mediaId);
       }
-      final from = _events.length;
-      final rows = await query
-          .order('release_at', ascending: true)
-          .order('id', ascending: true)
-          .range(from, from + _pageSize - 1);
+      query = query
+          .where('releaseAt', isGreaterThanOrEqualTo: Timestamp.now())
+          .orderBy('releaseAt')
+          .limit(_pageSize);
+      final last = _lastDoc;
+      if (last != null) {
+        query = query.startAfterDocument(last);
+      }
+      final page = await query.get();
+      // Jointure avec le catalogue (titre, affiche, type).
+      final media = await service.fetchMediaByIds(
+          page.docs.map((d) => d.data()['mediaId'] as String? ?? ''));
+      final rows = [
+        for (final doc in page.docs)
+          cineRow(doc)..['media'] = media[doc.data()['mediaId']],
+      ];
       if (!mounted) {
         return;
       }
       setState(() {
+        if (page.docs.isNotEmpty) {
+          _lastDoc = page.docs.last;
+        }
         _events.addAll(rows);
-        _hasMore = rows.length == _pageSize;
+        _hasMore = page.docs.length == _pageSize;
         _loading = false;
       });
     } catch (e) {

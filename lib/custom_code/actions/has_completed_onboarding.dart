@@ -1,5 +1,5 @@
 // Automatic FlutterFlow imports
-import '/backend/supabase/supabase.dart';
+import '/backend/backend.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import 'index.dart'; // Imports other custom actions
@@ -8,27 +8,27 @@ import 'package:flutter/material.dart';
 // Begin custom action code
 // DO NOT REMOVE OR MODIFY THE CODE ABOVE!
 
+import 'package:firebase_auth/firebase_auth.dart' as fb;
 import 'package:shared_preferences/shared_preferences.dart';
 
 /// Vrai si l'utilisateur a déjà vu le walkthrough de première utilisation.
-/// Vérifie d'abord l'appareil (rapide, hors connexion) puis le profil Supabase
-/// (pour ne pas le revoir après une réinstallation).
+/// Vérifie d'abord l'appareil (rapide, hors connexion) puis le profil
+/// Firestore (pour ne pas le revoir après une réinstallation).
 Future<bool> hasCompletedOnboarding() async {
   final prefs = await SharedPreferences.getInstance();
   if (prefs.getBool('cs_onboarding_done') ?? false) {
     return true;
   }
-  final userId = SupaFlow.client.auth.currentUser?.id;
+  final userId = fb.FirebaseAuth.instance.currentUser?.uid;
   if (userId == null) {
     return false;
   }
   try {
-    final row = await SupaFlow.client
-        .from('profiles')
-        .select('onboarding_done')
-        .eq('id', userId)
-        .maybeSingle();
-    final done = row?['onboarding_done'] == true;
+    final doc = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(userId)
+        .get();
+    final done = doc.data()?['onboardingCompleted'] == true;
     if (done) {
       await prefs.setBool('cs_onboarding_done', true);
     }

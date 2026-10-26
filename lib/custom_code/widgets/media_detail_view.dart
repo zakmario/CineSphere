@@ -1,5 +1,5 @@
 // Automatic FlutterFlow imports
-import '/backend/supabase/supabase.dart';
+import '/backend/backend.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import 'index.dart'; // Imports other custom widgets
@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 // Begin custom widget code
 // DO NOT REMOVE OR MODIFY THE CODE ABOVE!
 
+import '/custom_code/actions/firestore_service.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import '/custom_code/widgets/trailer_player.dart';
 
@@ -60,11 +61,7 @@ class _MediaDetailViewState extends State<MediaDetailView> {
       _error = null;
     });
     try {
-      final row = await SupaFlow.client
-          .from('media')
-          .select()
-          .eq('id', widget.mediaId)
-          .maybeSingle();
+      final row = await FirestoreService.instance.fetchMedia(widget.mediaId);
       if (!mounted) {
         return;
       }

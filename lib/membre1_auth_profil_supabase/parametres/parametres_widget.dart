@@ -1,4 +1,4 @@
-import '/auth/supabase_auth/auth_util.dart';
+import '/auth/firebase_auth/auth_util.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
@@ -8,6 +8,7 @@ import '/index.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
+import 'package:webviewx_plus/webviewx_plus.dart';
 import 'parametres_model.dart';
 export 'parametres_model.dart';
 
@@ -497,7 +498,15 @@ class _ParametresWidgetState extends State<ParametresWidget> {
                           hoverColor: Colors.transparent,
                           highlightColor: Colors.transparent,
                           onTap: () async {
-                            context.pushNamed(MotDePasseOublieWidget.routeName);
+                            context.pushNamed(
+                              NouveauMotDePasseWidget.routeName,
+                              queryParameters: {
+                                'email': serializeParam(
+                                  currentUserEmail,
+                                  ParamType.String,
+                                ),
+                              }.withoutNulls,
+                            );
                           },
                           child: Container(
                             decoration: BoxDecoration(),
@@ -555,7 +564,7 @@ class _ParametresWidgetState extends State<ParametresWidget> {
                                               ),
                                         ),
                                         Text(
-                                          'Recevoir un code par e-mail',
+                                          'Choisir un nouveau mot de passe',
                                           style: FlutterFlowTheme.of(context)
                                               .bodyMedium
                                               .override(
@@ -1403,22 +1412,24 @@ class _ParametresWidgetState extends State<ParametresWidget> {
                             var confirmDialogResponse = await showDialog<bool>(
                                   context: context,
                                   builder: (alertDialogContext) {
-                                    return AlertDialog(
-                                      title: Text('Supprimer votre compte ?'),
-                                      content: Text(
-                                          'Votre profil, vos favoris, vos listes, vos contenus vus et vos avis seront supprimés définitivement. Cette action est irréversible.'),
-                                      actions: [
-                                        TextButton(
-                                          onPressed: () => Navigator.pop(
-                                              alertDialogContext, false),
-                                          child: Text('Annuler'),
-                                        ),
-                                        TextButton(
-                                          onPressed: () => Navigator.pop(
-                                              alertDialogContext, true),
-                                          child: Text('Supprimer'),
-                                        ),
-                                      ],
+                                    return WebViewAware(
+                                      child: AlertDialog(
+                                        title: Text('Supprimer votre compte ?'),
+                                        content: Text(
+                                            'Votre profil, vos favoris, vos listes, vos contenus vus et vos avis seront supprimés définitivement. Cette action est irréversible.'),
+                                        actions: [
+                                          TextButton(
+                                            onPressed: () => Navigator.pop(
+                                                alertDialogContext, false),
+                                            child: Text('Annuler'),
+                                          ),
+                                          TextButton(
+                                            onPressed: () => Navigator.pop(
+                                                alertDialogContext, true),
+                                            child: Text('Supprimer'),
+                                          ),
+                                        ],
+                                      ),
                                     );
                                   },
                                 ) ??

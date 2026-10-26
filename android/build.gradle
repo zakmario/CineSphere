@@ -12,7 +12,8 @@ subprojects {
         if (project.hasProperty("kotlin")) {
             project.tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
                 kotlinOptions {
-                    jvmTarget = "1.8"
+                    // Match Firebase plugins' Java 17 target and older plugins' targets.
+                    jvmTarget = project.hasProperty("android") && project.android.compileOptions.targetCompatibility.isCompatibleWith(JavaVersion.VERSION_1_8) ? project.android.compileOptions.targetCompatibility.toString() : "1.8"
                 }
             }
             if (project.hasProperty("android")) {

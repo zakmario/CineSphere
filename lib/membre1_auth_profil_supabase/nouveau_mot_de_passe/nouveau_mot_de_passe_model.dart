@@ -4,7 +4,6 @@ import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
 import 'dart:ui';
 import '/custom_code/actions/index.dart' as actions;
-import '/index.dart';
 import 'nouveau_mot_de_passe_widget.dart' show NouveauMotDePasseWidget;
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -14,22 +13,6 @@ class NouveauMotDePasseModel extends FlutterFlowModel<NouveauMotDePasseWidget> {
   ///  State fields for stateful widgets in this page.
 
   final formKey = GlobalKey<FormState>();
-  // State field(s) for CodeField widget.
-  FocusNode? codeFieldFocusNode;
-  TextEditingController? codeFieldTextController;
-  String? Function(BuildContext, String?)? codeFieldTextControllerValidator;
-  String? _codeFieldTextControllerValidator(BuildContext context, String? val) {
-    if (val == null || val.isEmpty) {
-      return 'Saisissez le code reçu par e-mail.';
-    }
-
-    if (val.length < 6) {
-      return 'Le code contient au moins 6 chiffres.';
-    }
-
-    return null;
-  }
-
   // State field(s) for PasswordField widget.
   late FocusNode passwordFieldPasswordVisibilityFocusNode;
   FocusNode? passwordFieldFocusNode;
@@ -66,12 +49,9 @@ class NouveauMotDePasseModel extends FlutterFlowModel<NouveauMotDePasseWidget> {
 
   // Stores action output result for [Custom Action - authResetPassword] action in Button widget.
   String? reinitialisation;
-  // Stores action output result for [Custom Action - authSendResetCode] action in Text widget.
-  String? renvoi;
 
   @override
   void initState(BuildContext context) {
-    codeFieldTextControllerValidator = _codeFieldTextControllerValidator;
     passwordFieldPasswordVisibilityFocusNode = FocusNode();
     passwordFieldVisibility = false;
     passwordFieldTextControllerValidator =
@@ -83,9 +63,6 @@ class NouveauMotDePasseModel extends FlutterFlowModel<NouveauMotDePasseWidget> {
 
   @override
   void dispose() {
-    codeFieldFocusNode?.dispose();
-    codeFieldTextController?.dispose();
-
     passwordFieldFocusNode?.dispose();
     passwordFieldTextController?.dispose();
     passwordFieldPasswordVisibilityFocusNode.dispose();

@@ -4,14 +4,13 @@ import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
 import 'dart:ui';
 import '/custom_code/actions/index.dart' as actions;
-import '/index.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'mot_de_passe_oublie_model.dart';
 export 'mot_de_passe_oublie_model.dart';
 
-/// Membre 1 — demande de code de réinitialisation
+/// Membre 1 — envoi du lien de réinitialisation Firebase
 class MotDePasseOublieWidget extends StatefulWidget {
   const MotDePasseOublieWidget({super.key});
 
@@ -139,7 +138,7 @@ class _MotDePasseOublieWidgetState extends State<MotDePasseOublieWidget> {
                     decoration: BoxDecoration(),
                   ),
                   Text(
-                    'Pas de panique ! Saisissez l\'adresse de votre compte : nous vous envoyons un code pour choisir un nouveau mot de passe.',
+                    'Pas de panique ! Saisissez l\'adresse de votre compte : nous vous envoyons un lien pour choisir un nouveau mot de passe.',
                     textAlign: TextAlign.center,
                     style: FlutterFlowTheme.of(context).bodyMedium.override(
                           font: GoogleFonts.inter(
@@ -340,7 +339,7 @@ class _MotDePasseOublieWidgetState extends State<MotDePasseOublieWidget> {
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   SnackBar(
                                     content: Text(
-                                      'Code envoyé ! Consultez votre boîte mail.',
+                                      'Lien envoyé ! Choisissez un nouveau mot de passe depuis l\'e-mail, puis connectez-vous.',
                                       style: TextStyle(
                                         color: Color(0xFFF5F5F7),
                                       ),
@@ -349,16 +348,7 @@ class _MotDePasseOublieWidgetState extends State<MotDePasseOublieWidget> {
                                     backgroundColor: Color(0xFF2ECC71),
                                   ),
                                 );
-
-                                context.pushNamed(
-                                  NouveauMotDePasseWidget.routeName,
-                                  queryParameters: {
-                                    'email': serializeParam(
-                                      _model.emailFieldTextController.text,
-                                      ParamType.String,
-                                    ),
-                                  }.withoutNulls,
-                                );
+                                context.pop();
                               } else {
                                 ScaffoldMessenger.of(context).clearSnackBars();
                                 ScaffoldMessenger.of(context).showSnackBar(
@@ -377,7 +367,7 @@ class _MotDePasseOublieWidgetState extends State<MotDePasseOublieWidget> {
 
                               safeSetState(() {});
                             },
-                            text: 'Envoyer le code',
+                            text: 'Envoyer le lien',
                             icon: Icon(
                               Icons.send_outlined,
                               size: 20.0,

@@ -1,5 +1,5 @@
-import '/auth/supabase_auth/auth_util.dart';
-import '/backend/supabase/supabase.dart';
+import '/auth/firebase_auth/auth_util.dart';
+import '/backend/backend.dart';
 import '/flutter_flow/flutter_flow_button_tabbar.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
@@ -15,7 +15,7 @@ import 'package:provider/provider.dart';
 import 'favoris_model.dart';
 export 'favoris_model.dart';
 
-/// Membre 1 — favoris, listes et vus Supabase
+/// Membre 1 — favoris, listes et vus Firestore
 class FavorisWidget extends StatefulWidget {
   const FavorisWidget({
     super.key,
@@ -204,11 +204,12 @@ class _FavorisWidgetState extends State<FavorisWidget>
                                   crossAxisAlignment:
                                       CrossAxisAlignment.stretch,
                                   children: [
-                                    FutureBuilder<List<FavoritesRow>>(
-                                      future: FavoritesTable().queryRows(
-                                        queryFn: (q) => q.eqOrNull(
-                                          'user_id',
-                                          currentUserUid,
+                                    FutureBuilder<List<FavoritesRecord>>(
+                                      future: queryFavoritesRecordOnce(
+                                        queryBuilder: (favoritesRecord) =>
+                                            favoritesRecord.where(
+                                          'userId',
+                                          isEqualTo: currentUserUid,
                                         ),
                                       ),
                                       builder: (context, snapshot) {
@@ -229,8 +230,8 @@ class _FavorisWidgetState extends State<FavorisWidget>
                                             ),
                                           );
                                         }
-                                        List<FavoritesRow>
-                                            containerFavoritesRowList =
+                                        List<FavoritesRecord>
+                                            containerFavoritesRecordList =
                                             snapshot.data!;
 
                                         return Container(
@@ -282,7 +283,7 @@ class _FavorisWidgetState extends State<FavorisWidget>
                                                             size: 16.0,
                                                           ),
                                                           Text(
-                                                            containerFavoritesRowList
+                                                            containerFavoritesRecordList
                                                                 .length
                                                                 .toString(),
                                                             style: FlutterFlowTheme
@@ -354,7 +355,7 @@ class _FavorisWidgetState extends State<FavorisWidget>
                                                   ),
                                                 ],
                                               ),
-                                              if (containerFavoritesRowList
+                                              if (containerFavoritesRecordList
                                                       .length ==
                                                   0)
                                                 Container(
@@ -555,14 +556,16 @@ class _FavorisWidgetState extends State<FavorisWidget>
                                         );
                                       },
                                     ),
-                                    FutureBuilder<List<FavoritesRow>>(
-                                      future: FavoritesTable().queryRows(
-                                        queryFn: (q) => q
-                                            .eqOrNull(
-                                              'user_id',
-                                              currentUserUid,
-                                            )
-                                            .order('created_at'),
+                                    FutureBuilder<List<FavoritesRecord>>(
+                                      future: queryFavoritesRecordOnce(
+                                        queryBuilder: (favoritesRecord) =>
+                                            favoritesRecord
+                                                .where(
+                                                  'userId',
+                                                  isEqualTo: currentUserUid,
+                                                )
+                                                .orderBy('createdAt',
+                                                    descending: true),
                                       ),
                                       builder: (context, snapshot) {
                                         // Customize what your widget looks like when it's loading.
@@ -582,14 +585,14 @@ class _FavorisWidgetState extends State<FavorisWidget>
                                             ),
                                           );
                                         }
-                                        List<FavoritesRow>
-                                            gridViewFavoritesRowList =
+                                        List<FavoritesRecord>
+                                            gridViewFavoritesRecordList =
                                             snapshot.data!;
 
                                         return Builder(
                                           builder: (context) {
                                             final favoritesList =
-                                                gridViewFavoritesRowList
+                                                gridViewFavoritesRecordList
                                                     .toList();
 
                                             return GridView.builder(
@@ -610,13 +613,17 @@ class _FavorisWidgetState extends State<FavorisWidget>
                                                     favoritesList[
                                                         favoritesListIndex];
                                                 return FutureBuilder<
-                                                    List<MediaRow>>(
-                                                  future: MediaTable()
-                                                      .querySingleRow(
-                                                    queryFn: (q) => q.eqOrNull(
+                                                    List<MediaRecord>>(
+                                                  future: queryMediaRecordOnce(
+                                                    queryBuilder:
+                                                        (mediaRecord) =>
+                                                            mediaRecord.where(
                                                       'id',
-                                                      favoritesListItem.mediaId,
+                                                      isEqualTo:
+                                                          favoritesListItem
+                                                              .mediaId,
                                                     ),
+                                                    singleRecord: true,
                                                   ),
                                                   builder: (context, snapshot) {
                                                     // Customize what your widget looks like when it's loading.
@@ -638,14 +645,13 @@ class _FavorisWidgetState extends State<FavorisWidget>
                                                         ),
                                                       );
                                                     }
-                                                    List<MediaRow>
-                                                        containerMediaRowList =
+                                                    List<MediaRecord>
+                                                        containerMediaRecordList =
                                                         snapshot.data!;
-
-                                                    final containerMediaRow =
-                                                        containerMediaRowList
+                                                    final containerMediaRecord =
+                                                        containerMediaRecordList
                                                                 .isNotEmpty
-                                                            ? containerMediaRowList
+                                                            ? containerMediaRecordList
                                                                 .first
                                                             : null;
 
@@ -727,7 +733,7 @@ class _FavorisWidgetState extends State<FavorisWidget>
                                                                           url) {
                                                                         return url ??
                                                                             '';
-                                                                      }(containerMediaRow
+                                                                      }(containerMediaRecord
                                                                           ?.posterUrl),
                                                                       width: double
                                                                           .infinity,
@@ -795,7 +801,7 @@ class _FavorisWidgetState extends State<FavorisWidget>
                                                                         .stretch,
                                                                 children: [
                                                                   Text(
-                                                                    containerMediaRow!
+                                                                    containerMediaRecord!
                                                                         .title,
                                                                     maxLines: 2,
                                                                     style: FlutterFlowTheme.of(
@@ -1232,7 +1238,8 @@ class _FavorisWidgetState extends State<FavorisWidget>
                                                         ?.clear();
                                                   });
                                                   safeSetState(() => _model
-                                                      .requestCompleter = null);
+                                                          .firestoreRequestCompleter =
+                                                      null);
                                                 } else {
                                                   ScaffoldMessenger.of(context)
                                                       .clearSnackBars();
@@ -1306,17 +1313,25 @@ class _FavorisWidgetState extends State<FavorisWidget>
                                         ),
                                       ),
                                     ),
-                                    FutureBuilder<List<WatchlistsRow>>(
-                                      future: (_model.requestCompleter ??=
-                                              Completer<List<WatchlistsRow>>()
+                                    FutureBuilder<List<WatchlistsRecord>>(
+                                      future: (_model
+                                                  .firestoreRequestCompleter ??=
+                                              Completer<
+                                                  List<WatchlistsRecord>>()
                                                 ..complete(
-                                                    WatchlistsTable().queryRows(
-                                                  queryFn: (q) => q
-                                                      .eqOrNull(
-                                                        'user_id',
-                                                        currentUserUid,
-                                                      )
-                                                      .order('created_at'),
+                                                    queryWatchlistsRecordOnce(
+                                                  queryBuilder:
+                                                      (watchlistsRecord) =>
+                                                          watchlistsRecord
+                                                              .where(
+                                                                'userId',
+                                                                isEqualTo:
+                                                                    currentUserUid,
+                                                              )
+                                                              .orderBy(
+                                                                  'createdAt',
+                                                                  descending:
+                                                                      true),
                                                 )))
                                           .future,
                                       builder: (context, snapshot) {
@@ -1337,8 +1352,8 @@ class _FavorisWidgetState extends State<FavorisWidget>
                                             ),
                                           );
                                         }
-                                        List<WatchlistsRow>
-                                            containerWatchlistsRowList =
+                                        List<WatchlistsRecord>
+                                            containerWatchlistsRecordList =
                                             snapshot.data!;
 
                                         return Container(
@@ -1383,7 +1398,7 @@ class _FavorisWidgetState extends State<FavorisWidget>
                                                       ),
                                                 ),
                                               ),
-                                              if (containerWatchlistsRowList
+                                              if (containerWatchlistsRecordList
                                                       .length ==
                                                   0)
                                                 Container(
@@ -1512,7 +1527,7 @@ class _FavorisWidgetState extends State<FavorisWidget>
                                               Builder(
                                                 builder: (context) {
                                                   final watchlistsList =
-                                                      containerWatchlistsRowList
+                                                      containerWatchlistsRecordList
                                                           .toList();
 
                                                   return Column(
@@ -1531,16 +1546,22 @@ class _FavorisWidgetState extends State<FavorisWidget>
                                                               watchlistsListIndex];
                                                       return FutureBuilder<
                                                           List<
-                                                              WatchlistItemsRow>>(
+                                                              WatchlistItemsRecord>>(
                                                         future:
-                                                            WatchlistItemsTable()
-                                                                .queryRows(
-                                                          queryFn: (q) =>
-                                                              q.eqOrNull(
-                                                            'watchlist_id',
-                                                            watchlistsListItem
-                                                                .id,
-                                                          ),
+                                                            queryWatchlistItemsRecordOnce(
+                                                          queryBuilder:
+                                                              (watchlistItemsRecord) =>
+                                                                  watchlistItemsRecord
+                                                                      .where(
+                                                                        'watchlistId',
+                                                                        isEqualTo:
+                                                                            watchlistsListItem.id,
+                                                                      )
+                                                                      .where(
+                                                                        'userId',
+                                                                        isEqualTo:
+                                                                            currentUserUid,
+                                                                      ),
                                                         ),
                                                         builder: (context,
                                                             snapshot) {
@@ -1564,8 +1585,8 @@ class _FavorisWidgetState extends State<FavorisWidget>
                                                               ),
                                                             );
                                                           }
-                                                          List<WatchlistItemsRow>
-                                                              containerWatchlistItemsRowList =
+                                                          List<WatchlistItemsRecord>
+                                                              containerWatchlistItemsRecordList =
                                                               snapshot.data!;
 
                                                           return InkWell(
@@ -1691,7 +1712,7 @@ class _FavorisWidgetState extends State<FavorisWidget>
                                                                             children:
                                                                                 [
                                                                               Text(
-                                                                                containerWatchlistItemsRowList.length.toString(),
+                                                                                containerWatchlistItemsRecordList.length.toString(),
                                                                                 style: FlutterFlowTheme.of(context).bodyMedium.override(
                                                                                       font: GoogleFonts.inter(
                                                                                         fontWeight: FontWeight.normal,
@@ -1767,17 +1788,13 @@ class _FavorisWidgetState extends State<FavorisWidget>
                                   crossAxisAlignment:
                                       CrossAxisAlignment.stretch,
                                   children: [
-                                    FutureBuilder<List<WatchedRow>>(
-                                      future: WatchedTable().queryRows(
-                                        queryFn: (q) => q
-                                            .eqOrNull(
-                                              'user_id',
-                                              currentUserUid,
-                                            )
-                                            .isFilter(
-                                              'episode_id',
-                                              null,
-                                            ),
+                                    FutureBuilder<List<WatchedRecord>>(
+                                      future: queryWatchedRecordOnce(
+                                        queryBuilder: (watchedRecord) =>
+                                            watchedRecord.where(
+                                          'userId',
+                                          isEqualTo: currentUserUid,
+                                        ),
                                       ),
                                       builder: (context, snapshot) {
                                         // Customize what your widget looks like when it's loading.
@@ -1797,8 +1814,8 @@ class _FavorisWidgetState extends State<FavorisWidget>
                                             ),
                                           );
                                         }
-                                        List<WatchedRow>
-                                            containerWatchedRowList =
+                                        List<WatchedRecord>
+                                            containerWatchedRecordList =
                                             snapshot.data!;
 
                                         return Container(
@@ -1850,7 +1867,7 @@ class _FavorisWidgetState extends State<FavorisWidget>
                                                             size: 16.0,
                                                           ),
                                                           Text(
-                                                            containerWatchedRowList
+                                                            containerWatchedRecordList
                                                                 .length
                                                                 .toString(),
                                                             style: FlutterFlowTheme
@@ -1922,7 +1939,7 @@ class _FavorisWidgetState extends State<FavorisWidget>
                                                   ),
                                                 ],
                                               ),
-                                              if (containerWatchedRowList
+                                              if (containerWatchedRecordList
                                                       .length ==
                                                   0)
                                                 Container(
@@ -2053,18 +2070,16 @@ class _FavorisWidgetState extends State<FavorisWidget>
                                         );
                                       },
                                     ),
-                                    FutureBuilder<List<WatchedRow>>(
-                                      future: WatchedTable().queryRows(
-                                        queryFn: (q) => q
-                                            .eqOrNull(
-                                              'user_id',
-                                              currentUserUid,
-                                            )
-                                            .isFilter(
-                                              'episode_id',
-                                              null,
-                                            )
-                                            .order('watched_at'),
+                                    FutureBuilder<List<WatchedRecord>>(
+                                      future: queryWatchedRecordOnce(
+                                        queryBuilder: (watchedRecord) =>
+                                            watchedRecord
+                                                .where(
+                                                  'userId',
+                                                  isEqualTo: currentUserUid,
+                                                )
+                                                .orderBy('watchedAt',
+                                                    descending: true),
                                       ),
                                       builder: (context, snapshot) {
                                         // Customize what your widget looks like when it's loading.
@@ -2084,14 +2099,15 @@ class _FavorisWidgetState extends State<FavorisWidget>
                                             ),
                                           );
                                         }
-                                        List<WatchedRow>
-                                            gridViewWatchedRowList =
+                                        List<WatchedRecord>
+                                            gridViewWatchedRecordList =
                                             snapshot.data!;
 
                                         return Builder(
                                           builder: (context) {
                                             final watchedList =
-                                                gridViewWatchedRowList.toList();
+                                                gridViewWatchedRecordList
+                                                    .toList();
 
                                             return GridView.builder(
                                               padding: EdgeInsets.zero,
@@ -2130,255 +2146,82 @@ class _FavorisWidgetState extends State<FavorisWidget>
                                                         CrossAxisAlignment
                                                             .stretch,
                                                     children: [
-                                                      if (watchedListItem
-                                                                  .mediaId !=
-                                                              null &&
-                                                          watchedListItem
-                                                                  .mediaId !=
-                                                              '')
-                                                        Expanded(
-                                                          child: FutureBuilder<
-                                                              List<MediaRow>>(
-                                                            future: MediaTable()
-                                                                .querySingleRow(
-                                                              queryFn: (q) =>
-                                                                  q.eqOrNull(
-                                                                'id',
-                                                                watchedListItem
-                                                                    .mediaId,
-                                                              ),
+                                                      Expanded(
+                                                        child: FutureBuilder<
+                                                            List<MediaRecord>>(
+                                                          future:
+                                                              queryMediaRecordOnce(
+                                                            queryBuilder:
+                                                                (mediaRecord) =>
+                                                                    mediaRecord
+                                                                        .where(
+                                                              'id',
+                                                              isEqualTo:
+                                                                  watchedListItem
+                                                                      .mediaId,
                                                             ),
-                                                            builder: (context,
-                                                                snapshot) {
-                                                              // Customize what your widget looks like when it's loading.
-                                                              if (!snapshot
-                                                                  .hasData) {
-                                                                return Center(
+                                                            singleRecord: true,
+                                                          ),
+                                                          builder: (context,
+                                                              snapshot) {
+                                                            // Customize what your widget looks like when it's loading.
+                                                            if (!snapshot
+                                                                .hasData) {
+                                                              return Center(
+                                                                child: SizedBox(
+                                                                  width: 50.0,
+                                                                  height: 50.0,
                                                                   child:
-                                                                      SizedBox(
-                                                                    width: 50.0,
-                                                                    height:
-                                                                        50.0,
-                                                                    child:
-                                                                        CircularProgressIndicator(
-                                                                      valueColor:
-                                                                          AlwaysStoppedAnimation<
-                                                                              Color>(
-                                                                        FlutterFlowTheme.of(context)
-                                                                            .primary,
-                                                                      ),
+                                                                      CircularProgressIndicator(
+                                                                    valueColor:
+                                                                        AlwaysStoppedAnimation<
+                                                                            Color>(
+                                                                      FlutterFlowTheme.of(
+                                                                              context)
+                                                                          .primary,
                                                                     ),
-                                                                  ),
-                                                                );
-                                                              }
-                                                              List<MediaRow>
-                                                                  containerMediaRowList =
-                                                                  snapshot
-                                                                      .data!;
-
-                                                              final containerMediaRow =
-                                                                  containerMediaRowList
-                                                                          .isNotEmpty
-                                                                      ? containerMediaRowList
-                                                                          .first
-                                                                      : null;
-
-                                                              return InkWell(
-                                                                splashColor: Colors
-                                                                    .transparent,
-                                                                focusColor: Colors
-                                                                    .transparent,
-                                                                hoverColor: Colors
-                                                                    .transparent,
-                                                                highlightColor:
-                                                                    Colors
-                                                                        .transparent,
-                                                                onTap:
-                                                                    () async {
-                                                                  context
-                                                                      .pushNamed(
-                                                                    MediaDetailWidget
-                                                                        .routeName,
-                                                                    queryParameters:
-                                                                        {
-                                                                      'mediaId':
-                                                                          serializeParam(
-                                                                        watchedListItem
-                                                                            .mediaId,
-                                                                        ParamType
-                                                                            .String,
-                                                                      ),
-                                                                    }.withoutNulls,
-                                                                  );
-                                                                },
-                                                                child:
-                                                                    Container(
-                                                                  decoration:
-                                                                      BoxDecoration(),
-                                                                  child: Column(
-                                                                    mainAxisSize:
-                                                                        MainAxisSize
-                                                                            .max,
-                                                                    mainAxisAlignment:
-                                                                        MainAxisAlignment
-                                                                            .start,
-                                                                    crossAxisAlignment:
-                                                                        CrossAxisAlignment
-                                                                            .stretch,
-                                                                    children: [
-                                                                      Expanded(
-                                                                        child:
-                                                                            Stack(
-                                                                          alignment: AlignmentDirectional(
-                                                                              1.0,
-                                                                              -1.0),
-                                                                          children: [
-                                                                            ClipRRect(
-                                                                              borderRadius: BorderRadius.only(
-                                                                                topLeft: Radius.circular(12.0),
-                                                                                topRight: Radius.circular(12.0),
-                                                                              ),
-                                                                              child: CachedNetworkImage(
-                                                                                fadeInDuration: Duration(milliseconds: 0),
-                                                                                fadeOutDuration: Duration(milliseconds: 0),
-                                                                                imageUrl: (String? url) {
-                                                                                  return url ?? '';
-                                                                                }(containerMediaRow?.posterUrl),
-                                                                                width: double.infinity,
-                                                                                height: double.infinity,
-                                                                                fit: BoxFit.cover,
-                                                                              ),
-                                                                            ),
-                                                                            Padding(
-                                                                              padding: EdgeInsetsDirectional.fromSTEB(0.0, 8.0, 8.0, 0.0),
-                                                                              child: Container(
-                                                                                width: 32.0,
-                                                                                height: 32.0,
-                                                                                decoration: BoxDecoration(
-                                                                                  color: Color(0xCC0B0B12),
-                                                                                  shape: BoxShape.circle,
-                                                                                ),
-                                                                                alignment: AlignmentDirectional(0.0, 0.0),
-                                                                                child: Icon(
-                                                                                  Icons.movie_outlined,
-                                                                                  color: Color(0xFFF5B841),
-                                                                                  size: 16.0,
-                                                                                ),
-                                                                              ),
-                                                                            ),
-                                                                          ],
-                                                                        ),
-                                                                      ),
-                                                                      Padding(
-                                                                        padding: EdgeInsetsDirectional.fromSTEB(
-                                                                            10.0,
-                                                                            10.0,
-                                                                            10.0,
-                                                                            12.0),
-                                                                        child:
-                                                                            Column(
-                                                                          mainAxisSize:
-                                                                              MainAxisSize.min,
-                                                                          mainAxisAlignment:
-                                                                              MainAxisAlignment.start,
-                                                                          crossAxisAlignment:
-                                                                              CrossAxisAlignment.stretch,
-                                                                          children:
-                                                                              [
-                                                                            Text(
-                                                                              containerMediaRow!.title,
-                                                                              maxLines: 2,
-                                                                              style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                                                    font: GoogleFonts.inter(
-                                                                                      fontWeight: FontWeight.w600,
-                                                                                      fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
-                                                                                    ),
-                                                                                    color: Color(0xFFF5F5F7),
-                                                                                    fontSize: 14.0,
-                                                                                    letterSpacing: 0.0,
-                                                                                    fontWeight: FontWeight.w600,
-                                                                                    fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
-                                                                                    lineHeight: 1.3,
-                                                                                  ),
-                                                                            ),
-                                                                            Text(
-                                                                              'Voir la fiche',
-                                                                              style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                                                    font: GoogleFonts.inter(
-                                                                                      fontWeight: FontWeight.w600,
-                                                                                      fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
-                                                                                    ),
-                                                                                    color: Color(0xFFF5B841),
-                                                                                    fontSize: 12.0,
-                                                                                    letterSpacing: 0.0,
-                                                                                    fontWeight: FontWeight.w600,
-                                                                                    fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
-                                                                                  ),
-                                                                            ),
-                                                                          ].divide(SizedBox(height: 4.0)),
-                                                                        ),
-                                                                      ),
-                                                                    ],
                                                                   ),
                                                                 ),
                                                               );
-                                                            },
-                                                          ),
-                                                        ),
-                                                      if (watchedListItem
-                                                                  .movieId !=
-                                                              null &&
-                                                          watchedListItem
-                                                                  .movieId !=
-                                                              '')
-                                                        Expanded(
-                                                          child: FutureBuilder<
-                                                              List<MoviesRow>>(
-                                                            future: MoviesTable()
-                                                                .querySingleRow(
-                                                              queryFn: (q) =>
-                                                                  q.eqOrNull(
-                                                                'id',
-                                                                watchedListItem
-                                                                    .movieId,
-                                                              ),
-                                                            ),
-                                                            builder: (context,
-                                                                snapshot) {
-                                                              // Customize what your widget looks like when it's loading.
-                                                              if (!snapshot
-                                                                  .hasData) {
-                                                                return Center(
-                                                                  child:
-                                                                      SizedBox(
-                                                                    width: 50.0,
-                                                                    height:
-                                                                        50.0,
-                                                                    child:
-                                                                        CircularProgressIndicator(
-                                                                      valueColor:
-                                                                          AlwaysStoppedAnimation<
-                                                                              Color>(
-                                                                        FlutterFlowTheme.of(context)
-                                                                            .primary,
-                                                                      ),
+                                                            }
+                                                            List<MediaRecord>
+                                                                containerMediaRecordList =
+                                                                snapshot.data!;
+                                                            final containerMediaRecord =
+                                                                containerMediaRecordList
+                                                                        .isNotEmpty
+                                                                    ? containerMediaRecordList
+                                                                        .first
+                                                                    : null;
+
+                                                            return InkWell(
+                                                              splashColor: Colors
+                                                                  .transparent,
+                                                              focusColor: Colors
+                                                                  .transparent,
+                                                              hoverColor: Colors
+                                                                  .transparent,
+                                                              highlightColor:
+                                                                  Colors
+                                                                      .transparent,
+                                                              onTap: () async {
+                                                                context
+                                                                    .pushNamed(
+                                                                  MediaDetailWidget
+                                                                      .routeName,
+                                                                  queryParameters:
+                                                                      {
+                                                                    'mediaId':
+                                                                        serializeParam(
+                                                                      watchedListItem
+                                                                          .mediaId,
+                                                                      ParamType
+                                                                          .String,
                                                                     ),
-                                                                  ),
+                                                                  }.withoutNulls,
                                                                 );
-                                                              }
-                                                              List<MoviesRow>
-                                                                  containerMoviesRowList =
-                                                                  snapshot
-                                                                      .data!;
-
-                                                              final containerMoviesRow =
-                                                                  containerMoviesRowList
-                                                                          .isNotEmpty
-                                                                      ? containerMoviesRowList
-                                                                          .first
-                                                                      : null;
-
-                                                              return Container(
+                                                              },
+                                                              child: Container(
                                                                 decoration:
                                                                     BoxDecoration(),
                                                                 child: Column(
@@ -2411,7 +2254,7 @@ class _FavorisWidgetState extends State<FavorisWidget>
                                                                               fadeOutDuration: Duration(milliseconds: 0),
                                                                               imageUrl: (String? url) {
                                                                                 return url ?? '';
-                                                                              }(containerMoviesRow?.posterUrl),
+                                                                              }(containerMediaRecord?.posterUrl),
                                                                               width: double.infinity,
                                                                               height: double.infinity,
                                                                               fit: BoxFit.cover,
@@ -2433,7 +2276,7 @@ class _FavorisWidgetState extends State<FavorisWidget>
                                                                               ),
                                                                               alignment: AlignmentDirectional(0.0, 0.0),
                                                                               child: Icon(
-                                                                                Icons.local_movies_outlined,
+                                                                                Icons.movie_outlined,
                                                                                 color: Color(0xFFF5B841),
                                                                                 size: 16.0,
                                                                               ),
@@ -2459,7 +2302,7 @@ class _FavorisWidgetState extends State<FavorisWidget>
                                                                         children:
                                                                             [
                                                                           Text(
-                                                                            containerMoviesRow!.title,
+                                                                            containerMediaRecord!.title,
                                                                             maxLines:
                                                                                 2,
                                                                             style: FlutterFlowTheme.of(context).bodyMedium.override(
@@ -2476,7 +2319,7 @@ class _FavorisWidgetState extends State<FavorisWidget>
                                                                                 ),
                                                                           ),
                                                                           Text(
-                                                                            'Film',
+                                                                            'Voir la fiche',
                                                                             style: FlutterFlowTheme.of(context).bodyMedium.override(
                                                                                   font: GoogleFonts.inter(
                                                                                     fontWeight: FontWeight.w600,
@@ -2494,183 +2337,11 @@ class _FavorisWidgetState extends State<FavorisWidget>
                                                                     ),
                                                                   ],
                                                                 ),
-                                                              );
-                                                            },
-                                                          ),
-                                                        ),
-                                                      if (watchedListItem
-                                                                  .seriesId !=
-                                                              null &&
-                                                          watchedListItem
-                                                                  .seriesId !=
-                                                              '')
-                                                        Expanded(
-                                                          child: FutureBuilder<
-                                                              List<SeriesRow>>(
-                                                            future: SeriesTable()
-                                                                .querySingleRow(
-                                                              queryFn: (q) =>
-                                                                  q.eqOrNull(
-                                                                'id',
-                                                                watchedListItem
-                                                                    .seriesId,
                                                               ),
-                                                            ),
-                                                            builder: (context,
-                                                                snapshot) {
-                                                              // Customize what your widget looks like when it's loading.
-                                                              if (!snapshot
-                                                                  .hasData) {
-                                                                return Center(
-                                                                  child:
-                                                                      SizedBox(
-                                                                    width: 50.0,
-                                                                    height:
-                                                                        50.0,
-                                                                    child:
-                                                                        CircularProgressIndicator(
-                                                                      valueColor:
-                                                                          AlwaysStoppedAnimation<
-                                                                              Color>(
-                                                                        FlutterFlowTheme.of(context)
-                                                                            .primary,
-                                                                      ),
-                                                                    ),
-                                                                  ),
-                                                                );
-                                                              }
-                                                              List<SeriesRow>
-                                                                  containerSeriesRowList =
-                                                                  snapshot
-                                                                      .data!;
-
-                                                              final containerSeriesRow =
-                                                                  containerSeriesRowList
-                                                                          .isNotEmpty
-                                                                      ? containerSeriesRowList
-                                                                          .first
-                                                                      : null;
-
-                                                              return Container(
-                                                                decoration:
-                                                                    BoxDecoration(),
-                                                                child: Column(
-                                                                  mainAxisSize:
-                                                                      MainAxisSize
-                                                                          .max,
-                                                                  mainAxisAlignment:
-                                                                      MainAxisAlignment
-                                                                          .start,
-                                                                  crossAxisAlignment:
-                                                                      CrossAxisAlignment
-                                                                          .stretch,
-                                                                  children: [
-                                                                    Expanded(
-                                                                      child:
-                                                                          Stack(
-                                                                        alignment: AlignmentDirectional(
-                                                                            1.0,
-                                                                            -1.0),
-                                                                        children: [
-                                                                          ClipRRect(
-                                                                            borderRadius:
-                                                                                BorderRadius.only(
-                                                                              topLeft: Radius.circular(12.0),
-                                                                              topRight: Radius.circular(12.0),
-                                                                            ),
-                                                                            child:
-                                                                                CachedNetworkImage(
-                                                                              fadeInDuration: Duration(milliseconds: 0),
-                                                                              fadeOutDuration: Duration(milliseconds: 0),
-                                                                              imageUrl: (String? url) {
-                                                                                return url ?? '';
-                                                                              }(containerSeriesRow?.posterUrl),
-                                                                              width: double.infinity,
-                                                                              height: double.infinity,
-                                                                              fit: BoxFit.cover,
-                                                                            ),
-                                                                          ),
-                                                                          Padding(
-                                                                            padding: EdgeInsetsDirectional.fromSTEB(
-                                                                                0.0,
-                                                                                8.0,
-                                                                                8.0,
-                                                                                0.0),
-                                                                            child:
-                                                                                Container(
-                                                                              width: 32.0,
-                                                                              height: 32.0,
-                                                                              decoration: BoxDecoration(
-                                                                                color: Color(0xCC0B0B12),
-                                                                                shape: BoxShape.circle,
-                                                                              ),
-                                                                              alignment: AlignmentDirectional(0.0, 0.0),
-                                                                              child: Icon(
-                                                                                Icons.tv_rounded,
-                                                                                color: Color(0xFFA28BFF),
-                                                                                size: 16.0,
-                                                                              ),
-                                                                            ),
-                                                                          ),
-                                                                        ],
-                                                                      ),
-                                                                    ),
-                                                                    Padding(
-                                                                      padding: EdgeInsetsDirectional.fromSTEB(
-                                                                          10.0,
-                                                                          10.0,
-                                                                          10.0,
-                                                                          12.0),
-                                                                      child:
-                                                                          Column(
-                                                                        mainAxisSize:
-                                                                            MainAxisSize.min,
-                                                                        mainAxisAlignment:
-                                                                            MainAxisAlignment.start,
-                                                                        crossAxisAlignment:
-                                                                            CrossAxisAlignment.stretch,
-                                                                        children:
-                                                                            [
-                                                                          Text(
-                                                                            containerSeriesRow!.title,
-                                                                            maxLines:
-                                                                                2,
-                                                                            style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                                                  font: GoogleFonts.inter(
-                                                                                    fontWeight: FontWeight.w600,
-                                                                                    fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
-                                                                                  ),
-                                                                                  color: Color(0xFFF5F5F7),
-                                                                                  fontSize: 14.0,
-                                                                                  letterSpacing: 0.0,
-                                                                                  fontWeight: FontWeight.w600,
-                                                                                  fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
-                                                                                  lineHeight: 1.3,
-                                                                                ),
-                                                                          ),
-                                                                          Text(
-                                                                            'Série',
-                                                                            style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                                                  font: GoogleFonts.inter(
-                                                                                    fontWeight: FontWeight.w600,
-                                                                                    fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
-                                                                                  ),
-                                                                                  color: Color(0xFFA28BFF),
-                                                                                  fontSize: 12.0,
-                                                                                  letterSpacing: 0.0,
-                                                                                  fontWeight: FontWeight.w600,
-                                                                                  fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
-                                                                                ),
-                                                                          ),
-                                                                        ].divide(SizedBox(height: 4.0)),
-                                                                      ),
-                                                                    ),
-                                                                  ],
-                                                                ),
-                                                              );
-                                                            },
-                                                          ),
+                                                            );
+                                                          },
                                                         ),
+                                                      ),
                                                     ],
                                                   ),
                                                 );

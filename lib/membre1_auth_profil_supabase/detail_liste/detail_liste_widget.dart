@@ -1,4 +1,5 @@
-import '/backend/supabase/supabase.dart';
+import '/auth/firebase_auth/auth_util.dart';
+import '/backend/backend.dart';
 import '/flutter_flow/flutter_flow_icon_button.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
@@ -11,6 +12,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
+import 'package:webviewx_plus/webviewx_plus.dart';
 import 'detail_liste_model.dart';
 export 'detail_liste_model.dart';
 
@@ -105,14 +107,21 @@ class _DetailListeWidgetState extends State<DetailListeWidget> {
                     height: 16.0,
                     decoration: BoxDecoration(),
                   ),
-                  FutureBuilder<List<WatchlistsRow>>(
-                    future: (_model.requestCompleter1 ??=
-                            Completer<List<WatchlistsRow>>()
-                              ..complete(WatchlistsTable().querySingleRow(
-                                queryFn: (q) => q.eqOrNull(
-                                  'id',
-                                  widget!.watchlistId,
-                                ),
+                  FutureBuilder<List<WatchlistsRecord>>(
+                    future: (_model.firestoreRequestCompleter1 ??=
+                            Completer<List<WatchlistsRecord>>()
+                              ..complete(queryWatchlistsRecordOnce(
+                                queryBuilder: (watchlistsRecord) =>
+                                    watchlistsRecord
+                                        .where(
+                                          'id',
+                                          isEqualTo: widget!.watchlistId,
+                                        )
+                                        .where(
+                                          'userId',
+                                          isEqualTo: currentUserUid,
+                                        ),
+                                singleRecord: true,
                               )))
                         .future,
                     builder: (context, snapshot) {
@@ -130,12 +139,11 @@ class _DetailListeWidgetState extends State<DetailListeWidget> {
                           ),
                         );
                       }
-                      List<WatchlistsRow> containerWatchlistsRowList =
+                      List<WatchlistsRecord> containerWatchlistsRecordList =
                           snapshot.data!;
-
-                      final containerWatchlistsRow =
-                          containerWatchlistsRowList.isNotEmpty
-                              ? containerWatchlistsRowList.first
+                      final containerWatchlistsRecord =
+                          containerWatchlistsRecordList.isNotEmpty
+                              ? containerWatchlistsRecordList.first
                               : null;
 
                       return Container(
@@ -177,7 +185,7 @@ class _DetailListeWidgetState extends State<DetailListeWidget> {
                                       ),
                                     ),
                                     Text(
-                                      containerWatchlistsRow!.name,
+                                      containerWatchlistsRecord!.name,
                                       textAlign: TextAlign.center,
                                       style: FlutterFlowTheme.of(context)
                                           .headlineMedium
@@ -272,7 +280,7 @@ class _DetailListeWidgetState extends State<DetailListeWidget> {
                                         controller: _model
                                                 .listNameFieldTextController ??=
                                             TextEditingController(
-                                          text: containerWatchlistsRow?.name,
+                                          text: containerWatchlistsRecord?.name,
                                         ),
                                         focusNode:
                                             _model.listNameFieldFocusNode,
@@ -465,8 +473,9 @@ class _DetailListeWidgetState extends State<DetailListeWidget> {
                                                   Color(0xFF2ECC71),
                                             ),
                                           );
-                                          safeSetState(() =>
-                                              _model.requestCompleter1 = null);
+                                          safeSetState(() => _model
+                                                  .firestoreRequestCompleter1 =
+                                              null);
                                         } else {
                                           ScaffoldMessenger.of(context)
                                               .clearSnackBars();
@@ -545,16 +554,21 @@ class _DetailListeWidgetState extends State<DetailListeWidget> {
                     height: 24.0,
                     decoration: BoxDecoration(),
                   ),
-                  FutureBuilder<List<WatchlistItemsRow>>(
-                    future: (_model.requestCompleter2 ??=
-                            Completer<List<WatchlistItemsRow>>()
-                              ..complete(WatchlistItemsTable().queryRows(
-                                queryFn: (q) => q
-                                    .eqOrNull(
-                                      'watchlist_id',
-                                      widget!.watchlistId,
-                                    )
-                                    .order('added_at'),
+                  FutureBuilder<List<WatchlistItemsRecord>>(
+                    future: (_model.firestoreRequestCompleter2 ??=
+                            Completer<List<WatchlistItemsRecord>>()
+                              ..complete(queryWatchlistItemsRecordOnce(
+                                queryBuilder: (watchlistItemsRecord) =>
+                                    watchlistItemsRecord
+                                        .where(
+                                          'watchlistId',
+                                          isEqualTo: widget!.watchlistId,
+                                        )
+                                        .where(
+                                          'userId',
+                                          isEqualTo: currentUserUid,
+                                        )
+                                        .orderBy('addedAt', descending: true),
                               )))
                         .future,
                     builder: (context, snapshot) {
@@ -572,8 +586,8 @@ class _DetailListeWidgetState extends State<DetailListeWidget> {
                           ),
                         );
                       }
-                      List<WatchlistItemsRow> containerWatchlistItemsRowList =
-                          snapshot.data!;
+                      List<WatchlistItemsRecord>
+                          containerWatchlistItemsRecordList = snapshot.data!;
 
                       return Container(
                         decoration: BoxDecoration(),
@@ -642,7 +656,7 @@ class _DetailListeWidgetState extends State<DetailListeWidget> {
                                               size: 16.0,
                                             ),
                                             Text(
-                                              containerWatchlistItemsRowList
+                                              containerWatchlistItemsRecordList
                                                   .length
                                                   .toString(),
                                               style: FlutterFlowTheme.of(
@@ -705,7 +719,7 @@ class _DetailListeWidgetState extends State<DetailListeWidget> {
                                 ),
                               ],
                             ),
-                            if (containerWatchlistItemsRowList.length == 0)
+                            if (containerWatchlistItemsRecordList.length == 0)
                               Container(
                                 decoration: BoxDecoration(
                                   color: Color(0xFF15151F),
@@ -793,7 +807,7 @@ class _DetailListeWidgetState extends State<DetailListeWidget> {
                             Builder(
                               builder: (context) {
                                 final itemsList =
-                                    containerWatchlistItemsRowList.toList();
+                                    containerWatchlistItemsRecordList.toList();
 
                                 return GridView.builder(
                                   padding: EdgeInsets.zero,
@@ -827,295 +841,71 @@ class _DetailListeWidgetState extends State<DetailListeWidget> {
                                         crossAxisAlignment:
                                             CrossAxisAlignment.stretch,
                                         children: [
-                                          if (itemsListItem.mediaId != null &&
-                                              itemsListItem.mediaId != '')
-                                            Expanded(
-                                              child:
-                                                  FutureBuilder<List<MediaRow>>(
-                                                future:
-                                                    MediaTable().querySingleRow(
-                                                  queryFn: (q) => q.eqOrNull(
-                                                    'id',
-                                                    itemsListItem.mediaId,
-                                                  ),
+                                          Expanded(
+                                            child: FutureBuilder<
+                                                List<MediaRecord>>(
+                                              future: queryMediaRecordOnce(
+                                                queryBuilder: (mediaRecord) =>
+                                                    mediaRecord.where(
+                                                  'id',
+                                                  isEqualTo:
+                                                      itemsListItem.mediaId,
                                                 ),
-                                                builder: (context, snapshot) {
-                                                  // Customize what your widget looks like when it's loading.
-                                                  if (!snapshot.hasData) {
-                                                    return Center(
-                                                      child: SizedBox(
-                                                        width: 50.0,
-                                                        height: 50.0,
-                                                        child:
-                                                            CircularProgressIndicator(
-                                                          valueColor:
-                                                              AlwaysStoppedAnimation<
-                                                                  Color>(
-                                                            FlutterFlowTheme.of(
-                                                                    context)
-                                                                .primary,
-                                                          ),
+                                                singleRecord: true,
+                                              ),
+                                              builder: (context, snapshot) {
+                                                // Customize what your widget looks like when it's loading.
+                                                if (!snapshot.hasData) {
+                                                  return Center(
+                                                    child: SizedBox(
+                                                      width: 50.0,
+                                                      height: 50.0,
+                                                      child:
+                                                          CircularProgressIndicator(
+                                                        valueColor:
+                                                            AlwaysStoppedAnimation<
+                                                                Color>(
+                                                          FlutterFlowTheme.of(
+                                                                  context)
+                                                              .primary,
                                                         ),
-                                                      ),
-                                                    );
-                                                  }
-                                                  List<MediaRow>
-                                                      containerMediaRowList =
-                                                      snapshot.data!;
-
-                                                  final containerMediaRow =
-                                                      containerMediaRowList
-                                                              .isNotEmpty
-                                                          ? containerMediaRowList
-                                                              .first
-                                                          : null;
-
-                                                  return InkWell(
-                                                    splashColor:
-                                                        Colors.transparent,
-                                                    focusColor:
-                                                        Colors.transparent,
-                                                    hoverColor:
-                                                        Colors.transparent,
-                                                    highlightColor:
-                                                        Colors.transparent,
-                                                    onTap: () async {
-                                                      context.pushNamed(
-                                                        MediaDetailWidget
-                                                            .routeName,
-                                                        queryParameters: {
-                                                          'mediaId':
-                                                              serializeParam(
-                                                            itemsListItem
-                                                                .mediaId,
-                                                            ParamType.String,
-                                                          ),
-                                                        }.withoutNulls,
-                                                      );
-                                                    },
-                                                    child: Container(
-                                                      decoration:
-                                                          BoxDecoration(),
-                                                      child: Column(
-                                                        mainAxisSize:
-                                                            MainAxisSize.max,
-                                                        mainAxisAlignment:
-                                                            MainAxisAlignment
-                                                                .start,
-                                                        crossAxisAlignment:
-                                                            CrossAxisAlignment
-                                                                .stretch,
-                                                        children: [
-                                                          Expanded(
-                                                            child: Stack(
-                                                              alignment:
-                                                                  AlignmentDirectional(
-                                                                      1.0,
-                                                                      -1.0),
-                                                              children: [
-                                                                ClipRRect(
-                                                                  borderRadius:
-                                                                      BorderRadius
-                                                                          .only(
-                                                                    topLeft: Radius
-                                                                        .circular(
-                                                                            12.0),
-                                                                    topRight: Radius
-                                                                        .circular(
-                                                                            12.0),
-                                                                  ),
-                                                                  child:
-                                                                      CachedNetworkImage(
-                                                                    fadeInDuration:
-                                                                        Duration(
-                                                                            milliseconds:
-                                                                                0),
-                                                                    fadeOutDuration:
-                                                                        Duration(
-                                                                            milliseconds:
-                                                                                0),
-                                                                    imageUrl: (String?
-                                                                        url) {
-                                                                      return url ??
-                                                                          '';
-                                                                    }(containerMediaRow
-                                                                        ?.posterUrl),
-                                                                    width: double
-                                                                        .infinity,
-                                                                    height: double
-                                                                        .infinity,
-                                                                    fit: BoxFit
-                                                                        .cover,
-                                                                  ),
-                                                                ),
-                                                                Padding(
-                                                                  padding: EdgeInsetsDirectional
-                                                                      .fromSTEB(
-                                                                          0.0,
-                                                                          8.0,
-                                                                          8.0,
-                                                                          0.0),
-                                                                  child:
-                                                                      Container(
-                                                                    width: 32.0,
-                                                                    height:
-                                                                        32.0,
-                                                                    decoration:
-                                                                        BoxDecoration(
-                                                                      color: Color(
-                                                                          0xCC0B0B12),
-                                                                      shape: BoxShape
-                                                                          .circle,
-                                                                    ),
-                                                                    alignment:
-                                                                        AlignmentDirectional(
-                                                                            0.0,
-                                                                            0.0),
-                                                                    child: Icon(
-                                                                      Icons
-                                                                          .movie_outlined,
-                                                                      color: Color(
-                                                                          0xFFF5B841),
-                                                                      size:
-                                                                          16.0,
-                                                                    ),
-                                                                  ),
-                                                                ),
-                                                              ],
-                                                            ),
-                                                          ),
-                                                          Padding(
-                                                            padding:
-                                                                EdgeInsetsDirectional
-                                                                    .fromSTEB(
-                                                                        10.0,
-                                                                        10.0,
-                                                                        10.0,
-                                                                        12.0),
-                                                            child: Column(
-                                                              mainAxisSize:
-                                                                  MainAxisSize
-                                                                      .min,
-                                                              mainAxisAlignment:
-                                                                  MainAxisAlignment
-                                                                      .start,
-                                                              crossAxisAlignment:
-                                                                  CrossAxisAlignment
-                                                                      .stretch,
-                                                              children: [
-                                                                Text(
-                                                                  containerMediaRow!
-                                                                      .title,
-                                                                  maxLines: 2,
-                                                                  style: FlutterFlowTheme.of(
-                                                                          context)
-                                                                      .bodyMedium
-                                                                      .override(
-                                                                        font: GoogleFonts
-                                                                            .inter(
-                                                                          fontWeight:
-                                                                              FontWeight.w600,
-                                                                          fontStyle: FlutterFlowTheme.of(context)
-                                                                              .bodyMedium
-                                                                              .fontStyle,
-                                                                        ),
-                                                                        color: Color(
-                                                                            0xFFF5F5F7),
-                                                                        fontSize:
-                                                                            14.0,
-                                                                        letterSpacing:
-                                                                            0.0,
-                                                                        fontWeight:
-                                                                            FontWeight.w600,
-                                                                        fontStyle: FlutterFlowTheme.of(context)
-                                                                            .bodyMedium
-                                                                            .fontStyle,
-                                                                        lineHeight:
-                                                                            1.3,
-                                                                      ),
-                                                                ),
-                                                                Text(
-                                                                  'Voir la fiche',
-                                                                  style: FlutterFlowTheme.of(
-                                                                          context)
-                                                                      .bodyMedium
-                                                                      .override(
-                                                                        font: GoogleFonts
-                                                                            .inter(
-                                                                          fontWeight:
-                                                                              FontWeight.w600,
-                                                                          fontStyle: FlutterFlowTheme.of(context)
-                                                                              .bodyMedium
-                                                                              .fontStyle,
-                                                                        ),
-                                                                        color: Color(
-                                                                            0xFFF5B841),
-                                                                        fontSize:
-                                                                            12.0,
-                                                                        letterSpacing:
-                                                                            0.0,
-                                                                        fontWeight:
-                                                                            FontWeight.w600,
-                                                                        fontStyle: FlutterFlowTheme.of(context)
-                                                                            .bodyMedium
-                                                                            .fontStyle,
-                                                                      ),
-                                                                ),
-                                                              ].divide(SizedBox(
-                                                                  height: 4.0)),
-                                                            ),
-                                                          ),
-                                                        ],
                                                       ),
                                                     ),
                                                   );
-                                                },
-                                              ),
-                                            ),
-                                          if (itemsListItem.movieId != null &&
-                                              itemsListItem.movieId != '')
-                                            Expanded(
-                                              child: FutureBuilder<
-                                                  List<MoviesRow>>(
-                                                future: MoviesTable()
-                                                    .querySingleRow(
-                                                  queryFn: (q) => q.eqOrNull(
-                                                    'id',
-                                                    itemsListItem.movieId,
-                                                  ),
-                                                ),
-                                                builder: (context, snapshot) {
-                                                  // Customize what your widget looks like when it's loading.
-                                                  if (!snapshot.hasData) {
-                                                    return Center(
-                                                      child: SizedBox(
-                                                        width: 50.0,
-                                                        height: 50.0,
-                                                        child:
-                                                            CircularProgressIndicator(
-                                                          valueColor:
-                                                              AlwaysStoppedAnimation<
-                                                                  Color>(
-                                                            FlutterFlowTheme.of(
-                                                                    context)
-                                                                .primary,
-                                                          ),
+                                                }
+                                                List<MediaRecord>
+                                                    containerMediaRecordList =
+                                                    snapshot.data!;
+                                                final containerMediaRecord =
+                                                    containerMediaRecordList
+                                                            .isNotEmpty
+                                                        ? containerMediaRecordList
+                                                            .first
+                                                        : null;
+
+                                                return InkWell(
+                                                  splashColor:
+                                                      Colors.transparent,
+                                                  focusColor:
+                                                      Colors.transparent,
+                                                  hoverColor:
+                                                      Colors.transparent,
+                                                  highlightColor:
+                                                      Colors.transparent,
+                                                  onTap: () async {
+                                                    context.pushNamed(
+                                                      MediaDetailWidget
+                                                          .routeName,
+                                                      queryParameters: {
+                                                        'mediaId':
+                                                            serializeParam(
+                                                          itemsListItem.mediaId,
+                                                          ParamType.String,
                                                         ),
-                                                      ),
+                                                      }.withoutNulls,
                                                     );
-                                                  }
-                                                  List<MoviesRow>
-                                                      containerMoviesRowList =
-                                                      snapshot.data!;
-
-                                                  final containerMoviesRow =
-                                                      containerMoviesRowList
-                                                              .isNotEmpty
-                                                          ? containerMoviesRowList
-                                                              .first
-                                                          : null;
-
-                                                  return Container(
+                                                  },
+                                                  child: Container(
                                                     decoration: BoxDecoration(),
                                                     child: Column(
                                                       mainAxisSize:
@@ -1158,7 +948,7 @@ class _DetailListeWidgetState extends State<DetailListeWidget> {
                                                                       url) {
                                                                     return url ??
                                                                         '';
-                                                                  }(containerMoviesRow
+                                                                  }(containerMediaRecord
                                                                       ?.posterUrl),
                                                                   width: double
                                                                       .infinity,
@@ -1193,7 +983,7 @@ class _DetailListeWidgetState extends State<DetailListeWidget> {
                                                                           0.0),
                                                                   child: Icon(
                                                                     Icons
-                                                                        .local_movies_outlined,
+                                                                        .movie_outlined,
                                                                     color: Color(
                                                                         0xFFF5B841),
                                                                     size: 16.0,
@@ -1223,7 +1013,7 @@ class _DetailListeWidgetState extends State<DetailListeWidget> {
                                                                     .stretch,
                                                             children: [
                                                               Text(
-                                                                containerMoviesRow!
+                                                                containerMediaRecord!
                                                                     .title,
                                                                 maxLines: 2,
                                                                 style: FlutterFlowTheme.of(
@@ -1256,7 +1046,7 @@ class _DetailListeWidgetState extends State<DetailListeWidget> {
                                                                     ),
                                                               ),
                                                               Text(
-                                                                'Film',
+                                                                'Voir la fiche',
                                                                 style: FlutterFlowTheme.of(
                                                                         context)
                                                                     .bodyMedium
@@ -1290,232 +1080,11 @@ class _DetailListeWidgetState extends State<DetailListeWidget> {
                                                         ),
                                                       ],
                                                     ),
-                                                  );
-                                                },
-                                              ),
-                                            ),
-                                          if (itemsListItem.seriesId != null &&
-                                              itemsListItem.seriesId != '')
-                                            Expanded(
-                                              child: FutureBuilder<
-                                                  List<SeriesRow>>(
-                                                future: SeriesTable()
-                                                    .querySingleRow(
-                                                  queryFn: (q) => q.eqOrNull(
-                                                    'id',
-                                                    itemsListItem.seriesId,
                                                   ),
-                                                ),
-                                                builder: (context, snapshot) {
-                                                  // Customize what your widget looks like when it's loading.
-                                                  if (!snapshot.hasData) {
-                                                    return Center(
-                                                      child: SizedBox(
-                                                        width: 50.0,
-                                                        height: 50.0,
-                                                        child:
-                                                            CircularProgressIndicator(
-                                                          valueColor:
-                                                              AlwaysStoppedAnimation<
-                                                                  Color>(
-                                                            FlutterFlowTheme.of(
-                                                                    context)
-                                                                .primary,
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    );
-                                                  }
-                                                  List<SeriesRow>
-                                                      containerSeriesRowList =
-                                                      snapshot.data!;
-
-                                                  final containerSeriesRow =
-                                                      containerSeriesRowList
-                                                              .isNotEmpty
-                                                          ? containerSeriesRowList
-                                                              .first
-                                                          : null;
-
-                                                  return Container(
-                                                    decoration: BoxDecoration(),
-                                                    child: Column(
-                                                      mainAxisSize:
-                                                          MainAxisSize.max,
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .start,
-                                                      crossAxisAlignment:
-                                                          CrossAxisAlignment
-                                                              .stretch,
-                                                      children: [
-                                                        Expanded(
-                                                          child: Stack(
-                                                            alignment:
-                                                                AlignmentDirectional(
-                                                                    1.0, -1.0),
-                                                            children: [
-                                                              ClipRRect(
-                                                                borderRadius:
-                                                                    BorderRadius
-                                                                        .only(
-                                                                  topLeft: Radius
-                                                                      .circular(
-                                                                          12.0),
-                                                                  topRight: Radius
-                                                                      .circular(
-                                                                          12.0),
-                                                                ),
-                                                                child:
-                                                                    CachedNetworkImage(
-                                                                  fadeInDuration:
-                                                                      Duration(
-                                                                          milliseconds:
-                                                                              0),
-                                                                  fadeOutDuration:
-                                                                      Duration(
-                                                                          milliseconds:
-                                                                              0),
-                                                                  imageUrl: (String?
-                                                                      url) {
-                                                                    return url ??
-                                                                        '';
-                                                                  }(containerSeriesRow
-                                                                      ?.posterUrl),
-                                                                  width: double
-                                                                      .infinity,
-                                                                  height: double
-                                                                      .infinity,
-                                                                  fit: BoxFit
-                                                                      .cover,
-                                                                ),
-                                                              ),
-                                                              Padding(
-                                                                padding:
-                                                                    EdgeInsetsDirectional
-                                                                        .fromSTEB(
-                                                                            0.0,
-                                                                            8.0,
-                                                                            8.0,
-                                                                            0.0),
-                                                                child:
-                                                                    Container(
-                                                                  width: 32.0,
-                                                                  height: 32.0,
-                                                                  decoration:
-                                                                      BoxDecoration(
-                                                                    color: Color(
-                                                                        0xCC0B0B12),
-                                                                    shape: BoxShape
-                                                                        .circle,
-                                                                  ),
-                                                                  alignment:
-                                                                      AlignmentDirectional(
-                                                                          0.0,
-                                                                          0.0),
-                                                                  child: Icon(
-                                                                    Icons
-                                                                        .tv_rounded,
-                                                                    color: Color(
-                                                                        0xFFA28BFF),
-                                                                    size: 16.0,
-                                                                  ),
-                                                                ),
-                                                              ),
-                                                            ],
-                                                          ),
-                                                        ),
-                                                        Padding(
-                                                          padding:
-                                                              EdgeInsetsDirectional
-                                                                  .fromSTEB(
-                                                                      10.0,
-                                                                      10.0,
-                                                                      10.0,
-                                                                      12.0),
-                                                          child: Column(
-                                                            mainAxisSize:
-                                                                MainAxisSize
-                                                                    .min,
-                                                            mainAxisAlignment:
-                                                                MainAxisAlignment
-                                                                    .start,
-                                                            crossAxisAlignment:
-                                                                CrossAxisAlignment
-                                                                    .stretch,
-                                                            children: [
-                                                              Text(
-                                                                containerSeriesRow!
-                                                                    .title,
-                                                                maxLines: 2,
-                                                                style: FlutterFlowTheme.of(
-                                                                        context)
-                                                                    .bodyMedium
-                                                                    .override(
-                                                                      font: GoogleFonts
-                                                                          .inter(
-                                                                        fontWeight:
-                                                                            FontWeight.w600,
-                                                                        fontStyle: FlutterFlowTheme.of(context)
-                                                                            .bodyMedium
-                                                                            .fontStyle,
-                                                                      ),
-                                                                      color: Color(
-                                                                          0xFFF5F5F7),
-                                                                      fontSize:
-                                                                          14.0,
-                                                                      letterSpacing:
-                                                                          0.0,
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .w600,
-                                                                      fontStyle: FlutterFlowTheme.of(
-                                                                              context)
-                                                                          .bodyMedium
-                                                                          .fontStyle,
-                                                                      lineHeight:
-                                                                          1.3,
-                                                                    ),
-                                                              ),
-                                                              Text(
-                                                                'Série',
-                                                                style: FlutterFlowTheme.of(
-                                                                        context)
-                                                                    .bodyMedium
-                                                                    .override(
-                                                                      font: GoogleFonts
-                                                                          .inter(
-                                                                        fontWeight:
-                                                                            FontWeight.w600,
-                                                                        fontStyle: FlutterFlowTheme.of(context)
-                                                                            .bodyMedium
-                                                                            .fontStyle,
-                                                                      ),
-                                                                      color: Color(
-                                                                          0xFFA28BFF),
-                                                                      fontSize:
-                                                                          12.0,
-                                                                      letterSpacing:
-                                                                          0.0,
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .w600,
-                                                                      fontStyle: FlutterFlowTheme.of(
-                                                                              context)
-                                                                          .bodyMedium
-                                                                          .fontStyle,
-                                                                    ),
-                                                              ),
-                                                            ].divide(SizedBox(
-                                                                height: 4.0)),
-                                                          ),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  );
-                                                },
-                                              ),
+                                                );
+                                              },
                                             ),
+                                          ),
                                           InkWell(
                                             splashColor: Colors.transparent,
                                             focusColor: Colors.transparent,
@@ -1524,7 +1093,7 @@ class _DetailListeWidgetState extends State<DetailListeWidget> {
                                             onTap: () async {
                                               _model.retrait = await actions
                                                   .removeWatchlistItem(
-                                                itemsListItem.id!,
+                                                itemsListItem.id,
                                               );
                                               if (_model.retrait == '') {
                                                 ScaffoldMessenger.of(context)
@@ -1546,7 +1115,8 @@ class _DetailListeWidgetState extends State<DetailListeWidget> {
                                                   ),
                                                 );
                                                 safeSetState(() => _model
-                                                    .requestCompleter2 = null);
+                                                        .firestoreRequestCompleter2 =
+                                                    null);
                                               } else {
                                                 ScaffoldMessenger.of(context)
                                                     .clearSnackBars();
@@ -1646,22 +1216,24 @@ class _DetailListeWidgetState extends State<DetailListeWidget> {
                       var confirmDialogResponse = await showDialog<bool>(
                             context: context,
                             builder: (alertDialogContext) {
-                              return AlertDialog(
-                                title: Text('Supprimer la liste ?'),
-                                content: Text(
-                                    'La liste et ses titres seront supprimés définitivement.'),
-                                actions: [
-                                  TextButton(
-                                    onPressed: () => Navigator.pop(
-                                        alertDialogContext, false),
-                                    child: Text('Annuler'),
-                                  ),
-                                  TextButton(
-                                    onPressed: () =>
-                                        Navigator.pop(alertDialogContext, true),
-                                    child: Text('Supprimer'),
-                                  ),
-                                ],
+                              return WebViewAware(
+                                child: AlertDialog(
+                                  title: Text('Supprimer la liste ?'),
+                                  content: Text(
+                                      'La liste et ses titres seront supprimés définitivement.'),
+                                  actions: [
+                                    TextButton(
+                                      onPressed: () => Navigator.pop(
+                                          alertDialogContext, false),
+                                      child: Text('Annuler'),
+                                    ),
+                                    TextButton(
+                                      onPressed: () => Navigator.pop(
+                                          alertDialogContext, true),
+                                      child: Text('Supprimer'),
+                                    ),
+                                  ],
+                                ),
                               );
                             },
                           ) ??

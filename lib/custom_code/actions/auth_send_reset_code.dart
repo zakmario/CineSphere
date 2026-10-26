@@ -1,5 +1,5 @@
 // Automatic FlutterFlow imports
-import '/backend/supabase/supabase.dart';
+import '/backend/backend.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import 'index.dart'; // Imports other custom actions
@@ -9,13 +9,13 @@ import 'package:flutter/material.dart';
 // DO NOT REMOVE OR MODIFY THE CODE ABOVE!
 
 import '/custom_code/actions/auth_service.dart';
-import '/custom_code/actions/supabase_service.dart';
+import '/custom_code/actions/firestore_service.dart';
 
-/// Envoie le code de réinitialisation du mot de passe par e-mail.
+/// Envoie le lien de réinitialisation du mot de passe par e-mail.
 /// Retourne "" en cas de succès, sinon le message d'erreur à afficher.
 Future<String> authSendResetCode(String email) async {
   try {
-    await AuthService.instance.sendPasswordResetCode(email);
+    await AuthService.instance.sendPasswordReset(email);
     return '';
   } on CineFailure catch (failure) {
     return failure.message;

@@ -11,22 +11,22 @@ export '/membre3_ux_sqlite_notifications/calendrier/calendrier_widget.dart'
     show CalendrierWidget;
 export '/membre2_catalogue_recherche_pagination/actualites/actualites_widget.dart'
     show ActualitesWidget;
-export '/membre1_auth_profil_supabase/mot_de_passe_oublie/mot_de_passe_oublie_widget.dart'
-    show MotDePasseOublieWidget;
-export '/membre1_auth_profil_supabase/nouveau_mot_de_passe/nouveau_mot_de_passe_widget.dart'
-    show NouveauMotDePasseWidget;
-export '/membre1_auth_profil_supabase/detail_liste/detail_liste_widget.dart'
-    show DetailListeWidget;
-export '/membre1_auth_profil_supabase/favoris/favoris_widget.dart'
-    show FavorisWidget;
-export '/membre1_auth_profil_supabase/profil/profil_widget.dart'
-    show ProfilWidget;
 export '/membre1_auth_profil_supabase/login/login_widget.dart' show LoginWidget;
 export '/membre1_auth_profil_supabase/confirmation_email/confirmation_email_widget.dart'
     show ConfirmationEmailWidget;
 export '/membre1_auth_profil_supabase/inscription/inscription_widget.dart'
     show InscriptionWidget;
+export '/membre1_auth_profil_supabase/mot_de_passe_oublie/mot_de_passe_oublie_widget.dart'
+    show MotDePasseOublieWidget;
+export '/membre1_auth_profil_supabase/nouveau_mot_de_passe/nouveau_mot_de_passe_widget.dart'
+    show NouveauMotDePasseWidget;
 export '/membre1_auth_profil_supabase/parametres/parametres_widget.dart'
     show ParametresWidget;
+export '/membre1_auth_profil_supabase/profil/profil_widget.dart'
+    show ProfilWidget;
+export '/membre1_auth_profil_supabase/favoris/favoris_widget.dart'
+    show FavorisWidget;
+export '/membre1_auth_profil_supabase/detail_liste/detail_liste_widget.dart'
+    show DetailListeWidget;
 export '/membre1_auth_profil_supabase/bande_annonce/bande_annonce_widget.dart'
     show BandeAnnonceWidget;
