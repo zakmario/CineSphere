@@ -195,6 +195,16 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
                 ),
         ),
         FFRoute(
+          name: BandeAnnonceWidget.routeName,
+          path: BandeAnnonceWidget.routePath,
+          builder: (context, params) => BandeAnnonceWidget(
+            trailerUrl: params.getParam(
+              'trailerUrl',
+              ParamType.String,
+            ),
+          ),
+        ),
+        FFRoute(
           name: DetailListeWidget.routeName,
           path: DetailListeWidget.routePath,
           builder: (context, params) => DetailListeWidget(
@@ -203,16 +213,6 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
               ParamType.DocumentReference,
               isList: false,
               collectionNamePath: ['users', 'watchlists'],
-            ),
-          ),
-        ),
-        FFRoute(
-          name: BandeAnnonceWidget.routeName,
-          path: BandeAnnonceWidget.routePath,
-          builder: (context, params) => BandeAnnonceWidget(
-            trailerUrl: params.getParam(
-              'trailerUrl',
-              ParamType.String,
             ),
           ),
         )
