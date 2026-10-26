@@ -3,7 +3,7 @@
 Plateforme pour les amateurs de films et de séries TV : catalogue, recherche,
 favoris, calendrier des sorties et rappels.
 
-Bonus réalisés : **Supabase · Search & Filtres · Pagination · Local
+Bonus réalisés : **Firebase (Auth + Firestore) · Search & Filtres · Pagination · Local
 Notifications · Walkthroughs** (+ Custom code et tests automatisés).
 
 ## Workflow VS Code ↔ FlutterFlow
@@ -26,17 +26,32 @@ sont en lecture seule et régénérés par FlutterFlow) :
    → construire les pages → tester avec **Test Mode / Run Mode**.
 5. Avant de recoder dans VS Code : **Pull latest changes**.
 
-## 1. Supabase
+## 1. Firebase
 
-1. Supabase → *SQL Editor* → exécuter les scripts dans l'ordre indiqué dans
-   [supabase/README.md](supabase/README.md) (`schema.sql`, les migrations,
-   `seed.sql` ; chaque script peut être relancé).
-2. FlutterFlow → *Settings → Integrations → Supabase* → **Get Schema**.
+Projet Firebase `cinesphere-app-3f710` (forfait gratuit Spark), relié à
+FlutterFlow (*Settings → Project Setup → Firebase*). Le backend est passé de
+Supabase à Firebase le 26/10/2026 (décision d'équipe) ; le dossier
+`supabase/` est conservé comme archive de l'ancien schéma SQL.
 
-Tables : `profiles`, `genres`, `media` (films **et** séries, colonne
-`media_type`), `release_events` (dates de diffusion), `news`, `favorites`.
-Une seule table `media` permet une seule recherche, un seul filtre et une seule
-pagination pour les films et les séries.
+- **Authentication** : e-mail / mot de passe.
+- **Firestore** (`europe-west3`) : `users` (profil + préférences),
+  `usernames` (unicité des pseudos), `media` (films **et** séries, champ
+  `mediaType`), `genres`, `platforms`, `news`, `release_events`,
+  `favorites`, `watched`, `watchlists`, `watchlist_items`, `reviews`,
+  `notifications`, `search_history`. Champs en camelCase ; les documents
+  personnels portent `userId`.
+- **Règles et index** : dans [firebase/](firebase/) (`firestore.rules`,
+  `firestore.indexes.json`), déployés avec la CLI :
+
+```bash
+cd firebase
+firebase deploy --only firestore
+```
+
+Ne pas utiliser le bouton *Deploy* des règles dans FlutterFlow : il
+remplacerait ces règles par des règles ouvertes. Pour la même raison,
+FlutterFlow affiche « Firestore rules not deployed » et « indexes not
+properly deployed » : c'est attendu.
 
 ## 2. Custom code fourni
 
@@ -44,9 +59,9 @@ pagination pour les films et les séries.
 
 | Widget | Paramètres | Rôle |
 |---|---|---|
-| `CatalogBrowser` | `pageSize`, `initialMediaType`, `onItemTap(mediaId)` | Recherche (titre + synopsis, délai 400 ms), filtres (type, genre, note min., statut), tri, pagination Supabase avec scroll infini, états chargement / vide / erreur, pull-to-refresh |
+| `CatalogBrowser` | `pageSize`, `initialMediaType`, `onItemTap(mediaId)` | Recherche (titre + synopsis, délai 400 ms), filtres (type, genre, note min., statut), tri, pagination avec scroll infini (catalogue Firestore gardé en mémoire : Firestore n'a pas de recherche « contient »), états chargement / vide / erreur, pull-to-refresh |
 | `MediaCard` | `title`, `posterUrl`, `mediaType`, `rating`, `releaseDate`, `onTap` | Carte affiche + badges |
-| `FavoriteButton` | `mediaId`, `iconSize`, `onChanged(isFavorite)` | Cœur relié à la table `favorites` |
+| `FavoriteButton` | `mediaId`, `iconSize`, `onChanged(isFavorite)` | Cœur relié à la collection `favorites` |
 | `UpcomingReleasesList` | `mediaId`, `pageSize`, `reminderMinutesBefore`, `onItemTap(selectedMediaId)` | Calendrier groupé par jour, paginé, cloche = notification programmée |
 | `OnboardingWalkthrough` | `onFinish()` | 4 étapes de présentation + choix des genres préférés |
 | `HomeFeed` | `onItemTap(tappedMediaId)` | Accueil : « Pour vous » (genres préférés), Tendances, Bientôt disponible, Les mieux notés |
@@ -143,21 +158,24 @@ flutter test
 
 | Membre | Responsabilités |
 |---|---|
-| 1 — Supabase & compte | schéma, migrations, RLS, Storage, auth, profil et avatar, favoris, listes, vus (voir ci-dessous) |
+| 1 — Firebase & compte | Firestore, règles de sécurité, auth, profil et avatar, favoris, listes, vus (voir ci-dessous) |
 | 2 — Catalogue | `CatalogBrowser`, `MediaCard`, HomePage, MediaDetail, pagination |
 | 3 — UX & notifications | Onboarding + Walkthrough FlutterFlow, calendrier, notifications locales, tests |
 
-## Membre 1 — Authentification, profil et Supabase
+## Membre 1 — Authentification, profil et Firebase
 
-Pages dans le dossier FlutterFlow `membre1_auth_profil_supabase`. Ce sont des
-pages FlutterFlow **natives** (widgets FlutterFlow, requêtes Supabase,
-thème CinéSphère) qui appellent des actions personnalisées, une par fichier.
+Pages dans le dossier FlutterFlow `membre1_auth_profil_supabase` (nom
+d'origine conservé). Ce sont des pages FlutterFlow **natives** (widgets
+FlutterFlow, requêtes Firestore, thème CinéSphère) qui appellent des actions
+personnalisées, une par fichier.
 
-### Base Supabase
+### Base Firebase
 
-Schéma, RLS, triggers, Storage et audits : voir
-[supabase/README.md](supabase/README.md) (11 migrations dans
-`supabase/migrations/`).
+Collections, règles de sécurité et index : voir la section 1 et
+[firebase/](firebase/). Les règles reprennent les anciennes politiques RLS :
+catalogue en lecture publique, chaque membre ne lit et ne modifie que ses
+favoris, vus, listes et notifications, le rôle d'un profil ne se change pas
+depuis l'application.
 
 ### Pages
 
@@ -165,9 +183,9 @@ Schéma, RLS, triggers, Storage et audits : voir
 |---|---|---|---|
 | `login` (Entry Page) | — | connexion, liens vers Inscription et MotDePasseOublie | `authSignIn`, `syncTmdbCatalog` |
 | `Inscription` | — | e-mail, pseudo (unicité vérifiée pendant la saisie), mot de passe + confirmation | `authSignUp`, `syncTmdbCatalog` |
-| `ConfirmationEmail` | `email` | saisie du code reçu par e-mail, renvoi du code | `authConfirmSignUp`, `authResendCode`, `syncTmdbCatalog` |
-| `MotDePasseOublie` | — | envoi d'un code de réinitialisation | `authSendResetCode` |
-| `NouveauMotDePasse` | `email` | code + nouveau mot de passe (seulement le mot de passe si déjà connecté) | `authResetPassword`, `authSendResetCode` |
+| `ConfirmationEmail` | `email` | « J'ai confirmé mon adresse » après le clic sur le lien reçu par e-mail, renvoi du lien | `authConfirmSignUp`, `authResendCode`, `syncTmdbCatalog` |
+| `MotDePasseOublie` | — | envoi du lien Firebase de réinitialisation | `authSendResetCode` |
+| `NouveauMotDePasse` | `email` | changement du mot de passe du membre connecté (depuis Paramètres) | `authResetPassword` |
 | `Profil` | — | photo de profil (`AvatarPicker`), pseudo et bio modifiables, nombre d'avis publiés | `updateMyProfile` |
 | `Parametres` | — | profil, favoris, changer de mot de passe, notifications, revoir l'onboarding, **actualiser le catalogue TMDB**, **supprimer mon compte** (avec confirmation), déconnexion | `initLocalNotifications`, `showInstantNotification`, `syncTmdbCatalog`, `deleteMyAccount`, *Log Out* |
 | `Favoris` | — | 3 onglets : **Favoris**, **Mes listes** (création), **Vus** | `createWatchlist` |
@@ -180,19 +198,18 @@ membre 1 a ajouté ces widgets :
 | Widget | Paramètres | Rôle |
 |---|---|---|
 | `AddToWatchlistButton` | `mediaId` | feuille avec les listes du membre ; ajout à une liste existante ou création d'une liste avec le titre |
-| `MarkWatchedButton` | `mediaId`, `onChanged(isWatched)` | « Marquer comme vu » relié à la table `watched` (onglet Vus) |
+| `MarkWatchedButton` | `mediaId`, `onChanged(isWatched)` | « Marquer comme vu » relié à la collection `watched` (onglet Vus) |
 | `TrailerPlayer` | `trailerUrl`, `autoPlay` | lecteur YouTube intégré, basé sur le lecteur natif de FlutterFlow (`FlutterFlowYoutubePlayer`) : le bouton « Bande-annonce » ouvre la vidéo dans une fenêtre de l'application (`showTrailerDialog`) au lieu de YouTube |
-| `AvatarPicker` | `avatarUrl`, `onChanged(avatarUrl)` | photo choisie dans la galerie, réduite à 512 px, 2 Mo max, envoyée dans le bucket `avatars/{user_id}/` puis enregistrée dans `profiles.avatar_url` |
+| `AvatarPicker` | `avatarUrl`, `onChanged(avatarUrl)` | photo choisie dans la galerie, réduite à 256 px, enregistrée en base64 dans `users/{uid}.avatarData` (Storage demande le forfait payant Blaze) ; accepte aussi une URL http |
 
 Les actions qui modifient des données retournent `""` en cas de succès, sinon
 le message d'erreur en français à afficher (*SnackBar*). `toggleFavorite` et
 `toggleWatched` retournent le nouvel état.
 
-**Suppression de compte** : `deleteMyAccount` retire les fichiers de
-`avatars/{user_id}/` (Supabase interdit de les supprimer en SQL), puis appelle
-la fonction SQL `delete_my_account()` qui supprime la ligne `auth.users` du
-membre connecté ; profil, préférences, favoris, listes, vus, avis et
-notifications partent en cascade. La page enchaîne avec *Log Out*.
+**Suppression de compte** : `deleteMyAccount` vérifie que la connexion date
+de moins de 5 minutes (exigence de Firebase), efface les documents du membre
+(profil, pseudo, favoris, vus, listes, notifications, historique) puis le
+compte Firebase Auth. La page enchaîne avec *Log Out*.
 
 ### API TMDB
 
@@ -217,9 +234,9 @@ action (*API Call*). Code généré : `lib/backend/api_requests/api_calls.dart`.
 
 **Import dans le catalogue** : l'action `syncTmdbCatalog(force)` appelle
 `Tendances` (2 pages), `FilmsPopulaires`, `SeriesPopulaires`,
-`ProchainesSorties` et `SeriesEnCours`, puis envoie les titres (sans doublon)
-à la fonction SQL `import_tmdb_media`. Celle-ci crée ou met à jour les lignes
-de `media` (clé `media_type` + `tmdb_id`) : les widgets du catalogue affichent
+`ProchainesSorties` et `SeriesEnCours`, puis enregistre les titres (sans doublon)
+dans Firestore, ce que faisait l'ancienne fonction SQL `import_tmdb_media` :
+création ou mise à jour des documents de `media` (clé `mediaType` + `tmdbId`) : les widgets du catalogue affichent
 les vrais titres TMDB et favoris, listes et vus continuent de fonctionner.
 Un film à venir reçoit aussi un événement « Sortie au cinéma » dans
 `release_events` (calendrier).
@@ -227,11 +244,11 @@ Un film à venir reçoit aussi un événement « Sortie au cinéma » dans
 Les listes TMDB ne donnent ni durée, ni saisons, ni bande-annonce, ni
 plateformes : à chaque passage, l'action appelle ensuite `DetailFilm` ou
 `DetailSerie` pour les 60 titres à reprendre les plus populaires (8 appels en
-parallèle) et envoie le résultat à `enrich_tmdb_media` : durée, saisons,
+parallèle) et complète les documents (ancienne fonction SQL `enrich_tmdb_media`) : durée, saisons,
 épisodes, série terminée, bande-annonce YouTube (française d'abord) et
 plateformes d'abonnement en France. La fiche d'un titre (`MediaDetailView`)
 les affiche. Un titre est repris s'il n'a jamais été complété
-(`media.details_synced_at` vide) ou s'il n'a toujours pas de bande-annonce
+(`media.detailsSyncedAt` vide) ou s'il n'a toujours pas de bande-annonce
 7 jours après le dernier passage.
 
 - après connexion, inscription ou confirmation : `force = false`, en
@@ -246,52 +263,39 @@ La logique est dans `lib/custom_code/actions/auth_service.dart` ; les actions
 
 - validation : e-mail, mot de passe ≥ 8 caractères, confirmation, pseudo
   (3 à 24 caractères) dont l'unicité est vérifiée avant l'inscription
-  (fonction SQL `username_available`) ;
-- le pseudo est envoyé dans les métadonnées d'inscription et le trigger
-  `on_auth_user_created` crée `profiles` + `user_preferences` ;
-- erreurs Supabase Auth traduites en français (`CineFailure`) ;
-- **codes par e-mail plutôt que liens** : la confirmation d'inscription et le
-  mot de passe oublié utilisent le code à usage unique (`{{ .Token }}`) saisi
-  dans l'application. Les liens Supabase pointent vers le *Site URL*
-  (`localhost:3000`), inutilisable en Test Mode FlutterFlow ou sur téléphone ;
-- un e-mail non confirmé à la connexion renvoie un code et ouvre
-  ConfirmationEmail ;
-- session persistante gérée par `supabase_flutter`.
+  (collection `usernames`, lisible sans compte) ;
+- l'inscription crée le compte Firebase, puis `users/{uid}` et
+  `usernames/{pseudo}` dans un même lot (le compte est supprimé si le pseudo
+  vient d'être pris) ;
+- erreurs Firebase Auth traduites en français (`CineFailure`) ;
+- **liens par e-mail** : Firebase envoie un lien de confirmation à
+  l'inscription et un lien de réinitialisation du mot de passe (page
+  hébergée par Firebase) ;
+- un e-mail non confirmé à la connexion ouvre ConfirmationEmail (le membre
+  reste connecté pour pouvoir renvoyer le lien) ;
+- session persistante gérée par `firebase_auth`.
 
-Réglages Supabase (*Authentication*) :
-
-- *Email Templates* → **Confirm signup** et **Reset Password** : le corps doit
-  contenir `{{ .Token }}` ;
-- *Providers → Email* : longueur minimale du mot de passe **8** ;
-- SMTP : le SMTP intégré de Supabase n'envoie que 2 e-mails par heure et ne
-  permet pas de modifier les modèles ; le projet utilise un **SMTP Gmail**
-  (*Settings → SMTP*).
+Les comptes et données de Supabase ont été importés dans Firebase (mêmes
+identifiants, mots de passe repris grâce à l'import bcrypt de Firebase Auth).
 
 ### Données
 
-`lib/custom_code/actions/supabase_service.dart` (`SupabaseService`) regroupe
-l'accès aux données du membre 1 : profil, pseudo, avatar, préférences, listes
-(créer, renommer, supprimer, ajouter / retirer un titre), genres,
-plateformes, cache TMDB. Les modèles sont dans `cine_models.dart`.
-
-Pendant la transition « expand / contract » (voir
-[supabase/README.md](supabase/README.md)), favoris, listes et vus visent les
-titres du catalogue de démonstration par `media_id`.
+`lib/custom_code/actions/firestore_service.dart` (`FirestoreService`)
+regroupe l'accès aux données : profil, pseudo, avatar, préférences,
+favoris, vus, listes (créer, renommer, supprimer, ajouter / retirer un
+titre), genres, plateformes et catalogue. `cineRow` convertit un document
+Firestore en ligne `snake_case` lue par les modèles de `cine_models.dart` et
+par les widgets.
 
 ### Tests
 
 | Fichier | Contenu |
 |---|---|
-| `test/auth_service_test.dart` | validation, traduction des erreurs, appels Supabase Auth simulés |
-| `test/auth_actions_test.dart` | actions `auth*` |
-| `test/auth_forms_test.dart` | écrans connexion, inscription, mot de passe oublié, nouveau mot de passe |
-| `test/supabase_service_test.dart` | `SupabaseService`, dont la suppression de compte (réponses HTTP Supabase simulées) |
+| `test/auth_service_test.dart` | validation, traduction des erreurs Firebase, `AuthService` avec une passerelle simulée |
+| `test/auth_actions_test.dart` | actions `auth*` et `deleteMyAccount` |
+| `test/firestore_service_test.dart` | validateurs, conversion des documents (`cineRow`, `toFirestoreFields`), erreurs Firestore |
 | `test/cine_models_test.dart` | modèles (`fromJson`, `toJson`, SQLite, égalité) |
-| `test/avatar_picker_test.dart` | `AvatarPicker` (galerie et Supabase simulés) |
+| `test/avatar_picker_test.dart` | `AvatarPicker` (galerie simulée, `FirestoreService` en mémoire) |
 | `test/mark_watched_button_test.dart` | `MarkWatchedButton` |
 | `test/trailer_player_test.dart` | adresses YouTube, `TrailerPlayer` sans vidéo valide |
 | `test/sync_tmdb_catalog_test.dart` | conversion des résultats TMDB, fusion sans doublon, envoi par lots, TMDB injoignable, détails (bande-annonce, plateformes, séries terminées) |
-
-Vérifié aussi sur la vraie base avec deux comptes de test : accès anonyme
-refusé, RLS des favoris, listes et vus (un membre ne voit ni ne modifie les
-données de l'autre), envoi d'avatar dans son seul dossier.

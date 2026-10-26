@@ -1,5 +1,10 @@
 # Base de données Supabase — CinéSphère
 
+> **Archive.** Depuis le 26/10/2026, CinéSphère utilise Firebase (Auth +
+> Firestore) : voir [../firebase/](../firebase/) et le README principal.
+> Ces scripts décrivent l'ancien schéma Supabase, dont les données ont été
+> importées dans Firestore.
+
 Responsable : **Membre 1 — Authentification, profil et Supabase**.
 
 ## Installation (projet neuf ou existant)
