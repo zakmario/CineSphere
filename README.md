@@ -85,7 +85,7 @@ properly deployed » : c'est attendu.
 | Avatar dans Firebase Storage | base64 dans `users/{uid}.avatarData` | Storage exige le forfait payant Blaze pour un nouveau projet |
 | Tests avec `fake_cloud_firestore` / `firebase_auth_mocks` | émulateur (règles) + `mocktail` (Dart) | ces paquets exigent `equatable` ≥ 2.1.0, FlutterFlow impose 2.0.7 |
 | `flutterfire configure` / `firebase_options.dart` | configuration générée par FlutterFlow (`lib/backend/firebase/`) | export FlutterFlow (prévu au 5.1) |
-| — | `display_name`, `photo_url`, `phone_number` dans `users` | champs exigés par FlutterFlow pour la collection des comptes (vides) |
+| — | `uid`, `created_time`, `display_name`, `photo_url`, `phone_number` dans `users` | champs exigés par FlutterFlow pour la collection des comptes (les trois derniers restent vides) |
 | — | `posterUrl` dans `watched`, `popularity` dans `movies` / `series`, collection `news` | affichage de l'onglet Vus, tri « Tendances », page Actualites |
 | SQLite (cache TMDB, `pending_sync`, `SyncService`) | non fait | partie hors ligne du membre 3 (section 6.10) |
 
