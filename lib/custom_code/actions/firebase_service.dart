@@ -403,6 +403,10 @@ class CineFirebaseService {
               'username': name,
               'email': email,
               'role': 'user',
+              // uid et created_time : champs exigés par FlutterFlow pour la
+              // collection des comptes.
+              'uid': userId,
+              'created_time': now,
               'createdAt': now,
               'updatedAt': now,
               'preferences': toFirestoreFields(prefs),

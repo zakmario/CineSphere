@@ -61,6 +61,16 @@ class UsersRecord extends FirestoreRecord {
   PreferencesStruct get preferences => _preferences ?? PreferencesStruct();
   bool hasPreferences() => _preferences != null;
 
+  // "uid" field.
+  String? _uid;
+  String get uid => _uid ?? '';
+  bool hasUid() => _uid != null;
+
+  // "created_time" field.
+  DateTime? _createdTime;
+  DateTime? get createdTime => _createdTime;
+  bool hasCreatedTime() => _createdTime != null;
+
   // "display_name" field.
   String? _displayName;
   String get displayName => _displayName ?? '';
@@ -88,6 +98,8 @@ class UsersRecord extends FirestoreRecord {
     _preferences = snapshotData['preferences'] is PreferencesStruct
         ? snapshotData['preferences']
         : PreferencesStruct.maybeFromMap(snapshotData['preferences']);
+    _uid = snapshotData['uid'] as String?;
+    _createdTime = snapshotData['created_time'] as DateTime?;
     _displayName = snapshotData['display_name'] as String?;
     _photoUrl = snapshotData['photo_url'] as String?;
     _phoneNumber = snapshotData['phone_number'] as String?;
@@ -135,6 +147,8 @@ Map<String, dynamic> createUsersRecordData({
   DateTime? createdAt,
   DateTime? updatedAt,
   PreferencesStruct? preferences,
+  String? uid,
+  DateTime? createdTime,
   String? displayName,
   String? photoUrl,
   String? phoneNumber,
@@ -150,6 +164,8 @@ Map<String, dynamic> createUsersRecordData({
       'createdAt': createdAt,
       'updatedAt': updatedAt,
       'preferences': PreferencesStruct().toMap(),
+      'uid': uid,
+      'created_time': createdTime,
       'display_name': displayName,
       'photo_url': photoUrl,
       'phone_number': phoneNumber,
@@ -176,6 +192,8 @@ class UsersRecordDocumentEquality implements Equality<UsersRecord> {
         e1?.createdAt == e2?.createdAt &&
         e1?.updatedAt == e2?.updatedAt &&
         e1?.preferences == e2?.preferences &&
+        e1?.uid == e2?.uid &&
+        e1?.createdTime == e2?.createdTime &&
         e1?.displayName == e2?.displayName &&
         e1?.photoUrl == e2?.photoUrl &&
         e1?.phoneNumber == e2?.phoneNumber;
@@ -192,6 +210,8 @@ class UsersRecordDocumentEquality implements Equality<UsersRecord> {
         e?.createdAt,
         e?.updatedAt,
         e?.preferences,
+        e?.uid,
+        e?.createdTime,
         e?.displayName,
         e?.photoUrl,
         e?.phoneNumber

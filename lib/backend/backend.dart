@@ -810,7 +810,9 @@ Future maybeCreateUser(User user) async {
     displayName:
         user.displayName ?? FirebaseAuth.instance.currentUser?.displayName,
     photoUrl: user.photoURL,
+    uid: user.uid,
     phoneNumber: user.phoneNumber,
+    createdTime: getCurrentTimestamp,
   );
 
   await userRecord.set(userData);
