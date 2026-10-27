@@ -18,3 +18,6 @@ export 'preferences_panel.dart' show PreferencesPanel;
 export 'offline_banner.dart' show OfflineBanner;
 export 'offline_screen.dart' show OfflineScreen;
 export 'release_calendar.dart' show ReleaseCalendar;
+export 'notification_bell.dart' show NotificationBell;
+export 'notifications_center.dart' show NotificationsCenter;
+export 'notification_settings_panel.dart' show NotificationSettingsPanel;
