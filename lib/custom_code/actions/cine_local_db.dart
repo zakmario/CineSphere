@@ -171,6 +171,21 @@ String formatBytes(int bytes) {
   return '$text ${units[unit]}';
 }
 
+/// Document `releaseEvents/{id}` -> ligne [cineRow] (titre et affiche y sont
+/// dénormalisés) avec la clé du titre (`media_key` : `movie_550`).
+Map<String, dynamic> releaseEventRow(DocumentSnapshot<Object?> doc) {
+  final row = cineRow(doc);
+  final type = row['media_type'] as String? ?? 'movie';
+  final tmdbId = (row['tmdb_id'] as num?)?.toInt() ?? 0;
+  return row
+    ..['media_type'] = type
+    ..['media_key'] = mediaKey(type, tmdbId);
+}
+
+/// Date de sortie d'une ligne de [releaseEventRow] (UTC), null si absente.
+DateTime? releaseDateOf(Map<String, dynamic> row) =>
+    DateTime.tryParse('${row['release_date'] ?? row['release_at'] ?? ''}');
+
 // Encodage JSON ---------------------------------------------------------------
 
 /// JSON des colonnes `data` / `payload` : dates et Timestamp en ISO 8601.
@@ -616,41 +631,99 @@ class CineLocalDb {
 
   // Calendrier (calendar_events) -------------------------------------------
 
-  /// Enregistre des sorties (lignes [cineRow] de `releaseEvents`).
+  Map<String, Object?>? _calendarEntry(Map<String, dynamic> row, int cachedAt) {
+    final type = row['media_type'] as String?;
+    final tmdbId = (row['tmdb_id'] as num?)?.toInt();
+    final date = releaseDateOf(row);
+    if (row['id'] == null || type == null || tmdbId == null || date == null) {
+      return null;
+    }
+    return {
+      'id': row['id'],
+      'media_key': mediaKey(type, tmdbId),
+      'media_type': type,
+      'tmdb_id': tmdbId,
+      'title': row['title'] as String? ?? '',
+      'poster_url': row['poster_url'],
+      'platform': row['platform'],
+      'release_at': _millis(date),
+      'season_number': (row['season_number'] as num?)?.toInt(),
+      'episode_number': (row['episode_number'] as num?)?.toInt(),
+      'data': encodeLocalJson(row),
+      'cached_at': cachedAt,
+    };
+  }
+
+  /// Enregistre des sorties (lignes [releaseEventRow]).
   Future<void> saveCalendarEvents(List<Map<String, dynamic>> rows) =>
       _use(null, (db) async {
         final cachedAt = _millis(now());
         final batch = db.batch();
         for (final row in rows) {
-          final type = row['media_type'] as String?;
-          final tmdbId = (row['tmdb_id'] as num?)?.toInt();
-          final date = DateTime.tryParse(
-              '${row['release_date'] ?? row['release_at'] ?? ''}');
-          if (row['id'] == null ||
-              type == null ||
-              tmdbId == null ||
-              date == null) {
-            continue;
+          final entry = _calendarEntry(row, cachedAt);
+          if (entry != null) {
+            batch.insert('calendar_events', entry,
+                conflictAlgorithm: ConflictAlgorithm.replace);
           }
-          batch.insert(
-              'calendar_events',
-              {
-                'id': row['id'],
-                'media_key': mediaKey(type, tmdbId),
-                'media_type': type,
-                'tmdb_id': tmdbId,
-                'title': row['title'] as String? ?? '',
-                'poster_url': row['poster_url'],
-                'platform': row['platform'],
-                'release_at': _millis(date),
-                'season_number': (row['season_number'] as num?)?.toInt(),
-                'episode_number': (row['episode_number'] as num?)?.toInt(),
-                'data': encodeLocalJson(row),
-                'cached_at': cachedAt,
-              },
-              conflictAlgorithm: ConflictAlgorithm.replace);
         }
         await batch.commit(noResult: true);
+      });
+
+  /// Remplace les sorties de la période [from] - [to] par [rows] (réponse
+  /// de Firestore pour cette période : les sorties supprimées disparaissent).
+  Future<void> replaceCalendarRange(
+          DateTime from, DateTime to, List<Map<String, dynamic>> rows) =>
+      _use(null, (db) async {
+        final cachedAt = _millis(now());
+        await db.transaction((txn) async {
+          final batch = txn.batch()
+            ..delete('calendar_events',
+                where: 'release_at >= ? AND release_at < ?',
+                whereArgs: [_millis(from), _millis(to)]);
+          for (final row in rows) {
+            final entry = _calendarEntry(row, cachedAt);
+            if (entry != null) {
+              batch.insert('calendar_events', entry,
+                  conflictAlgorithm: ConflictAlgorithm.replace);
+            }
+          }
+          await batch.commit(noResult: true);
+        });
+      });
+
+  /// Sorties en cache de la période, avec la date de la plus ancienne
+  /// (null si la période n'a jamais été chargée ou ne contient rien).
+  Future<CachedValue<List<Map<String, dynamic>>>?> readCalendarRange(
+          DateTime from, DateTime to) =>
+      _use(null, (db) async {
+        final rows = await db.query('calendar_events',
+            columns: ['data', 'cached_at'],
+            where: 'release_at >= ? AND release_at < ?',
+            whereArgs: [_millis(from), _millis(to)],
+            orderBy: 'release_at, id');
+        if (rows.isEmpty) {
+          return null;
+        }
+        final oldest = rows
+            .map((r) => (r['cached_at'] as num).toInt())
+            .reduce((a, b) => a < b ? a : b);
+        return CachedValue(
+            [for (final r in rows) _decodeMap(r['data'])], _fromMillis(oldest));
+      });
+
+  /// Sorties Firestore (`releaseEvents`) entre [from] (inclus) et [to]
+  /// (exclu), par date.
+  Future<List<Map<String, dynamic>>> fetchReleaseEvents(
+          DateTime from, DateTime to) =>
+      remote.guard('fetchReleaseEvents', () async {
+        final snap = await remote
+            .col('releaseEvents')
+            .where('releaseDate',
+                isGreaterThanOrEqualTo: Timestamp.fromDate(from))
+            .where('releaseDate', isLessThan: Timestamp.fromDate(to))
+            .orderBy('releaseDate')
+            .get();
+        return snap.docs.map(releaseEventRow).toList();
       });
 
   /// Sorties entre [from] (inclus) et [to] (exclu), par date. [platforms] et
@@ -949,6 +1022,20 @@ class CineLocalDb {
             await saveCatalog([row]);
           }
         },
+        forceRefresh: forceRefresh,
+        now: now,
+      );
+
+  /// Sorties de la période [from] - [to] : SQLite puis Firestore.
+  Stream<CacheResult<List<Map<String, dynamic>>>> watchCalendar(
+    DateTime from,
+    DateTime to, {
+    bool forceRefresh = false,
+  }) =>
+      cacheThenNetwork(
+        readCache: () => readCalendarRange(from, to),
+        fetch: () => fetchReleaseEvents(from, to),
+        writeCache: (rows) => replaceCalendarRange(from, to, rows),
         forceRefresh: forceRefresh,
         now: now,
       );
