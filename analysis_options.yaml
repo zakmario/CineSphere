@@ -33,6 +33,9 @@ analyzer:
     # fichier de code personnalisé (« DO NOT REMOVE OR MODIFY »).
     unused_import: ignore
     unnecessary_import: ignore
+    # FlutterFlow génère `http` à la fois en dependencies et en
+    # dev_dependencies du pubspec : le retirer à la main serait annulé.
+    unnecessary_dev_dependency: ignore
 
 linter:
   rules:

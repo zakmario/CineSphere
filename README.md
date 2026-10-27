@@ -102,6 +102,9 @@ properly deployed » : c'est attendu.
 
 ## 2. Custom code fourni
 
+Liste complète (signatures, paramètres, ajout dans l'éditeur) :
+[docs/flutterflow_custom_code.md](docs/flutterflow_custom_code.md).
+
 ### Widgets
 
 | Widget | Paramètres | Rôle |
