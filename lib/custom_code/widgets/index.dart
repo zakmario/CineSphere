@@ -17,3 +17,4 @@ export 'profile_stats.dart' show ProfileStats;
 export 'preferences_panel.dart' show PreferencesPanel;
 export 'offline_banner.dart' show OfflineBanner;
 export 'offline_screen.dart' show OfflineScreen;
+export 'release_calendar.dart' show ReleaseCalendar;
