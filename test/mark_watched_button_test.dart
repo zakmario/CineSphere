@@ -54,9 +54,57 @@ void main() {
     expect(changes, [true, false]);
     expect(service.calls, [
       'isWatched $_mediaId',
-      'toggleWatched $_mediaId',
-      'toggleWatched $_mediaId',
+      'setWatched $_mediaId true',
+      'setWatched $_mediaId false',
     ]);
+  });
+
+  testWidgets('hors connexion : « Vu » tout de suite, sans attendre Firestore',
+      (tester) async {
+    service.holdWrites = true;
+    await pump(tester);
+    await tester.tap(find.text('Marquer comme vu'));
+    await tester.pump();
+    expect(find.text('Vu'), findsOneWidget);
+    expect(find.byType(CircularProgressIndicator), findsNothing);
+    await service.flushWrites();
+    await tester.pumpAndSettle();
+    expect(find.text('Vu'), findsOneWidget);
+  });
+
+  testWidgets('écriture refusée : retour à « Marquer comme vu » et message',
+      (tester) async {
+    final changes = <bool>[];
+    service.failWrites = true;
+    await pump(tester, changes: changes);
+    await tester.tap(find.text('Marquer comme vu'));
+    await tester.pumpAndSettle();
+    expect(find.text('Marquer comme vu'), findsOneWidget);
+    expect(find.text('Pas de connexion Internet.'), findsOneWidget);
+    expect(changes, [true, false]);
+  });
+
+  testWidgets('deux boutons du même titre restent synchronisés',
+      (tester) async {
+    await tester.pumpWidget(const MaterialApp(
+      home: Scaffold(
+        body: Column(children: [
+          MarkWatchedButton(mediaId: _mediaId),
+          FavoriteButton(mediaId: _mediaId),
+          FavoriteButton(mediaId: _mediaId),
+        ]),
+      ),
+    ));
+    await tester.pumpAndSettle();
+    expect(find.byIcon(Icons.favorite_border), findsNWidgets(2));
+
+    await tester.tap(find.byIcon(Icons.favorite_border).first);
+    await tester.pumpAndSettle();
+    expect(find.byIcon(Icons.favorite), findsNWidgets(2));
+    expect(find.text('Ajouté aux favoris'), findsOneWidget);
+    expect(service.favorites, {_mediaId});
+    // Le bouton « vu » n'est pas concerné.
+    expect(find.text('Marquer comme vu'), findsOneWidget);
   });
 
   testWidgets('déjà vu au chargement', (tester) async {

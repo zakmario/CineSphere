@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:typed_data';
 
 import 'package:cine_sphere/custom_code/actions/cine_models.dart';
@@ -37,11 +38,47 @@ class FakeCineFirebaseService extends CineFirebaseService {
     return favorites.contains(mediaId);
   }
 
+  /// Les écritures de favoris / vus échouent (réseau) tant que c'est vrai.
+  bool failWrites = false;
+
+  /// Écritures en attente (hors connexion) : complétées par [flushWrites].
+  bool holdWrites = false;
+  final _held = <Completer<void>>[];
+
+  Future<void> flushWrites() async {
+    for (final write in _held) {
+      write.complete();
+    }
+    _held.clear();
+  }
+
+  Future<void> _write(String call, Set<String> target, String id, bool on) async {
+    calls.add(call);
+    if (failWrites) {
+      throw const CineFailure(
+          CineFailureKind.network, 'Pas de connexion Internet.');
+    }
+    on ? target.add(id) : target.remove(id);
+    if (holdWrites) {
+      final pending = Completer<void>();
+      _held.add(pending);
+      await pending.future;
+    }
+  }
+
+  @override
+  Future<void> writeFavorite(String key, bool favorite) =>
+      _write('setFavorite $key $favorite', favorites, key, favorite);
+
+  @override
+  Future<void> writeWatched(String key, bool watched) =>
+      _write('setWatched $key $watched', this.watched, key, watched);
+
   @override
   Future<bool> toggleFavorite(String mediaId) async {
-    _requireUser();
-    calls.add('toggleFavorite $mediaId');
-    return favorites.remove(mediaId) ? false : favorites.add(mediaId);
+    final value = !favorites.contains(mediaId);
+    await setFavorite(mediaId, value);
+    return value;
   }
 
   @override
@@ -52,9 +89,9 @@ class FakeCineFirebaseService extends CineFirebaseService {
 
   @override
   Future<bool> toggleWatched(String mediaId) async {
-    _requireUser();
-    calls.add('toggleWatched $mediaId');
-    return watched.remove(mediaId) ? false : watched.add(mediaId);
+    final value = !watched.contains(mediaId);
+    await setWatched(mediaId, value);
+    return value;
   }
 
   @override

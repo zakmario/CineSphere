@@ -9,11 +9,13 @@ import 'package:flutter/material.dart';
 // Begin custom widget code
 // DO NOT REMOVE OR MODIFY THE CODE ABOVE!
 
+import 'dart:async';
+
 import '/custom_code/actions/firebase_service.dart';
 
 /// Bouton « Marquer comme vu » de la fiche d'un titre (membre 1), relié à
-/// la table `watched`. Charge son état tout seul et appelle [onChanged]
-/// après chaque changement ; le titre apparaît alors dans l'onglet Vus.
+/// `users/{uid}/watched`. Charge son état tout seul, change immédiatement
+/// au toucher et appelle [onChanged] ; le titre apparaît dans l'onglet Vus.
 class MarkWatchedButton extends StatefulWidget {
   const MarkWatchedButton({
     super.key,
@@ -35,11 +37,27 @@ class MarkWatchedButton extends StatefulWidget {
 class _MarkWatchedButtonState extends State<MarkWatchedButton> {
   bool _isWatched = false;
   bool _busy = true;
+  StreamSubscription<MediaChange>? _changes;
 
   @override
   void initState() {
     super.initState();
+    // Même titre marqué ou retiré ailleurs.
+    _changes = CineFirebaseService.instance.mediaChanges.listen((change) {
+      if (mounted &&
+          change.flag == MediaFlag.watched &&
+          change.mediaId == widget.mediaId &&
+          change.value != _isWatched) {
+        setState(() => _isWatched = change.value);
+      }
+    });
     WidgetsBinding.instance.addPostFrameCallback((_) => _load());
+  }
+
+  @override
+  void dispose() {
+    _changes?.cancel();
+    super.dispose();
   }
 
   @override
@@ -75,28 +93,40 @@ class _MarkWatchedButtonState extends State<MarkWatchedButton> {
     }
   }
 
+  void _snack(String text) => ScaffoldMessenger.of(context)
+    ..hideCurrentSnackBar()
+    ..showSnackBar(SnackBar(
+      content: Text(text),
+      duration: const Duration(seconds: 2),
+    ));
+
+  /// Mise à jour optimiste, comme FavoriteButton.
   Future<void> _toggle() async {
-    setState(() => _busy = true);
+    final service = CineFirebaseService.instance;
+    if (service.currentUserId == null) {
+      _snack('Connectez-vous pour marquer un titre comme vu.');
+      return;
+    }
+    final value = !_isWatched;
+    setState(() => _isWatched = value);
+    _snack(value ? 'Ajouté à vos titres vus' : 'Retiré des vus');
+    final onChanged = widget.onChanged;
+    if (onChanged != null) {
+      unawaited(onChanged(value));
+    }
     try {
-      final value = await toggleWatched(widget.mediaId);
+      await service.setWatched(widget.mediaId, value);
+    } catch (error) {
       if (!mounted) {
         return;
       }
-      setState(() => _isWatched = value);
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text(value ? 'Ajouté à vos titres vus' : 'Retiré des vus'),
-        duration: const Duration(seconds: 2),
-      ));
-      await widget.onChanged?.call(value);
-    } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text(e.toString().replaceFirst('Exception: ', '')),
-        ));
+      setState(() => _isWatched = !value);
+      _snack(error is CineFailure
+          ? error.message
+          : 'Impossible de modifier vos titres vus.');
+      if (onChanged != null) {
+        unawaited(onChanged(!value));
       }
-    }
-    if (mounted) {
-      setState(() => _busy = false);
     }
   }
 

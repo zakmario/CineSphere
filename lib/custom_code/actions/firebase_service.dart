@@ -267,6 +267,20 @@ Map<String, dynamic> mediaSummary(Map<String, dynamic> row) => {
       'posterUrl': row['poster_url'],
     };
 
+enum MediaFlag { favorite, watched }
+
+/// Un titre ajouté aux favoris / vus ([value] = true) ou retiré.
+class MediaChange {
+  const MediaChange(this.flag, this.mediaId, this.value);
+
+  final MediaFlag flag;
+  final String mediaId;
+  final bool value;
+
+  @override
+  String toString() => 'MediaChange(${flag.name}, $mediaId, $value)';
+}
+
 /// Note moyenne (null sans avis) et nombre des avis publics d'un titre.
 class ReviewStats {
   const ReviewStats({required this.count, this.average});
@@ -650,12 +664,40 @@ class CineFirebaseService {
         return (await mine('favorites').doc(key).get()).exists;
       });
 
-  /// Ajoute ou retire un favori ; renvoie le nouvel état.
-  Future<bool> toggleFavorite(String key) => guard('toggleFavorite', () async {
+  // Événements d'application (section 8) : favoris et vus.
+  final _mediaChanges = StreamController<MediaChange>.broadcast();
+
+  /// Favoris et vus qui changent, émis dès la demande (mise à jour
+  /// optimiste) : tous les boutons d'un même titre se mettent à jour. Un
+  /// événement inverse suit si Firestore refuse l'écriture.
+  Stream<MediaChange> get mediaChanges => _mediaChanges.stream;
+
+  Future<void> _setFlag(MediaFlag flag, String key, bool value,
+      Future<void> Function() write) async {
+    requireUserId;
+    _mediaChanges.add(MediaChange(flag, key, value));
+    try {
+      await write();
+    } catch (_) {
+      _mediaChanges.add(MediaChange(flag, key, !value));
+      rethrow;
+    }
+  }
+
+  /// Met le titre en favori ou l'en retire. Sans réseau, l'écriture attend
+  /// le retour de la connexion (persistance Firestore) : n'attendez pas ce
+  /// Future pour mettre l'interface à jour.
+  Future<void> setFavorite(String key, bool favorite) => _setFlag(
+      MediaFlag.favorite, key, favorite, () => writeFavorite(key, favorite));
+
+  /// Écriture Firestore de [setFavorite] (remplacée dans les tests).
+  @protected
+  Future<void> writeFavorite(String key, bool favorite) =>
+      guard('setFavorite', () async {
         final ref = mine('favorites').doc(key);
-        if ((await ref.get()).exists) {
+        if (!favorite) {
           await ref.delete();
-          return false;
+          return;
         }
         final media = await _requireMedia(key);
         await ref.set({
@@ -666,7 +708,13 @@ class CineFirebaseService {
               : Timestamp.fromDate(DateTime.parse(media['release_date'])),
           'addedAt': FieldValue.serverTimestamp(),
         });
-        return true;
+      });
+
+  /// Ajoute ou retire un favori ; renvoie le nouvel état.
+  Future<bool> toggleFavorite(String key) => guard('toggleFavorite', () async {
+        final favorite = !(await mine('favorites').doc(key).get()).exists;
+        await setFavorite(key, favorite);
+        return favorite;
       });
 
   Future<bool> isWatched(String key) => guard('isWatched', () async {
@@ -676,12 +724,18 @@ class CineFirebaseService {
         return (await mine('watched').doc(key).get()).exists;
       });
 
-  /// Marque un titre entier comme vu ou le retire ; renvoie le nouvel état.
-  Future<bool> toggleWatched(String key) => guard('toggleWatched', () async {
+  /// Marque un titre entier comme vu ou le retire (voir [setFavorite]).
+  Future<void> setWatched(String key, bool watched) => _setFlag(
+      MediaFlag.watched, key, watched, () => writeWatched(key, watched));
+
+  /// Écriture Firestore de [setWatched] (remplacée dans les tests).
+  @protected
+  Future<void> writeWatched(String key, bool watched) =>
+      guard('setWatched', () async {
         final ref = mine('watched').doc(key);
-        if ((await ref.get()).exists) {
+        if (!watched) {
           await ref.delete();
-          return false;
+          return;
         }
         final media = await _requireMedia(key);
         // posterUrl n'est pas dans le cahier des charges : dénormalisé pour
@@ -690,7 +744,13 @@ class CineFirebaseService {
           ...mediaSummary(media),
           'watchedAt': FieldValue.serverTimestamp(),
         });
-        return true;
+      });
+
+  /// Marque un titre entier comme vu ou le retire ; renvoie le nouvel état.
+  Future<bool> toggleWatched(String key) => guard('toggleWatched', () async {
+        final watched = !(await mine('watched').doc(key).get()).exists;
+        await setWatched(key, watched);
+        return watched;
       });
 
   // Listes ---------------------------------------------------------------

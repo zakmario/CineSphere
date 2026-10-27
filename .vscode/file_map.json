@@ -92,8 +92,8 @@
     "new_identifier_name": "FavoriteButton",
     "type": "W",
     "is_deleted": false,
-    "current_checksum": "5f50f2b610e5fb56f532fc85ce4cc9a9dc5c6e956ff0c879f5609c3e2ab81297",
-    "original_checksum": "5f50f2b610e5fb56f532fc85ce4cc9a9dc5c6e956ff0c879f5609c3e2ab81297"
+    "current_checksum": "feb57cb574930c1f8634e859e52a34386976a92d8b63fd65077fc12dabf65106",
+    "original_checksum": "feb57cb574930c1f8634e859e52a34386976a92d8b63fd65077fc12dabf65106"
   },
   "lib/custom_code/widgets/catalog_browser.dart": {
     "old_identifier_name": "CatalogBrowser",
@@ -292,8 +292,8 @@
     "new_identifier_name": "MarkWatchedButton",
     "type": "W",
     "is_deleted": false,
-    "current_checksum": "35e9bf38ae49a2b2c03c03de5e383355ddfac8d376edc579d8cad4d8ed9e42c8",
-    "original_checksum": "35e9bf38ae49a2b2c03c03de5e383355ddfac8d376edc579d8cad4d8ed9e42c8"
+    "current_checksum": "139ccb2b0bd14ff18ee615516e98df0a82ed1f54152c94f8f16c048e7d771e51",
+    "original_checksum": "139ccb2b0bd14ff18ee615516e98df0a82ed1f54152c94f8f16c048e7d771e51"
   },
   "lib/custom_code/widgets/avatar_picker.dart": {
     "old_identifier_name": "AvatarPicker",
@@ -340,7 +340,7 @@
     "new_identifier_name": "firebaseService",
     "type": "A",
     "is_deleted": false,
-    "current_checksum": "7df3bf9ac70f8d42f9cd85eb58dd7f5b67ee040d4f082f76657b0bc9e87ad3cc",
-    "original_checksum": "7df3bf9ac70f8d42f9cd85eb58dd7f5b67ee040d4f082f76657b0bc9e87ad3cc"
+    "current_checksum": "3cea6823fec41e0fd9d62582b0fb58244e6a905e30254cd53018f8efd4639087",
+    "original_checksum": "3cea6823fec41e0fd9d62582b0fb58244e6a905e30254cd53018f8efd4639087"
   }
 }
