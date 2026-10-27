@@ -32,3 +32,4 @@ export 'delete_my_account.dart' show deleteMyAccount;
 export 'sync_tmdb_catalog.dart' show syncTmdbCatalog;
 export 'clear_view_history.dart' show clearViewHistory;
 export 'sign_out_cleanup.dart' show signOutCleanup;
+export 'cine_local_db.dart' show cineLocalDb;
