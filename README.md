@@ -53,6 +53,7 @@ users/{uid}                    profil + preferences (map)
   watched/{movie_550}
   notifications/{id}
   searchHistory/{id}
+  history/{movie_550}          titres consultés (onglet Historique), 50 au plus
 usernames/{pseudo}             uid (unicité du pseudo)
 movies/{tmdbId}  series/{tmdbId}   cache TMDB, genreIds
 genres/{tmdbGenreId}  platforms/{tmdbProviderId}
@@ -71,7 +72,7 @@ news/{id}                      actualités (page Actualites, membre 2)
 ```bash
 cd firebase
 npm install
-npm run test:rules      # 19 tests des règles sur l'émulateur (Java 21 requis)
+npm run test:rules      # 22 tests des règles sur l'émulateur (Java 21 requis)
 npm run seed:emulator   # tool/seed_firestore.dart sur l'émulateur
 npm run deploy          # règles + index sur le vrai projet
 ```
@@ -95,6 +96,8 @@ properly deployed » : c'est attendu.
 | `flutterfire configure` / `firebase_options.dart` | configuration générée par FlutterFlow (`lib/backend/firebase/`) | export FlutterFlow (prévu au 5.1) |
 | — | `uid`, `created_time`, `display_name`, `photo_url`, `phone_number` dans `users` | champs exigés par FlutterFlow pour la collection des comptes (les trois derniers restent vides) |
 | — | `posterUrl` dans `watched`, `popularity` dans `movies` / `series`, collection `news` | affichage de l'onglet Vus, tri « Tendances », page Actualites |
+| — | sous-collection `users/{uid}/history` | onglet Historique (6.7) : la section 5 ne prévoit pas où ranger les titres consultés |
+| `reviews/{id}/likes/{uid}` supprimé par son auteur seulement | l'auteur de l'avis peut aussi effacer les likes des autres | sinon la suppression d'un avis liké (ou du compte) échoue |
 | SQLite (cache TMDB, `pending_sync`, `SyncService`) | non fait | partie hors ligne du membre 3 (section 6.10) |
 
 ## 2. Custom code fourni
@@ -232,7 +235,7 @@ depuis l'application.
 | `NouveauMotDePasse` | `email` | changement du mot de passe du membre connecté (depuis Paramètres) | `authResetPassword` |
 | `Profil` | — | photo de profil (`AvatarPicker`), pseudo et bio modifiables, nombre d'avis publiés | `updateMyProfile` |
 | `Parametres` | — | profil, favoris, changer de mot de passe, notifications, revoir l'onboarding, **actualiser le catalogue TMDB**, **supprimer mon compte** (avec confirmation), déconnexion | `initLocalNotifications`, `showInstantNotification`, `syncTmdbCatalog`, `deleteMyAccount`, *Log Out* |
-| `Favoris` | — | 3 onglets : **Favoris**, **Mes listes** (création), **Vus** | `createWatchlist` |
+| `Favoris` | `onglet` (0 à 3) | 4 onglets : **Favoris**, **Mes listes** (création), **Vus**, **Historique** (50 dernières fiches ouvertes, « Effacer l'historique ») | `createWatchlist`, `clearViewHistory` |
 | `DetailListe` | `watchlist` (référence) | titres d'une liste, renommer, retirer un titre, supprimer la liste (avec confirmation) | `renameWatchlist`, `removeWatchlistItem`, `deleteWatchlist` |
 | `BandeAnnonce` | `trailerUrl` | widget natif *YouTube Player* de FlutterFlow (lecture automatique, plein écran) ; sa présence fait gérer le paquet du lecteur par FlutterFlow | — |
 
@@ -245,6 +248,17 @@ membre 1 a ajouté ces widgets :
 | `MarkWatchedButton` | `mediaId`, `onChanged(isWatched)` | « Marquer comme vu » relié à `users/{uid}/watched` (onglet Vus) |
 | `TrailerPlayer` | `trailerUrl`, `autoPlay` | lecteur YouTube intégré, basé sur le lecteur natif de FlutterFlow (`FlutterFlowYoutubePlayer`) : le bouton « Bande-annonce » ouvre la vidéo dans une fenêtre de l'application (`showTrailerDialog`) au lieu de YouTube |
 | `AvatarPicker` | `avatarUrl`, `onChanged(avatarUrl)` | photo choisie dans la galerie, réduite à 256 px, enregistrée en base64 dans `users/{uid}.avatarData` (Storage demande le forfait payant Blaze) ; accepte aussi une URL http |
+| `ReviewsSection` | `mediaId` | section **Avis** en bas de la fiche : note moyenne des avis publics, son avis (donner, modifier, supprimer, option privé), avis des autres membres paginés par 20, likes |
+
+La fiche note aussi chaque ouverture dans l'historique (`recordView`, onglet
+Historique de Favoris).
+
+**Mises à jour optimistes** (6.7) : le cœur (`FavoriteButton`), « Marquer comme
+vu » et les likes changent dès le toucher, puis reviennent en arrière avec un
+message si Firestore refuse. Hors connexion, Firestore garde l'écriture en file
+et l'envoie au retour du réseau. Le flux `CineFirebaseService.mediaChanges`
+(événements d'application, section 8) met à jour tous les boutons d'un même
+titre (fiche, cartes).
 
 Les actions qui modifient des données retournent `""` en cas de succès, sinon
 le message d'erreur en français à afficher (*SnackBar*). `toggleFavorite` et
@@ -343,6 +357,7 @@ convertit un film ou une série en ligne commune lue par les widgets.
 | `test/firebase_service_test.dart` | validateurs, clés `movie_550`, conversion des documents (`cineRow`, `catalogRow`), erreurs Firestore |
 | `test/cine_models_test.dart` | modèles (`fromJson`, `toJson`, SQLite, égalité) |
 | `test/avatar_picker_test.dart` | `AvatarPicker` (galerie simulée, service en mémoire) |
-| `test/mark_watched_button_test.dart` | `MarkWatchedButton` |
+| `test/mark_watched_button_test.dart` | `MarkWatchedButton` et `FavoriteButton` : mise à jour optimiste, hors connexion, écriture refusée, boutons synchronisés |
+| `test/reviews_section_test.dart` | `ReviewsSection` : état vide, publier, modifier, supprimer, like annulé si refusé, pagination |
 | `test/trailer_player_test.dart` | adresses YouTube, `TrailerPlayer` sans vidéo valide |
 | `test/sync_tmdb_catalog_test.dart` | conversion des résultats TMDB, fusion sans doublon, envoi par lots, TMDB injoignable, détails (bande-annonce, plateformes, séries terminées) |

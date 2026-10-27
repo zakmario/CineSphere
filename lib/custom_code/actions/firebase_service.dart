@@ -30,6 +30,9 @@ Future<bool> firebaseService() async {
 /// Nombre d'éléments par page (cahier des charges, section 6.4).
 const int kPageSize = 20;
 
+/// Titres gardés dans l'onglet Historique.
+const int kMaxHistory = 50;
+
 /// Bornes inclusives de la page [page] (0 = première).
 ({int from, int to}) pageRange(int page, {int pageSize = kPageSize}) {
   assert(page >= 0 && pageSize > 0);
@@ -532,6 +535,7 @@ class CineFirebaseService {
           'watched',
           'notifications',
           'searchHistory',
+          'history',
         ]) {
           refs.addAll((await me.collection(name).get()).docs.map((d) => d.reference));
         }
@@ -1028,6 +1032,48 @@ class CineFirebaseService {
         batch.update(review, {'likesCount': FieldValue.increment(liked ? -1 : 1)});
         await batch.commit();
         return !liked;
+      });
+
+  // Historique des titres consultés ----------------------------------------
+  //
+  // Hors cahier des charges (section 5.2) : l'onglet Historique (6.7) lit
+  // `users/{uid}/history/{movie_550}`, un document par titre.
+
+  /// Note l'ouverture de la fiche d'un titre ([row] = ligne de [fetchMedia])
+  /// et ne garde que les [kMaxHistory] plus récents. Sans session ou en cas
+  /// d'erreur, ne fait rien : l'historique ne doit pas gêner la fiche.
+  Future<void> recordView(Map<String, dynamic> row) async {
+    final key = row['id'] as String?;
+    if (currentUserId == null || parseMediaKey(key) == null) {
+      return;
+    }
+    try {
+      final history = mine('history');
+      await history.doc(key).set({
+        ...mediaSummary(row),
+        'viewedAt': FieldValue.serverTimestamp(),
+      });
+      final total = (await history.count().get()).count ?? 0;
+      if (total > kMaxHistory) {
+        final oldest = await history
+            .orderBy('viewedAt')
+            .limit(total - kMaxHistory)
+            .get();
+        await commitInChunks([
+          for (final doc in oldest.docs) (batch) => batch.delete(doc.reference),
+        ]);
+      }
+    } catch (error) {
+      developer.log('recordView', name: 'CineFirebaseService', error: error);
+    }
+  }
+
+  /// Efface tout l'historique des titres consultés.
+  Future<void> clearViewHistory() => guard('clearViewHistory', () async {
+        final docs = (await mine('history').get()).docs;
+        await commitInChunks([
+          for (final doc in docs) (batch) => batch.delete(doc.reference),
+        ]);
       });
 
   // Historique de recherche ----------------------------------------------

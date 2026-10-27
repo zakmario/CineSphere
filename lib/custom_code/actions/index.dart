@@ -30,3 +30,4 @@ export 'remove_watchlist_item.dart' show removeWatchlistItem;
 export 'toggle_watched.dart' show toggleWatched;
 export 'delete_my_account.dart' show deleteMyAccount;
 export 'sync_tmdb_catalog.dart' show syncTmdbCatalog;
+export 'clear_view_history.dart' show clearViewHistory;

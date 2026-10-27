@@ -12,10 +12,11 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
+import 'package:webviewx_plus/webviewx_plus.dart';
 import 'favoris_model.dart';
 export 'favoris_model.dart';
 
-/// Membre 1 — favoris, listes et vus Firestore
+/// Membre 1 — favoris, listes, vus et historique Firestore
 class FavorisWidget extends StatefulWidget {
   const FavorisWidget({
     super.key,
@@ -44,13 +45,13 @@ class _FavorisWidgetState extends State<FavorisWidget>
 
     _model.collectionTabsController = TabController(
       vsync: this,
-      length: 3,
+      length: 4,
       initialIndex: min(
           valueOrDefault<int>(
             widget!.onglet,
             0,
           ),
-          2),
+          3),
     )..addListener(() => safeSetState(() {}));
 
     _model.watchlistNameFieldTextController ??= TextEditingController();
@@ -108,7 +109,7 @@ class _FavorisWidgetState extends State<FavorisWidget>
                               ),
                     ),
                     Text(
-                      'Vos favoris, vos listes et ce que vous avez vu.',
+                      'Vos favoris, vos listes, ce que vous avez vu et consulté.',
                       style: FlutterFlowTheme.of(context).bodyMedium.override(
                             font: GoogleFonts.inter(
                               fontWeight: FontWeight.normal,
@@ -181,10 +182,18 @@ class _FavorisWidgetState extends State<FavorisWidget>
                           Tab(
                             text: 'Vus',
                           ),
+                          Tab(
+                            text: 'Historique',
+                          ),
                         ],
                         controller: _model.collectionTabsController,
                         onTap: (i) async {
-                          [() async {}, () async {}, () async {}][i]();
+                          [
+                            () async {},
+                            () async {},
+                            () async {},
+                            () async {}
+                          ][i]();
                         },
                       ),
                     ),
@@ -1191,7 +1200,7 @@ class _FavorisWidgetState extends State<FavorisWidget>
                                                         ?.clear();
                                                   });
                                                   safeSetState(() => _model
-                                                          .firestoreRequestCompleter =
+                                                          .firestoreRequestCompleter1 =
                                                       null);
                                                 } else {
                                                   ScaffoldMessenger.of(context)
@@ -1268,7 +1277,7 @@ class _FavorisWidgetState extends State<FavorisWidget>
                                     ),
                                     FutureBuilder<List<WatchlistsRecord>>(
                                       future: (_model
-                                                  .firestoreRequestCompleter ??=
+                                                  .firestoreRequestCompleter1 ??=
                                               Completer<
                                                   List<WatchlistsRecord>>()
                                                 ..complete(
@@ -2226,6 +2235,780 @@ class _FavorisWidgetState extends State<FavorisWidget>
                                           },
                                         );
                                       },
+                                    ),
+                                  ].divide(SizedBox(height: 16.0)),
+                                ),
+                              ),
+                            ),
+                          ),
+                          KeepAliveWidgetWrapper(
+                            builder: (context) => Padding(
+                              padding: EdgeInsetsDirectional.fromSTEB(
+                                  16.0, 20.0, 16.0, 32.0),
+                              child: SingleChildScrollView(
+                                primary: false,
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.max,
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  crossAxisAlignment:
+                                      CrossAxisAlignment.stretch,
+                                  children: [
+                                    FutureBuilder<List<HistoryRecord>>(
+                                      future:
+                                          (_model.firestoreRequestCompleter2 ??=
+                                                  Completer<
+                                                      List<HistoryRecord>>()
+                                                    ..complete(
+                                                        queryHistoryRecordOnce(
+                                                      parent:
+                                                          currentUserReference,
+                                                    )))
+                                              .future,
+                                      builder: (context, snapshot) {
+                                        // Customize what your widget looks like when it's loading.
+                                        if (!snapshot.hasData) {
+                                          return Center(
+                                            child: SizedBox(
+                                              width: 50.0,
+                                              height: 50.0,
+                                              child: CircularProgressIndicator(
+                                                valueColor:
+                                                    AlwaysStoppedAnimation<
+                                                        Color>(
+                                                  FlutterFlowTheme.of(context)
+                                                      .primary,
+                                                ),
+                                              ),
+                                            ),
+                                          );
+                                        }
+                                        List<HistoryRecord>
+                                            containerHistoryRecordList =
+                                            snapshot.data!;
+
+                                        return Container(
+                                          decoration: BoxDecoration(),
+                                          child: Column(
+                                            mainAxisSize: MainAxisSize.min,
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.start,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.stretch,
+                                            children: [
+                                              Row(
+                                                mainAxisSize: MainAxisSize.max,
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.start,
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.center,
+                                                children: [
+                                                  Container(
+                                                    decoration: BoxDecoration(
+                                                      color: Color(0x1F7C5CFF),
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              999.0),
+                                                    ),
+                                                    child: Padding(
+                                                      padding:
+                                                          EdgeInsetsDirectional
+                                                              .fromSTEB(
+                                                                  12.0,
+                                                                  8.0,
+                                                                  14.0,
+                                                                  8.0),
+                                                      child: Row(
+                                                        mainAxisSize:
+                                                            MainAxisSize.max,
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .start,
+                                                        crossAxisAlignment:
+                                                            CrossAxisAlignment
+                                                                .center,
+                                                        children: [
+                                                          Icon(
+                                                            Icons
+                                                                .history_rounded,
+                                                            color: Color(
+                                                                0xFF7C5CFF),
+                                                            size: 16.0,
+                                                          ),
+                                                          Text(
+                                                            containerHistoryRecordList
+                                                                .length
+                                                                .toString(),
+                                                            style: FlutterFlowTheme
+                                                                    .of(context)
+                                                                .bodyMedium
+                                                                .override(
+                                                                  font:
+                                                                      GoogleFonts
+                                                                          .inter(
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .w600,
+                                                                    fontStyle: FlutterFlowTheme.of(
+                                                                            context)
+                                                                        .bodyMedium
+                                                                        .fontStyle,
+                                                                  ),
+                                                                  color: Color(
+                                                                      0xFFF5F5F7),
+                                                                  fontSize:
+                                                                      13.0,
+                                                                  letterSpacing:
+                                                                      0.0,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w600,
+                                                                  fontStyle: FlutterFlowTheme.of(
+                                                                          context)
+                                                                      .bodyMedium
+                                                                      .fontStyle,
+                                                                ),
+                                                          ),
+                                                          Text(
+                                                            'titre(s) consulté(s)',
+                                                            style: FlutterFlowTheme
+                                                                    .of(context)
+                                                                .bodyMedium
+                                                                .override(
+                                                                  font:
+                                                                      GoogleFonts
+                                                                          .inter(
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .normal,
+                                                                    fontStyle: FlutterFlowTheme.of(
+                                                                            context)
+                                                                        .bodyMedium
+                                                                        .fontStyle,
+                                                                  ),
+                                                                  color: Color(
+                                                                      0xFFA0A0B2),
+                                                                  fontSize:
+                                                                      13.0,
+                                                                  letterSpacing:
+                                                                      0.0,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .normal,
+                                                                  fontStyle: FlutterFlowTheme.of(
+                                                                          context)
+                                                                      .bodyMedium
+                                                                      .fontStyle,
+                                                                ),
+                                                          ),
+                                                        ].divide(SizedBox(
+                                                            width: 6.0)),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                              if (containerHistoryRecordList
+                                                      .length ==
+                                                  0)
+                                                Container(
+                                                  decoration: BoxDecoration(
+                                                    color: Color(0xFF15151F),
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            16.0),
+                                                    border: Border.all(
+                                                      color: Color(0xFF2A2A3A),
+                                                      width: 1.0,
+                                                    ),
+                                                  ),
+                                                  child: Padding(
+                                                    padding:
+                                                        EdgeInsetsDirectional
+                                                            .fromSTEB(
+                                                                24.0,
+                                                                32.0,
+                                                                24.0,
+                                                                32.0),
+                                                    child: Column(
+                                                      mainAxisSize:
+                                                          MainAxisSize.min,
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .start,
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .center,
+                                                      children: [
+                                                        Container(
+                                                          width: 72.0,
+                                                          height: 72.0,
+                                                          decoration:
+                                                              BoxDecoration(
+                                                            color: Color(
+                                                                0x267C5CFF),
+                                                            shape:
+                                                                BoxShape.circle,
+                                                          ),
+                                                          alignment:
+                                                              AlignmentDirectional(
+                                                                  0.0, 0.0),
+                                                          child: Icon(
+                                                            Icons
+                                                                .history_rounded,
+                                                            color: Color(
+                                                                0xFF7C5CFF),
+                                                            size: 32.0,
+                                                          ),
+                                                        ),
+                                                        Text(
+                                                          'Aucun titre consulté',
+                                                          textAlign:
+                                                              TextAlign.center,
+                                                          style: FlutterFlowTheme
+                                                                  .of(context)
+                                                              .headlineMedium
+                                                              .override(
+                                                                font:
+                                                                    GoogleFonts
+                                                                        .outfit(
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .bold,
+                                                                  fontStyle: FlutterFlowTheme.of(
+                                                                          context)
+                                                                      .headlineMedium
+                                                                      .fontStyle,
+                                                                ),
+                                                                color: Color(
+                                                                    0xFFF5F5F7),
+                                                                fontSize: 20.0,
+                                                                letterSpacing:
+                                                                    0.0,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold,
+                                                                fontStyle: FlutterFlowTheme.of(
+                                                                        context)
+                                                                    .headlineMedium
+                                                                    .fontStyle,
+                                                              ),
+                                                        ),
+                                                        Text(
+                                                          'Les fiches que vous ouvrez apparaîtront ici, les plus récentes d\'abord.',
+                                                          textAlign:
+                                                              TextAlign.center,
+                                                          style: FlutterFlowTheme
+                                                                  .of(context)
+                                                              .bodyMedium
+                                                              .override(
+                                                                font:
+                                                                    GoogleFonts
+                                                                        .inter(
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .normal,
+                                                                  fontStyle: FlutterFlowTheme.of(
+                                                                          context)
+                                                                      .bodyMedium
+                                                                      .fontStyle,
+                                                                ),
+                                                                color: Color(
+                                                                    0xFFA0A0B2),
+                                                                fontSize: 14.0,
+                                                                letterSpacing:
+                                                                    0.0,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .normal,
+                                                                fontStyle: FlutterFlowTheme.of(
+                                                                        context)
+                                                                    .bodyMedium
+                                                                    .fontStyle,
+                                                                lineHeight:
+                                                                    1.45,
+                                                              ),
+                                                        ),
+                                                        FFButtonWidget(
+                                                          onPressed: () async {
+                                                            context.pushNamed(
+                                                                HomePageWidget
+                                                                    .routeName);
+                                                          },
+                                                          text:
+                                                              'Explorer le catalogue',
+                                                          icon: Icon(
+                                                            Icons
+                                                                .explore_outlined,
+                                                            size: 20.0,
+                                                          ),
+                                                          options:
+                                                              FFButtonOptions(
+                                                            width:
+                                                                double.infinity,
+                                                            height: 52.0,
+                                                            padding:
+                                                                EdgeInsetsDirectional
+                                                                    .fromSTEB(
+                                                                        24.0,
+                                                                        0.0,
+                                                                        24.0,
+                                                                        0.0),
+                                                            iconPadding:
+                                                                EdgeInsetsDirectional
+                                                                    .fromSTEB(
+                                                                        0.0,
+                                                                        0.0,
+                                                                        0.0,
+                                                                        0.0),
+                                                            iconColor: Color(
+                                                                0xFF14110A),
+                                                            color: Color(
+                                                                0xFFF5B841),
+                                                            textStyle:
+                                                                FlutterFlowTheme.of(
+                                                                        context)
+                                                                    .titleSmall
+                                                                    .override(
+                                                                      font: GoogleFonts
+                                                                          .inter(
+                                                                        fontWeight:
+                                                                            FontWeight.w600,
+                                                                        fontStyle: FlutterFlowTheme.of(context)
+                                                                            .titleSmall
+                                                                            .fontStyle,
+                                                                      ),
+                                                                      color: Color(
+                                                                          0xFF14110A),
+                                                                      fontSize:
+                                                                          15.0,
+                                                                      letterSpacing:
+                                                                          0.0,
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .w600,
+                                                                      fontStyle: FlutterFlowTheme.of(
+                                                                              context)
+                                                                          .titleSmall
+                                                                          .fontStyle,
+                                                                    ),
+                                                            elevation: 0.0,
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        24.0),
+                                                          ),
+                                                        ),
+                                                      ].divide(SizedBox(
+                                                          height: 12.0)),
+                                                    ),
+                                                  ),
+                                                ),
+                                            ].divide(SizedBox(height: 16.0)),
+                                          ),
+                                        );
+                                      },
+                                    ),
+                                    FutureBuilder<List<HistoryRecord>>(
+                                      future:
+                                          (_model.firestoreRequestCompleter3 ??=
+                                                  Completer<
+                                                      List<HistoryRecord>>()
+                                                    ..complete(
+                                                        queryHistoryRecordOnce(
+                                                      parent:
+                                                          currentUserReference,
+                                                      queryBuilder:
+                                                          (historyRecord) =>
+                                                              historyRecord
+                                                                  .orderBy(
+                                                                      'viewedAt',
+                                                                      descending:
+                                                                          true),
+                                                      limit: 50,
+                                                    )))
+                                              .future,
+                                      builder: (context, snapshot) {
+                                        // Customize what your widget looks like when it's loading.
+                                        if (!snapshot.hasData) {
+                                          return Center(
+                                            child: SizedBox(
+                                              width: 50.0,
+                                              height: 50.0,
+                                              child: CircularProgressIndicator(
+                                                valueColor:
+                                                    AlwaysStoppedAnimation<
+                                                        Color>(
+                                                  FlutterFlowTheme.of(context)
+                                                      .primary,
+                                                ),
+                                              ),
+                                            ),
+                                          );
+                                        }
+                                        List<HistoryRecord>
+                                            gridViewHistoryRecordList =
+                                            snapshot.data!;
+
+                                        return Builder(
+                                          builder: (context) {
+                                            final historyList =
+                                                gridViewHistoryRecordList
+                                                    .toList();
+
+                                            return GridView.builder(
+                                              padding: EdgeInsets.zero,
+                                              gridDelegate:
+                                                  SliverGridDelegateWithFixedCrossAxisCount(
+                                                crossAxisCount: 2,
+                                                crossAxisSpacing: 12.0,
+                                                mainAxisSpacing: 16.0,
+                                                childAspectRatio: 0.55,
+                                              ),
+                                              primary: false,
+                                              shrinkWrap: true,
+                                              itemCount: historyList.length,
+                                              itemBuilder:
+                                                  (context, historyListIndex) {
+                                                final historyListItem =
+                                                    historyList[
+                                                        historyListIndex];
+                                                return Container(
+                                                  decoration: BoxDecoration(
+                                                    color: Color(0xFF15151F),
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            12.0),
+                                                    border: Border.all(
+                                                      color: Color(0xFF2A2A3A),
+                                                      width: 1.0,
+                                                    ),
+                                                  ),
+                                                  child: Column(
+                                                    mainAxisSize:
+                                                        MainAxisSize.max,
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment.start,
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .stretch,
+                                                    children: [
+                                                      Expanded(
+                                                        child: InkWell(
+                                                          splashColor: Colors
+                                                              .transparent,
+                                                          focusColor: Colors
+                                                              .transparent,
+                                                          hoverColor: Colors
+                                                              .transparent,
+                                                          highlightColor: Colors
+                                                              .transparent,
+                                                          onTap: () async {
+                                                            context.pushNamed(
+                                                              MediaDetailWidget
+                                                                  .routeName,
+                                                              queryParameters: {
+                                                                'mediaId':
+                                                                    serializeParam(
+                                                                  (String? mediaType,
+                                                                          int?
+                                                                              tmdbId) {
+                                                                    return '${mediaType}_${tmdbId}';
+                                                                  }(
+                                                                      historyListItem
+                                                                          .mediaType,
+                                                                      historyListItem
+                                                                          .tmdbId),
+                                                                  ParamType
+                                                                      .String,
+                                                                ),
+                                                              }.withoutNulls,
+                                                            );
+                                                          },
+                                                          child: Container(
+                                                            decoration:
+                                                                BoxDecoration(),
+                                                            child: Column(
+                                                              mainAxisSize:
+                                                                  MainAxisSize
+                                                                      .max,
+                                                              mainAxisAlignment:
+                                                                  MainAxisAlignment
+                                                                      .start,
+                                                              crossAxisAlignment:
+                                                                  CrossAxisAlignment
+                                                                      .stretch,
+                                                              children: [
+                                                                Expanded(
+                                                                  child: Stack(
+                                                                    alignment:
+                                                                        AlignmentDirectional(
+                                                                            1.0,
+                                                                            -1.0),
+                                                                    children: [
+                                                                      ClipRRect(
+                                                                        borderRadius:
+                                                                            BorderRadius.only(
+                                                                          topLeft:
+                                                                              Radius.circular(12.0),
+                                                                          topRight:
+                                                                              Radius.circular(12.0),
+                                                                        ),
+                                                                        child:
+                                                                            CachedNetworkImage(
+                                                                          fadeInDuration:
+                                                                              Duration(milliseconds: 0),
+                                                                          fadeOutDuration:
+                                                                              Duration(milliseconds: 0),
+                                                                          imageUrl: (String?
+                                                                              url) {
+                                                                            return url ??
+                                                                                '';
+                                                                          }(historyListItem
+                                                                              .posterUrl),
+                                                                          width:
+                                                                              double.infinity,
+                                                                          height:
+                                                                              double.infinity,
+                                                                          fit: BoxFit
+                                                                              .cover,
+                                                                        ),
+                                                                      ),
+                                                                      Padding(
+                                                                        padding: EdgeInsetsDirectional.fromSTEB(
+                                                                            0.0,
+                                                                            8.0,
+                                                                            8.0,
+                                                                            0.0),
+                                                                        child:
+                                                                            Container(
+                                                                          width:
+                                                                              32.0,
+                                                                          height:
+                                                                              32.0,
+                                                                          decoration:
+                                                                              BoxDecoration(
+                                                                            color:
+                                                                                Color(0xCC0B0B12),
+                                                                            shape:
+                                                                                BoxShape.circle,
+                                                                          ),
+                                                                          alignment: AlignmentDirectional(
+                                                                              0.0,
+                                                                              0.0),
+                                                                          child:
+                                                                              Icon(
+                                                                            Icons.history_rounded,
+                                                                            color:
+                                                                                Color(0xFF7C5CFF),
+                                                                            size:
+                                                                                16.0,
+                                                                          ),
+                                                                        ),
+                                                                      ),
+                                                                    ],
+                                                                  ),
+                                                                ),
+                                                                Padding(
+                                                                  padding: EdgeInsetsDirectional
+                                                                      .fromSTEB(
+                                                                          10.0,
+                                                                          10.0,
+                                                                          10.0,
+                                                                          12.0),
+                                                                  child: Column(
+                                                                    mainAxisSize:
+                                                                        MainAxisSize
+                                                                            .min,
+                                                                    mainAxisAlignment:
+                                                                        MainAxisAlignment
+                                                                            .start,
+                                                                    crossAxisAlignment:
+                                                                        CrossAxisAlignment
+                                                                            .stretch,
+                                                                    children: [
+                                                                      Text(
+                                                                        historyListItem
+                                                                            .title,
+                                                                        maxLines:
+                                                                            2,
+                                                                        style: FlutterFlowTheme.of(context)
+                                                                            .bodyMedium
+                                                                            .override(
+                                                                              font: GoogleFonts.inter(
+                                                                                fontWeight: FontWeight.w600,
+                                                                                fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
+                                                                              ),
+                                                                              color: Color(0xFFF5F5F7),
+                                                                              fontSize: 14.0,
+                                                                              letterSpacing: 0.0,
+                                                                              fontWeight: FontWeight.w600,
+                                                                              fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
+                                                                              lineHeight: 1.3,
+                                                                            ),
+                                                                      ),
+                                                                      Text(
+                                                                        'Voir la fiche',
+                                                                        style: FlutterFlowTheme.of(context)
+                                                                            .bodyMedium
+                                                                            .override(
+                                                                              font: GoogleFonts.inter(
+                                                                                fontWeight: FontWeight.w600,
+                                                                                fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
+                                                                              ),
+                                                                              color: Color(0xFF7C5CFF),
+                                                                              fontSize: 12.0,
+                                                                              letterSpacing: 0.0,
+                                                                              fontWeight: FontWeight.w600,
+                                                                              fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
+                                                                            ),
+                                                                      ),
+                                                                    ].divide(SizedBox(
+                                                                        height:
+                                                                            4.0)),
+                                                                  ),
+                                                                ),
+                                                              ],
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                );
+                                              },
+                                            );
+                                          },
+                                        );
+                                      },
+                                    ),
+                                    FFButtonWidget(
+                                      onPressed: () async {
+                                        var confirmDialogResponse =
+                                            await showDialog<bool>(
+                                                  context: context,
+                                                  builder:
+                                                      (alertDialogContext) {
+                                                    return WebViewAware(
+                                                      child: AlertDialog(
+                                                        title: Text(
+                                                            'Effacer l\'historique ?'),
+                                                        content: Text(
+                                                            'La liste des titres consultés sera vidée.'),
+                                                        actions: [
+                                                          TextButton(
+                                                            onPressed: () =>
+                                                                Navigator.pop(
+                                                                    alertDialogContext,
+                                                                    false),
+                                                            child:
+                                                                Text('Annuler'),
+                                                          ),
+                                                          TextButton(
+                                                            onPressed: () =>
+                                                                Navigator.pop(
+                                                                    alertDialogContext,
+                                                                    true),
+                                                            child:
+                                                                Text('Effacer'),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    );
+                                                  },
+                                                ) ??
+                                                false;
+                                        if (confirmDialogResponse) {
+                                          _model.effacement =
+                                              await actions.clearViewHistory();
+                                          if (_model.effacement == '') {
+                                            ScaffoldMessenger.of(context)
+                                                .clearSnackBars();
+                                            ScaffoldMessenger.of(context)
+                                                .showSnackBar(
+                                              SnackBar(
+                                                content: Text(
+                                                  'Historique effacé.',
+                                                  style: TextStyle(
+                                                    color: Color(0xFFF5F5F7),
+                                                  ),
+                                                ),
+                                                duration: Duration(
+                                                    milliseconds: 4000),
+                                                backgroundColor:
+                                                    Color(0xFF2ECC71),
+                                              ),
+                                            );
+                                            safeSetState(() => _model
+                                                    .firestoreRequestCompleter2 =
+                                                null);
+                                            safeSetState(() => _model
+                                                    .firestoreRequestCompleter3 =
+                                                null);
+                                          } else {
+                                            ScaffoldMessenger.of(context)
+                                                .clearSnackBars();
+                                            ScaffoldMessenger.of(context)
+                                                .showSnackBar(
+                                              SnackBar(
+                                                content: Text(
+                                                  _model.effacement!,
+                                                  style: TextStyle(
+                                                    color: Color(0xFFF5F5F7),
+                                                  ),
+                                                ),
+                                                duration: Duration(
+                                                    milliseconds: 4000),
+                                                backgroundColor:
+                                                    Color(0xFF1E1E2A),
+                                              ),
+                                            );
+                                          }
+                                        }
+
+                                        safeSetState(() {});
+                                      },
+                                      text: 'Effacer l\'historique',
+                                      icon: Icon(
+                                        Icons.delete_sweep_rounded,
+                                        size: 20.0,
+                                      ),
+                                      options: FFButtonOptions(
+                                        width: double.infinity,
+                                        height: 52.0,
+                                        padding: EdgeInsetsDirectional.fromSTEB(
+                                            24.0, 0.0, 24.0, 0.0),
+                                        iconPadding:
+                                            EdgeInsetsDirectional.fromSTEB(
+                                                0.0, 0.0, 0.0, 0.0),
+                                        iconColor: Color(0xFFF5F5F7),
+                                        color: Color(0xFF1E1E2A),
+                                        textStyle: FlutterFlowTheme.of(context)
+                                            .titleSmall
+                                            .override(
+                                              font: GoogleFonts.inter(
+                                                fontWeight: FontWeight.w600,
+                                                fontStyle:
+                                                    FlutterFlowTheme.of(context)
+                                                        .titleSmall
+                                                        .fontStyle,
+                                              ),
+                                              color: Color(0xFFF5F5F7),
+                                              fontSize: 15.0,
+                                              letterSpacing: 0.0,
+                                              fontWeight: FontWeight.w600,
+                                              fontStyle:
+                                                  FlutterFlowTheme.of(context)
+                                                      .titleSmall
+                                                      .fontStyle,
+                                            ),
+                                        elevation: 0.0,
+                                        borderSide: BorderSide(
+                                          color: Color(0xFF2A2A3A),
+                                          width: 1.0,
+                                        ),
+                                        borderRadius:
+                                            BorderRadius.circular(24.0),
+                                      ),
                                     ),
                                   ].divide(SizedBox(height: 16.0)),
                                 ),

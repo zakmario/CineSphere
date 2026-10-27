@@ -79,6 +79,10 @@ service cloud.firestore {
       match /searchHistory/{docId} {
         allow read, write: if isOwner(uid);
       }
+      // Hors cahier des charges : titres consultés (onglet Historique).
+      match /history/{mediaId} {
+        allow read, write: if isOwner(uid);
+      }
 
       // Listes : lisibles par les membres connectés si isPublic, écrites par
       // le propriétaire.

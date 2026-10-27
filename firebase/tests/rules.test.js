@@ -97,7 +97,7 @@ describe('données privées', () => {
     await assertSucceeds(deleteDoc(doc(db(ALICE), 'users', ALICE, 'favorites', 'movie_550')));
   });
 
-  for (const name of ['watched', 'notifications', 'searchHistory']) {
+  for (const name of ['watched', 'notifications', 'searchHistory', 'history']) {
     it(`${name} : propriétaire uniquement`, async () => {
       await assertSucceeds(setDoc(doc(db(ALICE), 'users', ALICE, name, 'x'), { a: 1 }));
       await assertFails(getDoc(doc(db(BOB), 'users', ALICE, name, 'x')));

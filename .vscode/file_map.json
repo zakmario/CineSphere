@@ -1,4 +1,12 @@
 {
+  "lib/custom_code/actions/clear_view_history.dart": {
+    "old_identifier_name": "clearViewHistory",
+    "new_identifier_name": "clearViewHistory",
+    "type": "A",
+    "is_deleted": false,
+    "current_checksum": "9ee3025ef666800afce3ef6c23f3c25b761315f255e9aa7095129ffe9ae30301",
+    "original_checksum": "9ee3025ef666800afce3ef6c23f3c25b761315f255e9aa7095129ffe9ae30301"
+  },
   "lib/flutter_flow/custom_functions.dart": {
     "old_identifier_name": "CustomFunctions",
     "new_identifier_name": "CustomFunctions",
@@ -132,8 +140,8 @@
     "new_identifier_name": "MediaDetailView",
     "type": "W",
     "is_deleted": false,
-    "original_checksum": "916dbfbfdedc660f5bb224ee0dbbaffc8997dd6c219c34938cd4484d699170ce",
-    "current_checksum": "916dbfbfdedc660f5bb224ee0dbbaffc8997dd6c219c34938cd4484d699170ce"
+    "original_checksum": "fb651d7e542e0bb016b192defec00fa6af794067e421b5cd6b71d084a598594d",
+    "current_checksum": "fb651d7e542e0bb016b192defec00fa6af794067e421b5cd6b71d084a598594d"
   },
   "lib/custom_code/widgets/favorites_grid.dart": {
     "old_identifier_name": "FavoritesGrid",
@@ -340,7 +348,7 @@
     "new_identifier_name": "firebaseService",
     "type": "A",
     "is_deleted": false,
-    "current_checksum": "3cea6823fec41e0fd9d62582b0fb58244e6a905e30254cd53018f8efd4639087",
-    "original_checksum": "3cea6823fec41e0fd9d62582b0fb58244e6a905e30254cd53018f8efd4639087"
+    "current_checksum": "68aef09ac85433bc1798d201bf097527173e9c9c276b91daaf877d2bcd7734c3",
+    "original_checksum": "68aef09ac85433bc1798d201bf097527173e9c9c276b91daaf877d2bcd7734c3"
   }
 }

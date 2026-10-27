@@ -21,6 +21,7 @@ import 'schema/likes_record.dart';
 import 'schema/news_record.dart';
 import 'schema/users_record.dart';
 import 'schema/items_record.dart';
+import 'schema/history_record.dart';
 
 export 'dart:async' show StreamSubscription;
 export 'package:cloud_firestore/cloud_firestore.dart' hide Order, Type;
@@ -45,6 +46,7 @@ export 'schema/likes_record.dart';
 export 'schema/news_record.dart';
 export 'schema/users_record.dart';
 export 'schema/items_record.dart';
+export 'schema/history_record.dart';
 
 /// Functions to query FavoritesRecords (as a Stream and as a Future).
 Future<int> queryFavoritesRecordCount({
@@ -654,6 +656,46 @@ Future<List<ItemsRecord>> queryItemsRecordOnce({
     queryCollectionOnce(
       ItemsRecord.collection(parent),
       ItemsRecord.fromSnapshot,
+      queryBuilder: queryBuilder,
+      limit: limit,
+      singleRecord: singleRecord,
+    );
+
+/// Functions to query HistoryRecords (as a Stream and as a Future).
+Future<int> queryHistoryRecordCount({
+  DocumentReference? parent,
+  Query Function(Query)? queryBuilder,
+  int limit = -1,
+}) =>
+    queryCollectionCount(
+      HistoryRecord.collection(parent),
+      queryBuilder: queryBuilder,
+      limit: limit,
+    );
+
+Stream<List<HistoryRecord>> queryHistoryRecord({
+  DocumentReference? parent,
+  Query Function(Query)? queryBuilder,
+  int limit = -1,
+  bool singleRecord = false,
+}) =>
+    queryCollection(
+      HistoryRecord.collection(parent),
+      HistoryRecord.fromSnapshot,
+      queryBuilder: queryBuilder,
+      limit: limit,
+      singleRecord: singleRecord,
+    );
+
+Future<List<HistoryRecord>> queryHistoryRecordOnce({
+  DocumentReference? parent,
+  Query Function(Query)? queryBuilder,
+  int limit = -1,
+  bool singleRecord = false,
+}) =>
+    queryCollectionOnce(
+      HistoryRecord.collection(parent),
+      HistoryRecord.fromSnapshot,
       queryBuilder: queryBuilder,
       limit: limit,
       singleRecord: singleRecord,

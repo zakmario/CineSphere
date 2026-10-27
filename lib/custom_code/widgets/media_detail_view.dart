@@ -9,6 +9,8 @@ import 'package:flutter/material.dart';
 // Begin custom widget code
 // DO NOT REMOVE OR MODIFY THE CODE ABOVE!
 
+import 'dart:async';
+
 import '/custom_code/actions/firebase_service.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import '/custom_code/widgets/trailer_player.dart';
@@ -70,6 +72,10 @@ class _MediaDetailViewState extends State<MediaDetailView> {
         _loading = false;
         _error = row == null ? 'Contenu introuvable.' : null;
       });
+      // Onglet Historique de Favoris (membre 1).
+      if (row != null) {
+        unawaited(CineFirebaseService.instance.recordView(row));
+      }
     } catch (e) {
       if (mounted) {
         setState(() {

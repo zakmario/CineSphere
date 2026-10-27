@@ -13,6 +13,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
+import 'package:webviewx_plus/webviewx_plus.dart';
 
 class FavorisModel extends FlutterFlowModel<FavorisWidget> {
   ///  State fields for stateful widgets in this page.
@@ -32,7 +33,11 @@ class FavorisModel extends FlutterFlowModel<FavorisWidget> {
       watchlistNameFieldTextControllerValidator;
   // Stores action output result for [Custom Action - createWatchlist] action in CreateWatchlistButton widget.
   String? creation;
-  Completer<List<WatchlistsRecord>>? firestoreRequestCompleter;
+  Completer<List<WatchlistsRecord>>? firestoreRequestCompleter1;
+  // Stores action output result for [Custom Action - clearViewHistory] action in ClearHistoryButton widget.
+  String? effacement;
+  Completer<List<HistoryRecord>>? firestoreRequestCompleter2;
+  Completer<List<HistoryRecord>>? firestoreRequestCompleter3;
 
   @override
   void initState(BuildContext context) {}
@@ -45,7 +50,7 @@ class FavorisModel extends FlutterFlowModel<FavorisWidget> {
   }
 
   /// Additional helper methods.
-  Future waitForFirestoreRequestCompleted({
+  Future waitForFirestoreRequestCompleted1({
     double minWait = 0,
     double maxWait = double.infinity,
   }) async {
@@ -53,7 +58,37 @@ class FavorisModel extends FlutterFlowModel<FavorisWidget> {
     while (true) {
       await Future.delayed(Duration(milliseconds: 50));
       final timeElapsed = stopwatch.elapsedMilliseconds;
-      final requestComplete = firestoreRequestCompleter?.isCompleted ?? false;
+      final requestComplete = firestoreRequestCompleter1?.isCompleted ?? false;
+      if (timeElapsed > maxWait || (requestComplete && timeElapsed > minWait)) {
+        break;
+      }
+    }
+  }
+
+  Future waitForFirestoreRequestCompleted2({
+    double minWait = 0,
+    double maxWait = double.infinity,
+  }) async {
+    final stopwatch = Stopwatch()..start();
+    while (true) {
+      await Future.delayed(Duration(milliseconds: 50));
+      final timeElapsed = stopwatch.elapsedMilliseconds;
+      final requestComplete = firestoreRequestCompleter2?.isCompleted ?? false;
+      if (timeElapsed > maxWait || (requestComplete && timeElapsed > minWait)) {
+        break;
+      }
+    }
+  }
+
+  Future waitForFirestoreRequestCompleted3({
+    double minWait = 0,
+    double maxWait = double.infinity,
+  }) async {
+    final stopwatch = Stopwatch()..start();
+    while (true) {
+      await Future.delayed(Duration(milliseconds: 50));
+      final timeElapsed = stopwatch.elapsedMilliseconds;
+      final requestComplete = firestoreRequestCompleter3?.isCompleted ?? false;
       if (timeElapsed > maxWait || (requestComplete && timeElapsed > minWait)) {
         break;
       }
