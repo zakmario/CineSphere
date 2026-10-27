@@ -15,6 +15,7 @@ typedef ScheduledNotification = ({
 class FakeNotifier implements LocalNotifier {
   bool ready = true;
   bool permission = true;
+  var permissionRequests = 0;
   String? launch;
   void Function(String? payload)? onTap;
   final scheduled = <int, ScheduledNotification>{};
@@ -28,7 +29,10 @@ class FakeNotifier implements LocalNotifier {
   }
 
   @override
-  Future<bool> requestPermission() async => permission;
+  Future<bool> requestPermission() async {
+    permissionRequests++;
+    return permission;
+  }
 
   @override
   Future<String?> launchPayload() async => launch;
