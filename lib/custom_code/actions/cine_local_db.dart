@@ -153,6 +153,24 @@ const List<List<String>> kLocalDbMigrations = [
   ],
 ];
 
+/// Taille lisible en français : « 512 o », « 48 Ko », « 1,2 Mo ».
+String formatBytes(int bytes) {
+  if (bytes < 1024) {
+    return '$bytes o';
+  }
+  const units = ['Ko', 'Mo', 'Go'];
+  var value = bytes / 1024;
+  var unit = 0;
+  while (value >= 1024 && unit < units.length - 1) {
+    value /= 1024;
+    unit++;
+  }
+  final text = value < 10 && value != value.roundToDouble()
+      ? value.toStringAsFixed(1).replaceAll('.', ',')
+      : value.round().toString();
+  return '$text ${units[unit]}';
+}
+
 // Encodage JSON ---------------------------------------------------------------
 
 /// JSON des colonnes `data` / `payload` : dates et Timestamp en ISO 8601.
