@@ -24,7 +24,8 @@ rejouable) :
 10. `migrations/20261022000200_media_tmdb_import.sql` — `media.tmdb_id` et import du catalogue TMDB
 11. `migrations/20261022000300_media_tmdb_details.sql` — détails TMDB (durée, saisons, bande-annonce, plateformes)
 12. `migrations/20261022000400_media_details_synced.sql` — `media.details_synced_at` (bandes-annonces manquantes)
-13. `seed.sql` — genres TMDB et plateformes
+13. `migrations/20261027000100_advisor_fixes.sql` — avertissements du Security Advisor (bucket avatars, `rls_auto_enable`)
+14. `seed.sql` — genres TMDB et plateformes
 
 Puis dans FlutterFlow : *Settings → Integrations → Supabase → Get Schema*.
 
