@@ -14,3 +14,4 @@ export 'avatar_picker.dart' show AvatarPicker;
 export 'trailer_player.dart' show TrailerPlayer;
 export 'reviews_section.dart' show ReviewsSection;
 export 'profile_stats.dart' show ProfileStats;
+export 'preferences_panel.dart' show PreferencesPanel;

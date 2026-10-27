@@ -61,7 +61,7 @@ class _DetailListeWidgetState extends State<DetailListeWidget> {
       },
       child: Scaffold(
         key: scaffoldKey,
-        backgroundColor: Color(0xFF0B0B12),
+        backgroundColor: FlutterFlowTheme.of(context).primaryBackground,
         body: SafeArea(
           top: true,
           child: Padding(
@@ -79,14 +79,15 @@ class _DetailListeWidgetState extends State<DetailListeWidget> {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       FlutterFlowIconButton(
-                        borderColor: Color(0xFF2A2A3A),
+                        borderColor: FlutterFlowTheme.of(context).alternate,
                         borderRadius: 22.0,
                         borderWidth: 1.0,
                         buttonSize: 44.0,
-                        fillColor: Color(0xFF15151F),
+                        fillColor:
+                            FlutterFlowTheme.of(context).secondaryBackground,
                         icon: Icon(
                           Icons.arrow_back_rounded,
-                          color: Color(0xFFF5F5F7),
+                          color: FlutterFlowTheme.of(context).primaryText,
                           size: 22.0,
                         ),
                         onPressed: () async {
@@ -140,10 +141,11 @@ class _DetailListeWidgetState extends State<DetailListeWidget> {
                           children: [
                             Container(
                               decoration: BoxDecoration(
-                                color: Color(0xFF15151F),
+                                color: FlutterFlowTheme.of(context)
+                                    .secondaryBackground,
                                 borderRadius: BorderRadius.circular(16.0),
                                 border: Border.all(
-                                  color: Color(0xFF2A2A3A),
+                                  color: FlutterFlowTheme.of(context).alternate,
                                   width: 1.0,
                                 ),
                               ),
@@ -165,7 +167,8 @@ class _DetailListeWidgetState extends State<DetailListeWidget> {
                                       alignment: AlignmentDirectional(0.0, 0.0),
                                       child: Icon(
                                         Icons.playlist_play_rounded,
-                                        color: Color(0xFF7C5CFF),
+                                        color: FlutterFlowTheme.of(context)
+                                            .secondary,
                                         size: 32.0,
                                       ),
                                     ),
@@ -182,7 +185,8 @@ class _DetailListeWidgetState extends State<DetailListeWidget> {
                                                       .headlineMedium
                                                       .fontStyle,
                                             ),
-                                            color: Color(0xFFF5F5F7),
+                                            color: FlutterFlowTheme.of(context)
+                                                .primaryText,
                                             fontSize: 26.0,
                                             letterSpacing: 0.0,
                                             fontWeight: FontWeight.bold,
@@ -205,7 +209,8 @@ class _DetailListeWidgetState extends State<DetailListeWidget> {
                                                       .bodyMedium
                                                       .fontStyle,
                                             ),
-                                            color: Color(0xFFA0A0B2),
+                                            color: FlutterFlowTheme.of(context)
+                                                .secondaryText,
                                             fontSize: 13.0,
                                             letterSpacing: 0.0,
                                             fontWeight: FontWeight.normal,
@@ -221,10 +226,11 @@ class _DetailListeWidgetState extends State<DetailListeWidget> {
                             ),
                             Container(
                               decoration: BoxDecoration(
-                                color: Color(0xFF15151F),
+                                color: FlutterFlowTheme.of(context)
+                                    .secondaryBackground,
                                 borderRadius: BorderRadius.circular(16.0),
                                 border: Border.all(
-                                  color: Color(0xFF2A2A3A),
+                                  color: FlutterFlowTheme.of(context).alternate,
                                   width: 1.0,
                                 ),
                               ),
@@ -249,7 +255,8 @@ class _DetailListeWidgetState extends State<DetailListeWidget> {
                                                       .bodyMedium
                                                       .fontStyle,
                                             ),
-                                            color: Color(0xFFF5F5F7),
+                                            color: FlutterFlowTheme.of(context)
+                                                .primaryText,
                                             fontSize: 16.0,
                                             letterSpacing: 0.0,
                                             fontWeight: FontWeight.w600,
@@ -288,7 +295,9 @@ class _DetailListeWidgetState extends State<DetailListeWidget> {
                                                           .bodyMedium
                                                           .fontStyle,
                                                 ),
-                                                color: Color(0xFFA0A0B2),
+                                                color:
+                                                    FlutterFlowTheme.of(context)
+                                                        .secondaryText,
                                                 fontSize: 14.0,
                                                 letterSpacing: 0.0,
                                                 fontWeight:
@@ -344,7 +353,9 @@ class _DetailListeWidgetState extends State<DetailListeWidget> {
                                                           .bodySmall
                                                           .fontStyle,
                                                 ),
-                                                color: Color(0xFFFF4D5E),
+                                                color:
+                                                    FlutterFlowTheme.of(context)
+                                                        .error,
                                                 fontSize: 12.0,
                                                 letterSpacing: 0.0,
                                                 fontWeight:
@@ -358,7 +369,9 @@ class _DetailListeWidgetState extends State<DetailListeWidget> {
                                               ),
                                           enabledBorder: OutlineInputBorder(
                                             borderSide: BorderSide(
-                                              color: Color(0xFF2A2A3A),
+                                              color:
+                                                  FlutterFlowTheme.of(context)
+                                                      .alternate,
                                               width: 1.0,
                                             ),
                                             borderRadius:
@@ -366,7 +379,9 @@ class _DetailListeWidgetState extends State<DetailListeWidget> {
                                           ),
                                           focusedBorder: OutlineInputBorder(
                                             borderSide: BorderSide(
-                                              color: Color(0xFFF5B841),
+                                              color:
+                                                  FlutterFlowTheme.of(context)
+                                                      .primary,
                                               width: 1.0,
                                             ),
                                             borderRadius:
@@ -374,7 +389,9 @@ class _DetailListeWidgetState extends State<DetailListeWidget> {
                                           ),
                                           errorBorder: OutlineInputBorder(
                                             borderSide: BorderSide(
-                                              color: Color(0xFFFF4D5E),
+                                              color:
+                                                  FlutterFlowTheme.of(context)
+                                                      .error,
                                               width: 1.0,
                                             ),
                                             borderRadius:
@@ -383,21 +400,26 @@ class _DetailListeWidgetState extends State<DetailListeWidget> {
                                           focusedErrorBorder:
                                               OutlineInputBorder(
                                             borderSide: BorderSide(
-                                              color: Color(0xFFFF4D5E),
+                                              color:
+                                                  FlutterFlowTheme.of(context)
+                                                      .error,
                                               width: 1.0,
                                             ),
                                             borderRadius:
                                                 BorderRadius.circular(12.0),
                                           ),
                                           filled: true,
-                                          fillColor: Color(0xFF1E1E2A),
+                                          fillColor:
+                                              FlutterFlowTheme.of(context)
+                                                  .accent4,
                                           contentPadding:
                                               EdgeInsetsDirectional.fromSTEB(
                                                   16.0, 18.0, 16.0, 18.0),
                                           prefixIcon: Icon(
                                             Icons
                                                 .drive_file_rename_outline_rounded,
-                                            color: Color(0xFFA0A0B2),
+                                            color: FlutterFlowTheme.of(context)
+                                                .secondaryText,
                                             size: 20.0,
                                           ),
                                         ),
@@ -414,7 +436,9 @@ class _DetailListeWidgetState extends State<DetailListeWidget> {
                                                         .bodyMedium
                                                         .fontStyle,
                                               ),
-                                              color: Color(0xFFF5F5F7),
+                                              color:
+                                                  FlutterFlowTheme.of(context)
+                                                      .primaryText,
                                               fontSize: 15.0,
                                               letterSpacing: 0.0,
                                               fontWeight:
@@ -426,7 +450,9 @@ class _DetailListeWidgetState extends State<DetailListeWidget> {
                                                       .bodyMedium
                                                       .fontStyle,
                                             ),
-                                        cursorColor: Color(0xFFF5B841),
+                                        cursorColor:
+                                            FlutterFlowTheme.of(context)
+                                                .primary,
                                         validator: _model
                                             .listNameFieldTextControllerValidator
                                             .asValidator(context),
@@ -495,8 +521,10 @@ class _DetailListeWidgetState extends State<DetailListeWidget> {
                                         iconPadding:
                                             EdgeInsetsDirectional.fromSTEB(
                                                 0.0, 0.0, 0.0, 0.0),
-                                        iconColor: Color(0xFFF5F5F7),
-                                        color: Color(0xFF1E1E2A),
+                                        iconColor: FlutterFlowTheme.of(context)
+                                            .primaryText,
+                                        color: FlutterFlowTheme.of(context)
+                                            .accent4,
                                         textStyle: FlutterFlowTheme.of(context)
                                             .titleSmall
                                             .override(
@@ -507,7 +535,9 @@ class _DetailListeWidgetState extends State<DetailListeWidget> {
                                                         .titleSmall
                                                         .fontStyle,
                                               ),
-                                              color: Color(0xFFF5F5F7),
+                                              color:
+                                                  FlutterFlowTheme.of(context)
+                                                      .primaryText,
                                               fontSize: 15.0,
                                               letterSpacing: 0.0,
                                               fontWeight: FontWeight.w600,
@@ -518,7 +548,8 @@ class _DetailListeWidgetState extends State<DetailListeWidget> {
                                             ),
                                         elevation: 0.0,
                                         borderSide: BorderSide(
-                                          color: Color(0xFF2A2A3A),
+                                          color: FlutterFlowTheme.of(context)
+                                              .alternate,
                                           width: 1.0,
                                         ),
                                         borderRadius:
@@ -628,7 +659,9 @@ class _DetailListeWidgetState extends State<DetailListeWidget> {
                                           children: [
                                             Icon(
                                               Icons.movie_outlined,
-                                              color: Color(0xFFF5B841),
+                                              color:
+                                                  FlutterFlowTheme.of(context)
+                                                      .primary,
                                               size: 16.0,
                                             ),
                                             Text(
@@ -647,7 +680,9 @@ class _DetailListeWidgetState extends State<DetailListeWidget> {
                                                               .bodyMedium
                                                               .fontStyle,
                                                     ),
-                                                    color: Color(0xFFF5F5F7),
+                                                    color: FlutterFlowTheme.of(
+                                                            context)
+                                                        .primaryText,
                                                     fontSize: 13.0,
                                                     letterSpacing: 0.0,
                                                     fontWeight: FontWeight.w600,
@@ -674,7 +709,9 @@ class _DetailListeWidgetState extends State<DetailListeWidget> {
                                                                   .fontStyle,
                                                         ),
                                                         color:
-                                                            Color(0xFFA0A0B2),
+                                                            FlutterFlowTheme.of(
+                                                                    context)
+                                                                .secondaryText,
                                                         fontSize: 13.0,
                                                         letterSpacing: 0.0,
                                                         fontWeight:
@@ -697,10 +734,12 @@ class _DetailListeWidgetState extends State<DetailListeWidget> {
                             if (containerItemsRecordList.length == 0)
                               Container(
                                 decoration: BoxDecoration(
-                                  color: Color(0xFF15151F),
+                                  color: FlutterFlowTheme.of(context)
+                                      .secondaryBackground,
                                   borderRadius: BorderRadius.circular(16.0),
                                   border: Border.all(
-                                    color: Color(0xFF2A2A3A),
+                                    color:
+                                        FlutterFlowTheme.of(context).alternate,
                                     width: 1.0,
                                   ),
                                 ),
@@ -724,7 +763,8 @@ class _DetailListeWidgetState extends State<DetailListeWidget> {
                                             AlignmentDirectional(0.0, 0.0),
                                         child: Icon(
                                           Icons.playlist_add_rounded,
-                                          color: Color(0xFFF5B841),
+                                          color: FlutterFlowTheme.of(context)
+                                              .primary,
                                           size: 32.0,
                                         ),
                                       ),
@@ -741,7 +781,9 @@ class _DetailListeWidgetState extends State<DetailListeWidget> {
                                                         .headlineMedium
                                                         .fontStyle,
                                               ),
-                                              color: Color(0xFFF5F5F7),
+                                              color:
+                                                  FlutterFlowTheme.of(context)
+                                                      .primaryText,
                                               fontSize: 20.0,
                                               letterSpacing: 0.0,
                                               fontWeight: FontWeight.bold,
@@ -764,7 +806,9 @@ class _DetailListeWidgetState extends State<DetailListeWidget> {
                                                         .bodyMedium
                                                         .fontStyle,
                                               ),
-                                              color: Color(0xFFA0A0B2),
+                                              color:
+                                                  FlutterFlowTheme.of(context)
+                                                      .secondaryText,
                                               fontSize: 14.0,
                                               letterSpacing: 0.0,
                                               fontWeight: FontWeight.normal,
@@ -801,11 +845,13 @@ class _DetailListeWidgetState extends State<DetailListeWidget> {
                                         itemsList[itemsListIndex];
                                     return Container(
                                       decoration: BoxDecoration(
-                                        color: Color(0xFF15151F),
+                                        color: FlutterFlowTheme.of(context)
+                                            .secondaryBackground,
                                         borderRadius:
                                             BorderRadius.circular(12.0),
                                         border: Border.all(
-                                          color: Color(0xFF2A2A3A),
+                                          color: FlutterFlowTheme.of(context)
+                                              .alternate,
                                           width: 1.0,
                                         ),
                                       ),
@@ -913,8 +959,9 @@ class _DetailListeWidgetState extends State<DetailListeWidget> {
                                                               child: Icon(
                                                                 Icons
                                                                     .movie_outlined,
-                                                                color: Color(
-                                                                    0xFFF5B841),
+                                                                color: FlutterFlowTheme.of(
+                                                                        context)
+                                                                    .primary,
                                                                 size: 16.0,
                                                               ),
                                                             ),
@@ -958,8 +1005,9 @@ class _DetailListeWidgetState extends State<DetailListeWidget> {
                                                                         .bodyMedium
                                                                         .fontStyle,
                                                                   ),
-                                                                  color: Color(
-                                                                      0xFFF5F5F7),
+                                                                  color: FlutterFlowTheme.of(
+                                                                          context)
+                                                                      .primaryText,
                                                                   fontSize:
                                                                       14.0,
                                                                   letterSpacing:
@@ -992,8 +1040,9 @@ class _DetailListeWidgetState extends State<DetailListeWidget> {
                                                                         .bodyMedium
                                                                         .fontStyle,
                                                                   ),
-                                                                  color: Color(
-                                                                      0xFFF5B841),
+                                                                  color: FlutterFlowTheme.of(
+                                                                          context)
+                                                                      .primary,
                                                                   fontSize:
                                                                       12.0,
                                                                   letterSpacing:
@@ -1088,7 +1137,10 @@ class _DetailListeWidgetState extends State<DetailListeWidget> {
                                                   children: [
                                                     Icon(
                                                       Icons.close_rounded,
-                                                      color: Color(0xFFE5484D),
+                                                      color:
+                                                          FlutterFlowTheme.of(
+                                                                  context)
+                                                              .tertiary,
                                                       size: 16.0,
                                                     ),
                                                     Text(
@@ -1108,8 +1160,9 @@ class _DetailListeWidgetState extends State<DetailListeWidget> {
                                                                       .bodyMedium
                                                                       .fontStyle,
                                                             ),
-                                                            color: Color(
-                                                                0xFFE5484D),
+                                                            color: FlutterFlowTheme
+                                                                    .of(context)
+                                                                .tertiary,
                                                             fontSize: 13.0,
                                                             letterSpacing: 0.0,
                                                             fontWeight:
@@ -1229,8 +1282,8 @@ class _DetailListeWidgetState extends State<DetailListeWidget> {
                           EdgeInsetsDirectional.fromSTEB(24.0, 0.0, 24.0, 0.0),
                       iconPadding:
                           EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 0.0),
-                      iconColor: Color(0xFFFF4D5E),
-                      color: Color(0xFF15151F),
+                      iconColor: FlutterFlowTheme.of(context).error,
+                      color: FlutterFlowTheme.of(context).secondaryBackground,
                       textStyle:
                           FlutterFlowTheme.of(context).titleSmall.override(
                                 font: GoogleFonts.inter(
@@ -1239,7 +1292,7 @@ class _DetailListeWidgetState extends State<DetailListeWidget> {
                                       .titleSmall
                                       .fontStyle,
                                 ),
-                                color: Color(0xFFFF4D5E),
+                                color: FlutterFlowTheme.of(context).error,
                                 fontSize: 15.0,
                                 letterSpacing: 0.0,
                                 fontWeight: FontWeight.w600,
@@ -1249,7 +1302,7 @@ class _DetailListeWidgetState extends State<DetailListeWidget> {
                               ),
                       elevation: 0.0,
                       borderSide: BorderSide(
-                        color: Color(0xFFFF4D5E),
+                        color: FlutterFlowTheme.of(context).error,
                         width: 1.0,
                       ),
                       borderRadius: BorderRadius.circular(24.0),

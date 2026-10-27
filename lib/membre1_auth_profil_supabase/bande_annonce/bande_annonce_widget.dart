@@ -54,7 +54,7 @@ class _BandeAnnonceWidgetState extends State<BandeAnnonceWidget> {
         },
         child: Scaffold(
           key: scaffoldKey,
-          backgroundColor: Color(0xFF0B0B12),
+          backgroundColor: FlutterFlowTheme.of(context).primaryBackground,
           body: SafeArea(
             top: true,
             child: Padding(
@@ -70,14 +70,15 @@ class _BandeAnnonceWidgetState extends State<BandeAnnonceWidget> {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       FlutterFlowIconButton(
-                        borderColor: Color(0xFF2A2A3A),
+                        borderColor: FlutterFlowTheme.of(context).alternate,
                         borderRadius: 22.0,
                         borderWidth: 1.0,
                         buttonSize: 44.0,
-                        fillColor: Color(0xFF15151F),
+                        fillColor:
+                            FlutterFlowTheme.of(context).secondaryBackground,
                         icon: Icon(
                           Icons.arrow_back_rounded,
-                          color: Color(0xFFF5F5F7),
+                          color: FlutterFlowTheme.of(context).primaryText,
                           size: 22.0,
                         ),
                         onPressed: () async {
@@ -96,7 +97,7 @@ class _BandeAnnonceWidgetState extends State<BandeAnnonceWidget> {
                                       .headlineMedium
                                       .fontStyle,
                                 ),
-                                color: Color(0xFFF5F5F7),
+                                color: FlutterFlowTheme.of(context).primaryText,
                                 fontSize: 20.0,
                                 letterSpacing: 0.0,
                                 fontWeight: FontWeight.bold,

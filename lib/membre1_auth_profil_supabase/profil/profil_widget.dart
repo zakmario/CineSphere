@@ -56,7 +56,7 @@ class _ProfilWidgetState extends State<ProfilWidget> {
       },
       child: Scaffold(
         key: scaffoldKey,
-        backgroundColor: Color(0xFF0B0B12),
+        backgroundColor: FlutterFlowTheme.of(context).primaryBackground,
         body: SafeArea(
           top: true,
           child: Padding(
@@ -94,14 +94,15 @@ class _ProfilWidgetState extends State<ProfilWidget> {
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           FlutterFlowIconButton(
-                            borderColor: Color(0xFF2A2A3A),
+                            borderColor: FlutterFlowTheme.of(context).alternate,
                             borderRadius: 22.0,
                             borderWidth: 1.0,
                             buttonSize: 44.0,
-                            fillColor: Color(0xFF15151F),
+                            fillColor: FlutterFlowTheme.of(context)
+                                .secondaryBackground,
                             icon: Icon(
                               Icons.arrow_back_rounded,
-                              color: Color(0xFFF5F5F7),
+                              color: FlutterFlowTheme.of(context).primaryText,
                               size: 22.0,
                             ),
                             onPressed: () async {
@@ -121,7 +122,8 @@ class _ProfilWidgetState extends State<ProfilWidget> {
                                           .headlineMedium
                                           .fontStyle,
                                     ),
-                                    color: Color(0xFFF5F5F7),
+                                    color: FlutterFlowTheme.of(context)
+                                        .primaryText,
                                     fontSize: 22.0,
                                     letterSpacing: 0.0,
                                     fontWeight: FontWeight.bold,
@@ -132,14 +134,15 @@ class _ProfilWidgetState extends State<ProfilWidget> {
                             ),
                           ),
                           FlutterFlowIconButton(
-                            borderColor: Color(0xFF2A2A3A),
+                            borderColor: FlutterFlowTheme.of(context).alternate,
                             borderRadius: 22.0,
                             borderWidth: 1.0,
                             buttonSize: 44.0,
-                            fillColor: Color(0xFF15151F),
+                            fillColor: FlutterFlowTheme.of(context)
+                                .secondaryBackground,
                             icon: Icon(
                               Icons.settings_outlined,
-                              color: Color(0xFFF5F5F7),
+                              color: FlutterFlowTheme.of(context).primaryText,
                               size: 22.0,
                             ),
                             onPressed: () async {
@@ -162,7 +165,7 @@ class _ProfilWidgetState extends State<ProfilWidget> {
                           ),
                           borderRadius: BorderRadius.circular(20.0),
                           border: Border.all(
-                            color: Color(0xFF2A2A3A),
+                            color: FlutterFlowTheme.of(context).alternate,
                             width: 1.0,
                           ),
                         ),
@@ -190,7 +193,8 @@ class _ProfilWidgetState extends State<ProfilWidget> {
                                             .headlineMedium
                                             .fontStyle,
                                       ),
-                                      color: Color(0xFFF5F5F7),
+                                      color: FlutterFlowTheme.of(context)
+                                          .primaryText,
                                       fontSize: 24.0,
                                       letterSpacing: 0.0,
                                       fontWeight: FontWeight.bold,
@@ -211,7 +215,8 @@ class _ProfilWidgetState extends State<ProfilWidget> {
                                             .bodyMedium
                                             .fontStyle,
                                       ),
-                                      color: Color(0xFFA0A0B2),
+                                      color: FlutterFlowTheme.of(context)
+                                          .secondaryText,
                                       fontSize: 14.0,
                                       letterSpacing: 0.0,
                                       fontWeight: FontWeight.normal,
@@ -239,7 +244,8 @@ class _ProfilWidgetState extends State<ProfilWidget> {
                                                   .bodyMedium
                                                   .fontStyle,
                                         ),
-                                        color: Color(0xFFA0A0B2),
+                                        color: FlutterFlowTheme.of(context)
+                                            .secondaryText,
                                         fontSize: 14.0,
                                         letterSpacing: 0.0,
                                         fontWeight: FontWeight.normal,
@@ -290,10 +296,12 @@ class _ProfilWidgetState extends State<ProfilWidget> {
 
                                 return Container(
                                   decoration: BoxDecoration(
-                                    color: Color(0xFF15151F),
+                                    color: FlutterFlowTheme.of(context)
+                                        .secondaryBackground,
                                     borderRadius: BorderRadius.circular(16.0),
                                     border: Border.all(
-                                      color: Color(0xFF2A2A3A),
+                                      color: FlutterFlowTheme.of(context)
+                                          .alternate,
                                       width: 1.0,
                                     ),
                                   ),
@@ -309,7 +317,8 @@ class _ProfilWidgetState extends State<ProfilWidget> {
                                       children: [
                                         Icon(
                                           Icons.favorite_rounded,
-                                          color: Color(0xFFE5484D),
+                                          color: FlutterFlowTheme.of(context)
+                                              .tertiary,
                                           size: 22.0,
                                         ),
                                         Text(
@@ -327,7 +336,9 @@ class _ProfilWidgetState extends State<ProfilWidget> {
                                                           .headlineMedium
                                                           .fontStyle,
                                                 ),
-                                                color: Color(0xFFF5F5F7),
+                                                color:
+                                                    FlutterFlowTheme.of(context)
+                                                        .primaryText,
                                                 fontSize: 24.0,
                                                 letterSpacing: 0.0,
                                                 fontWeight: FontWeight.bold,
@@ -351,7 +362,9 @@ class _ProfilWidgetState extends State<ProfilWidget> {
                                                           .bodyMedium
                                                           .fontStyle,
                                                 ),
-                                                color: Color(0xFFA0A0B2),
+                                                color:
+                                                    FlutterFlowTheme.of(context)
+                                                        .secondaryText,
                                                 fontSize: 12.0,
                                                 letterSpacing: 0.0,
                                                 fontWeight: FontWeight.normal,
@@ -395,10 +408,12 @@ class _ProfilWidgetState extends State<ProfilWidget> {
 
                                 return Container(
                                   decoration: BoxDecoration(
-                                    color: Color(0xFF15151F),
+                                    color: FlutterFlowTheme.of(context)
+                                        .secondaryBackground,
                                     borderRadius: BorderRadius.circular(16.0),
                                     border: Border.all(
-                                      color: Color(0xFF2A2A3A),
+                                      color: FlutterFlowTheme.of(context)
+                                          .alternate,
                                       width: 1.0,
                                     ),
                                   ),
@@ -414,7 +429,8 @@ class _ProfilWidgetState extends State<ProfilWidget> {
                                       children: [
                                         Icon(
                                           Icons.playlist_play_rounded,
-                                          color: Color(0xFF7C5CFF),
+                                          color: FlutterFlowTheme.of(context)
+                                              .secondary,
                                           size: 22.0,
                                         ),
                                         Text(
@@ -432,7 +448,9 @@ class _ProfilWidgetState extends State<ProfilWidget> {
                                                           .headlineMedium
                                                           .fontStyle,
                                                 ),
-                                                color: Color(0xFFF5F5F7),
+                                                color:
+                                                    FlutterFlowTheme.of(context)
+                                                        .primaryText,
                                                 fontSize: 24.0,
                                                 letterSpacing: 0.0,
                                                 fontWeight: FontWeight.bold,
@@ -456,7 +474,9 @@ class _ProfilWidgetState extends State<ProfilWidget> {
                                                           .bodyMedium
                                                           .fontStyle,
                                                 ),
-                                                color: Color(0xFFA0A0B2),
+                                                color:
+                                                    FlutterFlowTheme.of(context)
+                                                        .secondaryText,
                                                 fontSize: 12.0,
                                                 letterSpacing: 0.0,
                                                 fontWeight: FontWeight.normal,
@@ -503,10 +523,12 @@ class _ProfilWidgetState extends State<ProfilWidget> {
 
                                 return Container(
                                   decoration: BoxDecoration(
-                                    color: Color(0xFF15151F),
+                                    color: FlutterFlowTheme.of(context)
+                                        .secondaryBackground,
                                     borderRadius: BorderRadius.circular(16.0),
                                     border: Border.all(
-                                      color: Color(0xFF2A2A3A),
+                                      color: FlutterFlowTheme.of(context)
+                                          .alternate,
                                       width: 1.0,
                                     ),
                                   ),
@@ -522,7 +544,8 @@ class _ProfilWidgetState extends State<ProfilWidget> {
                                       children: [
                                         Icon(
                                           Icons.star_rounded,
-                                          color: Color(0xFFF5B841),
+                                          color: FlutterFlowTheme.of(context)
+                                              .primary,
                                           size: 22.0,
                                         ),
                                         Text(
@@ -540,7 +563,9 @@ class _ProfilWidgetState extends State<ProfilWidget> {
                                                           .headlineMedium
                                                           .fontStyle,
                                                 ),
-                                                color: Color(0xFFF5F5F7),
+                                                color:
+                                                    FlutterFlowTheme.of(context)
+                                                        .primaryText,
                                                 fontSize: 24.0,
                                                 letterSpacing: 0.0,
                                                 fontWeight: FontWeight.bold,
@@ -564,7 +589,9 @@ class _ProfilWidgetState extends State<ProfilWidget> {
                                                           .bodyMedium
                                                           .fontStyle,
                                                 ),
-                                                color: Color(0xFFA0A0B2),
+                                                color:
+                                                    FlutterFlowTheme.of(context)
+                                                        .secondaryText,
                                                 fontSize: 12.0,
                                                 letterSpacing: 0.0,
                                                 fontWeight: FontWeight.normal,
@@ -648,10 +675,11 @@ class _ProfilWidgetState extends State<ProfilWidget> {
                       ),
                       Container(
                         decoration: BoxDecoration(
-                          color: Color(0xFF15151F),
+                          color:
+                              FlutterFlowTheme.of(context).secondaryBackground,
                           borderRadius: BorderRadius.circular(16.0),
                           border: Border.all(
-                            color: Color(0xFF2A2A3A),
+                            color: FlutterFlowTheme.of(context).alternate,
                             width: 1.0,
                           ),
                         ),
@@ -701,7 +729,9 @@ class _ProfilWidgetState extends State<ProfilWidget> {
                                                           .bodyMedium
                                                           .fontStyle,
                                                 ),
-                                                color: Color(0xFFA0A0B2),
+                                                color:
+                                                    FlutterFlowTheme.of(context)
+                                                        .secondaryText,
                                                 fontSize: 14.0,
                                                 letterSpacing: 0.0,
                                                 fontWeight:
@@ -757,7 +787,9 @@ class _ProfilWidgetState extends State<ProfilWidget> {
                                                           .bodySmall
                                                           .fontStyle,
                                                 ),
-                                                color: Color(0xFFFF4D5E),
+                                                color:
+                                                    FlutterFlowTheme.of(context)
+                                                        .error,
                                                 fontSize: 12.0,
                                                 letterSpacing: 0.0,
                                                 fontWeight:
@@ -771,7 +803,9 @@ class _ProfilWidgetState extends State<ProfilWidget> {
                                               ),
                                           enabledBorder: OutlineInputBorder(
                                             borderSide: BorderSide(
-                                              color: Color(0xFF2A2A3A),
+                                              color:
+                                                  FlutterFlowTheme.of(context)
+                                                      .alternate,
                                               width: 1.0,
                                             ),
                                             borderRadius:
@@ -779,7 +813,9 @@ class _ProfilWidgetState extends State<ProfilWidget> {
                                           ),
                                           focusedBorder: OutlineInputBorder(
                                             borderSide: BorderSide(
-                                              color: Color(0xFFF5B841),
+                                              color:
+                                                  FlutterFlowTheme.of(context)
+                                                      .primary,
                                               width: 1.0,
                                             ),
                                             borderRadius:
@@ -787,7 +823,9 @@ class _ProfilWidgetState extends State<ProfilWidget> {
                                           ),
                                           errorBorder: OutlineInputBorder(
                                             borderSide: BorderSide(
-                                              color: Color(0xFFFF4D5E),
+                                              color:
+                                                  FlutterFlowTheme.of(context)
+                                                      .error,
                                               width: 1.0,
                                             ),
                                             borderRadius:
@@ -796,20 +834,25 @@ class _ProfilWidgetState extends State<ProfilWidget> {
                                           focusedErrorBorder:
                                               OutlineInputBorder(
                                             borderSide: BorderSide(
-                                              color: Color(0xFFFF4D5E),
+                                              color:
+                                                  FlutterFlowTheme.of(context)
+                                                      .error,
                                               width: 1.0,
                                             ),
                                             borderRadius:
                                                 BorderRadius.circular(12.0),
                                           ),
                                           filled: true,
-                                          fillColor: Color(0xFF1E1E2A),
+                                          fillColor:
+                                              FlutterFlowTheme.of(context)
+                                                  .accent4,
                                           contentPadding:
                                               EdgeInsetsDirectional.fromSTEB(
                                                   16.0, 18.0, 16.0, 18.0),
                                           prefixIcon: Icon(
                                             Icons.person_outline_rounded,
-                                            color: Color(0xFFA0A0B2),
+                                            color: FlutterFlowTheme.of(context)
+                                                .secondaryText,
                                             size: 20.0,
                                           ),
                                         ),
@@ -826,7 +869,9 @@ class _ProfilWidgetState extends State<ProfilWidget> {
                                                         .bodyMedium
                                                         .fontStyle,
                                               ),
-                                              color: Color(0xFFF5F5F7),
+                                              color:
+                                                  FlutterFlowTheme.of(context)
+                                                      .primaryText,
                                               fontSize: 15.0,
                                               letterSpacing: 0.0,
                                               fontWeight:
@@ -838,7 +883,9 @@ class _ProfilWidgetState extends State<ProfilWidget> {
                                                       .bodyMedium
                                                       .fontStyle,
                                             ),
-                                        cursorColor: Color(0xFFF5B841),
+                                        cursorColor:
+                                            FlutterFlowTheme.of(context)
+                                                .primary,
                                         validator: _model
                                             .usernameFieldTextControllerValidator
                                             .asValidator(context),
@@ -872,7 +919,9 @@ class _ProfilWidgetState extends State<ProfilWidget> {
                                                           .bodyMedium
                                                           .fontStyle,
                                                 ),
-                                                color: Color(0xFFA0A0B2),
+                                                color:
+                                                    FlutterFlowTheme.of(context)
+                                                        .secondaryText,
                                                 fontSize: 14.0,
                                                 letterSpacing: 0.0,
                                                 fontWeight:
@@ -930,7 +979,9 @@ class _ProfilWidgetState extends State<ProfilWidget> {
                                                           .bodySmall
                                                           .fontStyle,
                                                 ),
-                                                color: Color(0xFFFF4D5E),
+                                                color:
+                                                    FlutterFlowTheme.of(context)
+                                                        .error,
                                                 fontSize: 12.0,
                                                 letterSpacing: 0.0,
                                                 fontWeight:
@@ -944,7 +995,9 @@ class _ProfilWidgetState extends State<ProfilWidget> {
                                               ),
                                           enabledBorder: OutlineInputBorder(
                                             borderSide: BorderSide(
-                                              color: Color(0xFF2A2A3A),
+                                              color:
+                                                  FlutterFlowTheme.of(context)
+                                                      .alternate,
                                               width: 1.0,
                                             ),
                                             borderRadius:
@@ -952,7 +1005,9 @@ class _ProfilWidgetState extends State<ProfilWidget> {
                                           ),
                                           focusedBorder: OutlineInputBorder(
                                             borderSide: BorderSide(
-                                              color: Color(0xFFF5B841),
+                                              color:
+                                                  FlutterFlowTheme.of(context)
+                                                      .primary,
                                               width: 1.0,
                                             ),
                                             borderRadius:
@@ -960,7 +1015,9 @@ class _ProfilWidgetState extends State<ProfilWidget> {
                                           ),
                                           errorBorder: OutlineInputBorder(
                                             borderSide: BorderSide(
-                                              color: Color(0xFFFF4D5E),
+                                              color:
+                                                  FlutterFlowTheme.of(context)
+                                                      .error,
                                               width: 1.0,
                                             ),
                                             borderRadius:
@@ -969,20 +1026,25 @@ class _ProfilWidgetState extends State<ProfilWidget> {
                                           focusedErrorBorder:
                                               OutlineInputBorder(
                                             borderSide: BorderSide(
-                                              color: Color(0xFFFF4D5E),
+                                              color:
+                                                  FlutterFlowTheme.of(context)
+                                                      .error,
                                               width: 1.0,
                                             ),
                                             borderRadius:
                                                 BorderRadius.circular(12.0),
                                           ),
                                           filled: true,
-                                          fillColor: Color(0xFF1E1E2A),
+                                          fillColor:
+                                              FlutterFlowTheme.of(context)
+                                                  .accent4,
                                           contentPadding:
                                               EdgeInsetsDirectional.fromSTEB(
                                                   16.0, 18.0, 16.0, 18.0),
                                           prefixIcon: Icon(
                                             Icons.edit_outlined,
-                                            color: Color(0xFFA0A0B2),
+                                            color: FlutterFlowTheme.of(context)
+                                                .secondaryText,
                                             size: 20.0,
                                           ),
                                         ),
@@ -999,7 +1061,9 @@ class _ProfilWidgetState extends State<ProfilWidget> {
                                                         .bodyMedium
                                                         .fontStyle,
                                               ),
-                                              color: Color(0xFFF5F5F7),
+                                              color:
+                                                  FlutterFlowTheme.of(context)
+                                                      .primaryText,
                                               fontSize: 15.0,
                                               letterSpacing: 0.0,
                                               fontWeight:
@@ -1013,7 +1077,9 @@ class _ProfilWidgetState extends State<ProfilWidget> {
                                             ),
                                         maxLines: 4,
                                         keyboardType: TextInputType.multiline,
-                                        cursorColor: Color(0xFFF5B841),
+                                        cursorColor:
+                                            FlutterFlowTheme.of(context)
+                                                .primary,
                                         validator: _model
                                             .bioFieldTextControllerValidator
                                             .asValidator(context),
@@ -1081,7 +1147,7 @@ class _ProfilWidgetState extends State<ProfilWidget> {
                                   iconPadding: EdgeInsetsDirectional.fromSTEB(
                                       0.0, 0.0, 0.0, 0.0),
                                   iconColor: Color(0xFF14110A),
-                                  color: Color(0xFFF5B841),
+                                  color: FlutterFlowTheme.of(context).primary,
                                   textStyle: FlutterFlowTheme.of(context)
                                       .titleSmall
                                       .override(

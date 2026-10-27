@@ -1,34 +1,10 @@
 {
-  "lib/custom_code/widgets/profile_stats.dart": {
-    "old_identifier_name": "ProfileStats",
-    "new_identifier_name": "ProfileStats",
-    "type": "W",
-    "is_deleted": false,
-    "current_checksum": "e570c495a5f7ffc1fc583a968194332320f26325ec093813ea45936ad235ae6a",
-    "original_checksum": "e570c495a5f7ffc1fc583a968194332320f26325ec093813ea45936ad235ae6a"
-  },
-  "lib/custom_code/actions/clear_view_history.dart": {
-    "old_identifier_name": "clearViewHistory",
-    "new_identifier_name": "clearViewHistory",
-    "type": "A",
-    "is_deleted": false,
-    "current_checksum": "9ee3025ef666800afce3ef6c23f3c25b761315f255e9aa7095129ffe9ae30301",
-    "original_checksum": "9ee3025ef666800afce3ef6c23f3c25b761315f255e9aa7095129ffe9ae30301"
-  },
-  "lib/flutter_flow/custom_functions.dart": {
-    "old_identifier_name": "CustomFunctions",
-    "new_identifier_name": "CustomFunctions",
-    "type": "F",
-    "is_deleted": false,
-    "current_checksum": "ef215af61ea6d4389e08493f9975cdd44fd4b6bd2252a5b520b488267028902c",
-    "original_checksum": "ef215af61ea6d4389e08493f9975cdd44fd4b6bd2252a5b520b488267028902c"
-  },
   "pubspec.yaml": {
     "old_identifier_name": "pubspec.yaml",
     "new_identifier_name": "pubspec.yaml",
     "type": "D",
     "is_deleted": false,
-    "current_checksum": "16be983745cb8b0b777135b2cfbc1d4245521f7d4cf18bf7e80387f0bd4aa4d1",
+    "current_checksum": "bded7474fd7df81412802337aa1e6268f094c9b0db7663e06815d7da2a541f29",
     "original_checksum": "16be983745cb8b0b777135b2cfbc1d4245521f7d4cf18bf7e80387f0bd4aa4d1"
   },
   "lib/custom_code/actions/init_local_notifications.dart": {
@@ -109,7 +85,7 @@
     "type": "W",
     "is_deleted": false,
     "current_checksum": "feb57cb574930c1f8634e859e52a34386976a92d8b63fd65077fc12dabf65106",
-    "original_checksum": "feb57cb574930c1f8634e859e52a34386976a92d8b63fd65077fc12dabf65106"
+    "original_checksum": "5f50f2b610e5fb56f532fc85ce4cc9a9dc5c6e956ff0c879f5609c3e2ab81297"
   },
   "lib/custom_code/widgets/catalog_browser.dart": {
     "old_identifier_name": "CatalogBrowser",
@@ -148,7 +124,7 @@
     "new_identifier_name": "MediaDetailView",
     "type": "W",
     "is_deleted": false,
-    "original_checksum": "fb651d7e542e0bb016b192defec00fa6af794067e421b5cd6b71d084a598594d",
+    "original_checksum": "916dbfbfdedc660f5bb224ee0dbbaffc8997dd6c219c34938cd4484d699170ce",
     "current_checksum": "fb651d7e542e0bb016b192defec00fa6af794067e421b5cd6b71d084a598594d"
   },
   "lib/custom_code/widgets/favorites_grid.dart": {
@@ -180,8 +156,8 @@
     "new_identifier_name": "cineModels",
     "type": "A",
     "is_deleted": false,
-    "current_checksum": "9db86330f37deb420c3595d11f4fe364883b35abe5e31813a44da122368d1e70",
-    "original_checksum": "9db86330f37deb420c3595d11f4fe364883b35abe5e31813a44da122368d1e70"
+    "current_checksum": "50f7714e62ff983b95bd0f8cbc5ad03d57996416635c27175df17172d9650ff5",
+    "original_checksum": "50f7714e62ff983b95bd0f8cbc5ad03d57996416635c27175df17172d9650ff5"
   },
   "lib/custom_code/actions/auth_service.dart": {
     "old_identifier_name": "authService",
@@ -309,7 +285,7 @@
     "type": "W",
     "is_deleted": false,
     "current_checksum": "139ccb2b0bd14ff18ee615516e98df0a82ed1f54152c94f8f16c048e7d771e51",
-    "original_checksum": "139ccb2b0bd14ff18ee615516e98df0a82ed1f54152c94f8f16c048e7d771e51"
+    "original_checksum": "35e9bf38ae49a2b2c03c03de5e383355ddfac8d376edc579d8cad4d8ed9e42c8"
   },
   "lib/custom_code/widgets/avatar_picker.dart": {
     "old_identifier_name": "AvatarPicker",
@@ -343,20 +319,127 @@
     "current_checksum": "380d2d5cb270eafef5899d8283383a58142e5a3a06e4039d45181a97ec28ea43",
     "original_checksum": "380d2d5cb270eafef5899d8283383a58142e5a3a06e4039d45181a97ec28ea43"
   },
-  "lib/custom_code/widgets/reviews_section.dart": {
-    "old_identifier_name": "ReviewsSection",
-    "new_identifier_name": "ReviewsSection",
-    "type": "W",
-    "is_deleted": false,
-    "current_checksum": "407d74ece81ab7c51077e650be6b98efed450999d4f342ef791980624e6cb872",
-    "original_checksum": "407d74ece81ab7c51077e650be6b98efed450999d4f342ef791980624e6cb872"
-  },
   "lib/custom_code/actions/firebase_service.dart": {
     "old_identifier_name": "firebaseService",
     "new_identifier_name": "firebaseService",
     "type": "A",
     "is_deleted": false,
     "current_checksum": "c9448f1842da402cff0b79b4bb16a3a869c80fe3351a546e5ad8306a94fd8dcf",
-    "original_checksum": "c9448f1842da402cff0b79b4bb16a3a869c80fe3351a546e5ad8306a94fd8dcf"
+    "original_checksum": "601e0eb6986662e4f518d9c652654d64494f0c4997b8a55bcd3e5aa2a4e3204b"
+  },
+  "lib/custom_code/functions/format_runtime.dart": {
+    "old_identifier_name": "formatRuntime",
+    "new_identifier_name": "formatRuntime",
+    "type": "F",
+    "is_deleted": false,
+    "original_checksum": "d798f160cb54375b7be13b8662f2867a50d0baadcb984bffbf8ab2eae24a1dc6",
+    "current_checksum": "d798f160cb54375b7be13b8662f2867a50d0baadcb984bffbf8ab2eae24a1dc6"
+  },
+  "lib/custom_code/functions/format_release_date.dart": {
+    "old_identifier_name": "formatReleaseDate",
+    "new_identifier_name": "formatReleaseDate",
+    "type": "F",
+    "is_deleted": false,
+    "original_checksum": "19c501bd3fe764cd5bd3d06d6ebf2187a22182c20a9b66f537ec50c9407e3e82",
+    "current_checksum": "19c501bd3fe764cd5bd3d06d6ebf2187a22182c20a9b66f537ec50c9407e3e82"
+  },
+  "lib/custom_code/functions/days_until.dart": {
+    "old_identifier_name": "daysUntil",
+    "new_identifier_name": "daysUntil",
+    "type": "F",
+    "is_deleted": false,
+    "original_checksum": "7b7aa5584d25a4c3c749e31c594288fc42ba3ce67e4ec9555583ef3ee9d639b5",
+    "current_checksum": "7b7aa5584d25a4c3c749e31c594288fc42ba3ce67e4ec9555583ef3ee9d639b5"
+  },
+  "lib/custom_code/functions/is_release_soon.dart": {
+    "old_identifier_name": "isReleaseSoon",
+    "new_identifier_name": "isReleaseSoon",
+    "type": "F",
+    "is_deleted": false,
+    "original_checksum": "476429f6e87e22419806414a3abb0aa4275326ab1ea0ab60b96b21e1f317e7e4",
+    "current_checksum": "476429f6e87e22419806414a3abb0aa4275326ab1ea0ab60b96b21e1f317e7e4"
+  },
+  "lib/custom_code/functions/release_countdown_label.dart": {
+    "old_identifier_name": "releaseCountdownLabel",
+    "new_identifier_name": "releaseCountdownLabel",
+    "type": "F",
+    "is_deleted": false,
+    "original_checksum": "593c362f11430ae0634005dbaba4e77208d833bc39a1831f4f6e212248bb1d52",
+    "current_checksum": "593c362f11430ae0634005dbaba4e77208d833bc39a1831f4f6e212248bb1d52"
+  },
+  "lib/custom_code/functions/media_type_label.dart": {
+    "old_identifier_name": "mediaTypeLabel",
+    "new_identifier_name": "mediaTypeLabel",
+    "type": "F",
+    "is_deleted": false,
+    "original_checksum": "88abdfea38ff0b95c8a070825eaba7bbe59c7066438ef970c8d6817a466ad3b0",
+    "current_checksum": "88abdfea38ff0b95c8a070825eaba7bbe59c7066438ef970c8d6817a466ad3b0"
+  },
+  "lib/custom_code/functions/status_label.dart": {
+    "old_identifier_name": "statusLabel",
+    "new_identifier_name": "statusLabel",
+    "type": "F",
+    "is_deleted": false,
+    "original_checksum": "8af87e9d2a7f99d272c5396db9377c867575e0fecfec0c19a123e30df5d2da64",
+    "current_checksum": "8af87e9d2a7f99d272c5396db9377c867575e0fecfec0c19a123e30df5d2da64"
+  },
+  "lib/custom_code/functions/seasons_label.dart": {
+    "old_identifier_name": "seasonsLabel",
+    "new_identifier_name": "seasonsLabel",
+    "type": "F",
+    "is_deleted": false,
+    "original_checksum": "039f2578a2fa90bc73d8c1d6fef5733a863da9bc11331d2ac41d24eda4000146",
+    "current_checksum": "039f2578a2fa90bc73d8c1d6fef5733a863da9bc11331d2ac41d24eda4000146"
+  },
+  "lib/custom_code/functions/rating_label.dart": {
+    "old_identifier_name": "ratingLabel",
+    "new_identifier_name": "ratingLabel",
+    "type": "F",
+    "is_deleted": false,
+    "original_checksum": "37ee532456ebca189f8dc660327a083059c8e1171ff107b1d3515591cf7b33c7",
+    "current_checksum": "37ee532456ebca189f8dc660327a083059c8e1171ff107b1d3515591cf7b33c7"
+  },
+  "lib/custom_code/functions/rating_color.dart": {
+    "old_identifier_name": "ratingColor",
+    "new_identifier_name": "ratingColor",
+    "type": "F",
+    "is_deleted": false,
+    "original_checksum": "0ab16be8d36cb7cbd8378ec639cb313f4699c7d4727e3960501ba4ffde4124bd",
+    "current_checksum": "0ab16be8d36cb7cbd8378ec639cb313f4699c7d4727e3960501ba4ffde4124bd"
+  },
+  "lib/custom_code/functions/notification_id_from_string.dart": {
+    "old_identifier_name": "notificationIdFromString",
+    "new_identifier_name": "notificationIdFromString",
+    "type": "F",
+    "is_deleted": false,
+    "original_checksum": "958dd52cbb760f2804150ce8637449b8280f233cbbc719197f6df82531586a41",
+    "current_checksum": "958dd52cbb760f2804150ce8637449b8280f233cbbc719197f6df82531586a41"
+  },
+  "lib/custom_code/widgets/reviews_section.dart": {
+    "old_identifier_name": "ReviewsSection",
+    "new_identifier_name": "ReviewsSection",
+    "type": "W",
+    "is_deleted": false,
+    "current_checksum": "407d74ece81ab7c51077e650be6b98efed450999d4f342ef791980624e6cb872"
+  },
+  "lib/custom_code/actions/clear_view_history.dart": {
+    "old_identifier_name": "clearViewHistory",
+    "new_identifier_name": "clearViewHistory",
+    "type": "A",
+    "is_deleted": false
+  },
+  "lib/custom_code/widgets/profile_stats.dart": {
+    "old_identifier_name": "ProfileStats",
+    "new_identifier_name": "ProfileStats",
+    "type": "W",
+    "is_deleted": false,
+    "current_checksum": "e570c495a5f7ffc1fc583a968194332320f26325ec093813ea45936ad235ae6a"
+  },
+  "lib/custom_code/widgets/preferences_panel.dart": {
+    "old_identifier_name": "PreferencesPanel",
+    "new_identifier_name": "PreferencesPanel",
+    "type": "W",
+    "is_deleted": false,
+    "current_checksum": "7186861ea04b7e01a8f3c548d2520fe9d22c6e1c58e3cda026ca231abb551200"
   }
 }

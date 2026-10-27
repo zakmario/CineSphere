@@ -55,7 +55,7 @@ class _ConfirmationEmailWidgetState extends State<ConfirmationEmailWidget> {
       },
       child: Scaffold(
         key: scaffoldKey,
-        backgroundColor: Color(0xFF0B0B12),
+        backgroundColor: FlutterFlowTheme.of(context).primaryBackground,
         body: SafeArea(
           top: true,
           child: Padding(
@@ -73,14 +73,15 @@ class _ConfirmationEmailWidgetState extends State<ConfirmationEmailWidget> {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       FlutterFlowIconButton(
-                        borderColor: Color(0xFF2A2A3A),
+                        borderColor: FlutterFlowTheme.of(context).alternate,
                         borderRadius: 22.0,
                         borderWidth: 1.0,
                         buttonSize: 44.0,
-                        fillColor: Color(0xFF15151F),
+                        fillColor:
+                            FlutterFlowTheme.of(context).secondaryBackground,
                         icon: Icon(
                           Icons.arrow_back_rounded,
-                          color: Color(0xFFF5F5F7),
+                          color: FlutterFlowTheme.of(context).primaryText,
                           size: 22.0,
                         ),
                         onPressed: () async {
@@ -108,7 +109,7 @@ class _ConfirmationEmailWidgetState extends State<ConfirmationEmailWidget> {
                         alignment: AlignmentDirectional(0.0, 0.0),
                         child: Icon(
                           Icons.mark_email_unread_outlined,
-                          color: Color(0xFFF5B841),
+                          color: FlutterFlowTheme.of(context).primary,
                           size: 29.0,
                         ),
                       ),
@@ -128,7 +129,7 @@ class _ConfirmationEmailWidgetState extends State<ConfirmationEmailWidget> {
                                 .headlineMedium
                                 .fontStyle,
                           ),
-                          color: Color(0xFFF5F5F7),
+                          color: FlutterFlowTheme.of(context).primaryText,
                           fontSize: 26.0,
                           letterSpacing: 0.0,
                           fontWeight: FontWeight.bold,
@@ -151,7 +152,7 @@ class _ConfirmationEmailWidgetState extends State<ConfirmationEmailWidget> {
                                 .bodyMedium
                                 .fontStyle,
                           ),
-                          color: Color(0xFFA0A0B2),
+                          color: FlutterFlowTheme.of(context).secondaryText,
                           fontSize: 14.0,
                           letterSpacing: 0.0,
                           fontWeight: FontWeight.normal,
@@ -171,7 +172,7 @@ class _ConfirmationEmailWidgetState extends State<ConfirmationEmailWidget> {
                                   .bodyMedium
                                   .fontStyle,
                             ),
-                            color: Color(0xFFF5F5F7),
+                            color: FlutterFlowTheme.of(context).primaryText,
                             fontSize: 15.0,
                             letterSpacing: 0.0,
                             fontWeight: FontWeight.w600,
@@ -187,10 +188,10 @@ class _ConfirmationEmailWidgetState extends State<ConfirmationEmailWidget> {
                   ),
                   Container(
                     decoration: BoxDecoration(
-                      color: Color(0xFF15151F),
+                      color: FlutterFlowTheme.of(context).secondaryBackground,
                       borderRadius: BorderRadius.circular(16.0),
                       border: Border.all(
-                        color: Color(0xFF2A2A3A),
+                        color: FlutterFlowTheme.of(context).alternate,
                         width: 1.0,
                       ),
                     ),
@@ -214,7 +215,8 @@ class _ConfirmationEmailWidgetState extends State<ConfirmationEmailWidget> {
                                         .bodyMedium
                                         .fontStyle,
                                   ),
-                                  color: Color(0xFFA0A0B2),
+                                  color: FlutterFlowTheme.of(context)
+                                      .secondaryText,
                                   fontSize: 14.0,
                                   letterSpacing: 0.0,
                                   fontWeight: FontWeight.normal,
@@ -276,7 +278,7 @@ class _ConfirmationEmailWidgetState extends State<ConfirmationEmailWidget> {
                                   24.0, 0.0, 24.0, 0.0),
                               iconPadding: EdgeInsetsDirectional.fromSTEB(
                                   0.0, 0.0, 0.0, 0.0),
-                              color: Color(0xFFF5B841),
+                              color: FlutterFlowTheme.of(context).primary,
                               textStyle: FlutterFlowTheme.of(context)
                                   .titleSmall
                                   .override(
@@ -314,7 +316,8 @@ class _ConfirmationEmailWidgetState extends State<ConfirmationEmailWidget> {
                                             .bodyMedium
                                             .fontStyle,
                                       ),
-                                      color: Color(0xFFA0A0B2),
+                                      color: FlutterFlowTheme.of(context)
+                                          .secondaryText,
                                       fontSize: 14.0,
                                       letterSpacing: 0.0,
                                       fontWeight: FontWeight.normal,
@@ -386,7 +389,8 @@ class _ConfirmationEmailWidgetState extends State<ConfirmationEmailWidget> {
                                                     .bodyMedium
                                                     .fontStyle,
                                           ),
-                                          color: Color(0xFFF5B841),
+                                          color: FlutterFlowTheme.of(context)
+                                              .primary,
                                           fontSize: 14.0,
                                           letterSpacing: 0.0,
                                           fontWeight: FontWeight.w600,

@@ -101,6 +101,33 @@ class FakeCineFirebaseService extends CineFirebaseService {
     avatar = bytes;
   }
 
+  late UserPreferences preferences = UserPreferences(userId: userId ?? 'u1');
+  final savedPreferences = <UserPreferences>[];
+  List<Genre> genres = const [
+    Genre(id: 18, name: 'Drame'),
+    Genre(id: 35, name: 'Comédie'),
+  ];
+  List<Platform> platforms = const [
+    Platform(id: 8, name: 'Netflix'),
+    Platform(id: 337, name: 'Disney Plus'),
+  ];
+
+  @override
+  Future<UserPreferences> fetchPreferences() async => preferences;
+
+  @override
+  Future<UserPreferences> savePreferences(UserPreferences prefs) async {
+    calls.add('savePreferences');
+    savedPreferences.add(prefs);
+    return preferences = prefs;
+  }
+
+  @override
+  Future<List<Genre>> fetchGenres() async => genres;
+
+  @override
+  Future<List<Platform>> fetchPlatforms() async => platforms;
+
   /// Statistiques renvoyées par [fetchMyStats] (null = calculées à partir
   /// de [favorites] et [watched] sans catalogue).
   UserStats? stats;

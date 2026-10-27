@@ -74,7 +74,7 @@ class _FavorisWidgetState extends State<FavorisWidget>
       },
       child: Scaffold(
         key: scaffoldKey,
-        backgroundColor: Color(0xFF0B0B12),
+        backgroundColor: FlutterFlowTheme.of(context).primaryBackground,
         body: SafeArea(
           top: true,
           child: Column(
@@ -99,7 +99,7 @@ class _FavorisWidgetState extends State<FavorisWidget>
                                       .headlineMedium
                                       .fontStyle,
                                 ),
-                                color: Color(0xFFF5F5F7),
+                                color: FlutterFlowTheme.of(context).primaryText,
                                 fontSize: 28.0,
                                 letterSpacing: 0.0,
                                 fontWeight: FontWeight.bold,
@@ -117,7 +117,7 @@ class _FavorisWidgetState extends State<FavorisWidget>
                                   .bodyMedium
                                   .fontStyle,
                             ),
-                            color: Color(0xFFA0A0B2),
+                            color: FlutterFlowTheme.of(context).secondaryText,
                             fontSize: 14.0,
                             letterSpacing: 0.0,
                             fontWeight: FontWeight.normal,
@@ -166,9 +166,11 @@ class _FavorisWidgetState extends State<FavorisWidget>
                                       .titleSmall
                                       .fontStyle,
                                 ),
-                        labelColor: Color(0xFFF5B841),
-                        unselectedLabelColor: Color(0xFFA0A0B2),
-                        backgroundColor: Color(0xFF0B0B12),
+                        labelColor: FlutterFlowTheme.of(context).primary,
+                        unselectedLabelColor:
+                            FlutterFlowTheme.of(context).secondaryText,
+                        backgroundColor:
+                            FlutterFlowTheme.of(context).primaryBackground,
                         borderWidth: 0.0,
                         borderRadius: 0.0,
                         elevation: 0.0,
@@ -283,8 +285,9 @@ class _FavorisWidgetState extends State<FavorisWidget>
                                                           Icon(
                                                             Icons
                                                                 .favorite_rounded,
-                                                            color: Color(
-                                                                0xFFE5484D),
+                                                            color: FlutterFlowTheme
+                                                                    .of(context)
+                                                                .tertiary,
                                                             size: 16.0,
                                                           ),
                                                           Text(
@@ -306,8 +309,9 @@ class _FavorisWidgetState extends State<FavorisWidget>
                                                                         .bodyMedium
                                                                         .fontStyle,
                                                                   ),
-                                                                  color: Color(
-                                                                      0xFFF5F5F7),
+                                                                  color: FlutterFlowTheme.of(
+                                                                          context)
+                                                                      .primaryText,
                                                                   fontSize:
                                                                       13.0,
                                                                   letterSpacing:
@@ -338,8 +342,9 @@ class _FavorisWidgetState extends State<FavorisWidget>
                                                                         .bodyMedium
                                                                         .fontStyle,
                                                                   ),
-                                                                  color: Color(
-                                                                      0xFFA0A0B2),
+                                                                  color: FlutterFlowTheme.of(
+                                                                          context)
+                                                                      .secondaryText,
                                                                   fontSize:
                                                                       13.0,
                                                                   letterSpacing:
@@ -365,12 +370,17 @@ class _FavorisWidgetState extends State<FavorisWidget>
                                                   0)
                                                 Container(
                                                   decoration: BoxDecoration(
-                                                    color: Color(0xFF15151F),
+                                                    color: FlutterFlowTheme.of(
+                                                            context)
+                                                        .secondaryBackground,
                                                     borderRadius:
                                                         BorderRadius.circular(
                                                             16.0),
                                                     border: Border.all(
-                                                      color: Color(0xFF2A2A3A),
+                                                      color:
+                                                          FlutterFlowTheme.of(
+                                                                  context)
+                                                              .alternate,
                                                       width: 1.0,
                                                     ),
                                                   ),
@@ -408,8 +418,9 @@ class _FavorisWidgetState extends State<FavorisWidget>
                                                           child: Icon(
                                                             Icons
                                                                 .favorite_border_rounded,
-                                                            color: Color(
-                                                                0xFFE5484D),
+                                                            color: FlutterFlowTheme
+                                                                    .of(context)
+                                                                .tertiary,
                                                             size: 32.0,
                                                           ),
                                                         ),
@@ -432,8 +443,9 @@ class _FavorisWidgetState extends State<FavorisWidget>
                                                                       .headlineMedium
                                                                       .fontStyle,
                                                                 ),
-                                                                color: Color(
-                                                                    0xFFF5F5F7),
+                                                                color: FlutterFlowTheme.of(
+                                                                        context)
+                                                                    .primaryText,
                                                                 fontSize: 20.0,
                                                                 letterSpacing:
                                                                     0.0,
@@ -465,8 +477,9 @@ class _FavorisWidgetState extends State<FavorisWidget>
                                                                       .bodyMedium
                                                                       .fontStyle,
                                                                 ),
-                                                                color: Color(
-                                                                    0xFFA0A0B2),
+                                                                color: FlutterFlowTheme.of(
+                                                                        context)
+                                                                    .secondaryText,
                                                                 fontSize: 14.0,
                                                                 letterSpacing:
                                                                     0.0,
@@ -515,8 +528,9 @@ class _FavorisWidgetState extends State<FavorisWidget>
                                                                         0.0),
                                                             iconColor: Color(
                                                                 0xFF14110A),
-                                                            color: Color(
-                                                                0xFFF5B841),
+                                                            color: FlutterFlowTheme
+                                                                    .of(context)
+                                                                .primary,
                                                             textStyle:
                                                                 FlutterFlowTheme.of(
                                                                         context)
@@ -644,13 +658,17 @@ class _FavorisWidgetState extends State<FavorisWidget>
                                                   },
                                                   child: Container(
                                                     decoration: BoxDecoration(
-                                                      color: Color(0xFF15151F),
+                                                      color: FlutterFlowTheme
+                                                              .of(context)
+                                                          .secondaryBackground,
                                                       borderRadius:
                                                           BorderRadius.circular(
                                                               12.0),
                                                       border: Border.all(
                                                         color:
-                                                            Color(0xFF2A2A3A),
+                                                            FlutterFlowTheme.of(
+                                                                    context)
+                                                                .alternate,
                                                         width: 1.0,
                                                       ),
                                                     ),
@@ -731,8 +749,9 @@ class _FavorisWidgetState extends State<FavorisWidget>
                                                                   child: Icon(
                                                                     Icons
                                                                         .favorite_rounded,
-                                                                    color: Color(
-                                                                        0xFFE5484D),
+                                                                    color: FlutterFlowTheme.of(
+                                                                            context)
+                                                                        .tertiary,
                                                                     size: 16.0,
                                                                   ),
                                                                 ),
@@ -775,8 +794,9 @@ class _FavorisWidgetState extends State<FavorisWidget>
                                                                             .bodyMedium
                                                                             .fontStyle,
                                                                       ),
-                                                                      color: Color(
-                                                                          0xFFF5F5F7),
+                                                                      color: FlutterFlowTheme.of(
+                                                                              context)
+                                                                          .primaryText,
                                                                       fontSize:
                                                                           14.0,
                                                                       letterSpacing:
@@ -806,8 +826,9 @@ class _FavorisWidgetState extends State<FavorisWidget>
                                                                             .bodyMedium
                                                                             .fontStyle,
                                                                       ),
-                                                                      color: Color(
-                                                                          0xFFF5B841),
+                                                                      color: FlutterFlowTheme.of(
+                                                                              context)
+                                                                          .primary,
                                                                       fontSize:
                                                                           12.0,
                                                                       letterSpacing:
@@ -854,11 +875,13 @@ class _FavorisWidgetState extends State<FavorisWidget>
                                   children: [
                                     Container(
                                       decoration: BoxDecoration(
-                                        color: Color(0xFF15151F),
+                                        color: FlutterFlowTheme.of(context)
+                                            .secondaryBackground,
                                         borderRadius:
                                             BorderRadius.circular(16.0),
                                         border: Border.all(
-                                          color: Color(0xFF2A2A3A),
+                                          color: FlutterFlowTheme.of(context)
+                                              .alternate,
                                           width: 1.0,
                                         ),
                                       ),
@@ -891,7 +914,9 @@ class _FavorisWidgetState extends State<FavorisWidget>
                                                           0.0, 0.0),
                                                   child: Icon(
                                                     Icons.playlist_add_rounded,
-                                                    color: Color(0xFFF5B841),
+                                                    color: FlutterFlowTheme.of(
+                                                            context)
+                                                        .primary,
                                                     size: 18.0,
                                                   ),
                                                 ),
@@ -907,34 +932,37 @@ class _FavorisWidgetState extends State<FavorisWidget>
                                                     children: [
                                                       Text(
                                                         'Nouvelle liste',
-                                                        style: FlutterFlowTheme
-                                                                .of(context)
-                                                            .bodyMedium
-                                                            .override(
-                                                              font: GoogleFonts
-                                                                  .inter(
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w600,
-                                                                fontStyle: FlutterFlowTheme.of(
-                                                                        context)
-                                                                    .bodyMedium
-                                                                    .fontStyle,
-                                                              ),
-                                                              color: Color(
-                                                                  0xFFF5F5F7),
-                                                              fontSize: 16.0,
-                                                              letterSpacing:
-                                                                  0.0,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .w600,
-                                                              fontStyle:
-                                                                  FlutterFlowTheme.of(
+                                                        style:
+                                                            FlutterFlowTheme.of(
+                                                                    context)
+                                                                .bodyMedium
+                                                                .override(
+                                                                  font:
+                                                                      GoogleFonts
+                                                                          .inter(
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .w600,
+                                                                    fontStyle: FlutterFlowTheme.of(
+                                                                            context)
+                                                                        .bodyMedium
+                                                                        .fontStyle,
+                                                                  ),
+                                                                  color: FlutterFlowTheme.of(
+                                                                          context)
+                                                                      .primaryText,
+                                                                  fontSize:
+                                                                      16.0,
+                                                                  letterSpacing:
+                                                                      0.0,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w600,
+                                                                  fontStyle: FlutterFlowTheme.of(
                                                                           context)
                                                                       .bodyMedium
                                                                       .fontStyle,
-                                                            ),
+                                                                ),
                                                       ),
                                                       Text(
                                                         'Regroupez vos films et séries comme vous voulez.',
@@ -952,8 +980,9 @@ class _FavorisWidgetState extends State<FavorisWidget>
                                                                     .bodyMedium
                                                                     .fontStyle,
                                                               ),
-                                                              color: Color(
-                                                                  0xFFA0A0B2),
+                                                              color: FlutterFlowTheme
+                                                                      .of(context)
+                                                                  .secondaryText,
                                                               fontSize: 12.0,
                                                               letterSpacing:
                                                                   0.0,
@@ -1001,7 +1030,9 @@ class _FavorisWidgetState extends State<FavorisWidget>
                                                                   .fontStyle,
                                                         ),
                                                         color:
-                                                            Color(0xFFA0A0B2),
+                                                            FlutterFlowTheme.of(
+                                                                    context)
+                                                                .secondaryText,
                                                         fontSize: 14.0,
                                                         letterSpacing: 0.0,
                                                         fontWeight:
@@ -1065,7 +1096,9 @@ class _FavorisWidgetState extends State<FavorisWidget>
                                                                   .fontStyle,
                                                         ),
                                                         color:
-                                                            Color(0xFFFF4D5E),
+                                                            FlutterFlowTheme.of(
+                                                                    context)
+                                                                .error,
                                                         fontSize: 12.0,
                                                         letterSpacing: 0.0,
                                                         fontWeight:
@@ -1082,7 +1115,10 @@ class _FavorisWidgetState extends State<FavorisWidget>
                                                   enabledBorder:
                                                       OutlineInputBorder(
                                                     borderSide: BorderSide(
-                                                      color: Color(0xFF2A2A3A),
+                                                      color:
+                                                          FlutterFlowTheme.of(
+                                                                  context)
+                                                              .alternate,
                                                       width: 1.0,
                                                     ),
                                                     borderRadius:
@@ -1092,7 +1128,10 @@ class _FavorisWidgetState extends State<FavorisWidget>
                                                   focusedBorder:
                                                       OutlineInputBorder(
                                                     borderSide: BorderSide(
-                                                      color: Color(0xFFF5B841),
+                                                      color:
+                                                          FlutterFlowTheme.of(
+                                                                  context)
+                                                              .primary,
                                                       width: 1.0,
                                                     ),
                                                     borderRadius:
@@ -1102,7 +1141,10 @@ class _FavorisWidgetState extends State<FavorisWidget>
                                                   errorBorder:
                                                       OutlineInputBorder(
                                                     borderSide: BorderSide(
-                                                      color: Color(0xFFFF4D5E),
+                                                      color:
+                                                          FlutterFlowTheme.of(
+                                                                  context)
+                                                              .error,
                                                       width: 1.0,
                                                     ),
                                                     borderRadius:
@@ -1112,7 +1154,10 @@ class _FavorisWidgetState extends State<FavorisWidget>
                                                   focusedErrorBorder:
                                                       OutlineInputBorder(
                                                     borderSide: BorderSide(
-                                                      color: Color(0xFFFF4D5E),
+                                                      color:
+                                                          FlutterFlowTheme.of(
+                                                                  context)
+                                                              .error,
                                                       width: 1.0,
                                                     ),
                                                     borderRadius:
@@ -1120,14 +1165,19 @@ class _FavorisWidgetState extends State<FavorisWidget>
                                                             12.0),
                                                   ),
                                                   filled: true,
-                                                  fillColor: Color(0xFF1E1E2A),
+                                                  fillColor:
+                                                      FlutterFlowTheme.of(
+                                                              context)
+                                                          .accent4,
                                                   contentPadding:
                                                       EdgeInsetsDirectional
                                                           .fromSTEB(16.0, 18.0,
                                                               16.0, 18.0),
                                                   prefixIcon: Icon(
                                                     Icons.playlist_play_rounded,
-                                                    color: Color(0xFFA0A0B2),
+                                                    color: FlutterFlowTheme.of(
+                                                            context)
+                                                        .secondaryText,
                                                     size: 20.0,
                                                   ),
                                                 ),
@@ -1147,7 +1197,10 @@ class _FavorisWidgetState extends State<FavorisWidget>
                                                                 .bodyMedium
                                                                 .fontStyle,
                                                       ),
-                                                      color: Color(0xFFF5F5F7),
+                                                      color:
+                                                          FlutterFlowTheme.of(
+                                                                  context)
+                                                              .primaryText,
                                                       fontSize: 15.0,
                                                       letterSpacing: 0.0,
                                                       fontWeight:
@@ -1161,7 +1214,9 @@ class _FavorisWidgetState extends State<FavorisWidget>
                                                               .bodyMedium
                                                               .fontStyle,
                                                     ),
-                                                cursorColor: Color(0xFFF5B841),
+                                                cursorColor:
+                                                    FlutterFlowTheme.of(context)
+                                                        .primary,
                                                 validator: _model
                                                     .watchlistNameFieldTextControllerValidator
                                                     .asValidator(context),
@@ -1241,7 +1296,9 @@ class _FavorisWidgetState extends State<FavorisWidget>
                                                         .fromSTEB(
                                                             0.0, 0.0, 0.0, 0.0),
                                                 iconColor: Color(0xFF14110A),
-                                                color: Color(0xFFF5B841),
+                                                color:
+                                                    FlutterFlowTheme.of(context)
+                                                        .primary,
                                                 textStyle: FlutterFlowTheme.of(
                                                         context)
                                                     .titleSmall
@@ -1361,12 +1418,17 @@ class _FavorisWidgetState extends State<FavorisWidget>
                                                   0)
                                                 Container(
                                                   decoration: BoxDecoration(
-                                                    color: Color(0xFF15151F),
+                                                    color: FlutterFlowTheme.of(
+                                                            context)
+                                                        .secondaryBackground,
                                                     borderRadius:
                                                         BorderRadius.circular(
                                                             16.0),
                                                     border: Border.all(
-                                                      color: Color(0xFF2A2A3A),
+                                                      color:
+                                                          FlutterFlowTheme.of(
+                                                                  context)
+                                                              .alternate,
                                                       width: 1.0,
                                                     ),
                                                   ),
@@ -1404,8 +1466,9 @@ class _FavorisWidgetState extends State<FavorisWidget>
                                                           child: Icon(
                                                             Icons
                                                                 .playlist_play_rounded,
-                                                            color: Color(
-                                                                0xFF7C5CFF),
+                                                            color: FlutterFlowTheme
+                                                                    .of(context)
+                                                                .secondary,
                                                             size: 32.0,
                                                           ),
                                                         ),
@@ -1428,8 +1491,9 @@ class _FavorisWidgetState extends State<FavorisWidget>
                                                                       .headlineMedium
                                                                       .fontStyle,
                                                                 ),
-                                                                color: Color(
-                                                                    0xFFF5F5F7),
+                                                                color: FlutterFlowTheme.of(
+                                                                        context)
+                                                                    .primaryText,
                                                                 fontSize: 20.0,
                                                                 letterSpacing:
                                                                     0.0,
@@ -1461,8 +1525,9 @@ class _FavorisWidgetState extends State<FavorisWidget>
                                                                       .bodyMedium
                                                                       .fontStyle,
                                                                 ),
-                                                                color: Color(
-                                                                    0xFFA0A0B2),
+                                                                color: FlutterFlowTheme.of(
+                                                                        context)
+                                                                    .secondaryText,
                                                                 fontSize: 14.0,
                                                                 letterSpacing:
                                                                     0.0,
@@ -1529,15 +1594,17 @@ class _FavorisWidgetState extends State<FavorisWidget>
                                                         child: Container(
                                                           decoration:
                                                               BoxDecoration(
-                                                            color: Color(
-                                                                0xFF15151F),
+                                                            color: FlutterFlowTheme
+                                                                    .of(context)
+                                                                .secondaryBackground,
                                                             borderRadius:
                                                                 BorderRadius
                                                                     .circular(
                                                                         16.0),
                                                             border: Border.all(
-                                                              color: Color(
-                                                                  0xFF2A2A3A),
+                                                              color: FlutterFlowTheme
+                                                                      .of(context)
+                                                                  .alternate,
                                                               width: 1.0,
                                                             ),
                                                           ),
@@ -1577,8 +1644,9 @@ class _FavorisWidgetState extends State<FavorisWidget>
                                                                   child: Icon(
                                                                     Icons
                                                                         .playlist_play_rounded,
-                                                                    color: Color(
-                                                                        0xFF7C5CFF),
+                                                                    color: FlutterFlowTheme.of(
+                                                                            context)
+                                                                        .secondary,
                                                                     size: 20.0,
                                                                   ),
                                                                 ),
@@ -1606,7 +1674,7 @@ class _FavorisWidgetState extends State<FavorisWidget>
                                                                                 fontWeight: FontWeight.w600,
                                                                                 fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
                                                                               ),
-                                                                              color: Color(0xFFF5F5F7),
+                                                                              color: FlutterFlowTheme.of(context).primaryText,
                                                                               fontSize: 15.0,
                                                                               letterSpacing: 0.0,
                                                                               fontWeight: FontWeight.w600,
@@ -1629,7 +1697,7 @@ class _FavorisWidgetState extends State<FavorisWidget>
                                                                                     fontWeight: FontWeight.normal,
                                                                                     fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
                                                                                   ),
-                                                                                  color: Color(0xFFA0A0B2),
+                                                                                  color: FlutterFlowTheme.of(context).secondaryText,
                                                                                   fontSize: 12.0,
                                                                                   letterSpacing: 0.0,
                                                                                   fontWeight: FontWeight.normal,
@@ -1643,7 +1711,7 @@ class _FavorisWidgetState extends State<FavorisWidget>
                                                                                     fontWeight: FontWeight.normal,
                                                                                     fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
                                                                                   ),
-                                                                                  color: Color(0xFFA0A0B2),
+                                                                                  color: FlutterFlowTheme.of(context).secondaryText,
                                                                                   fontSize: 12.0,
                                                                                   letterSpacing: 0.0,
                                                                                   fontWeight: FontWeight.normal,
@@ -1767,8 +1835,9 @@ class _FavorisWidgetState extends State<FavorisWidget>
                                                           Icon(
                                                             Icons
                                                                 .visibility_outlined,
-                                                            color: Color(
-                                                                0xFF2ECC71),
+                                                            color: FlutterFlowTheme
+                                                                    .of(context)
+                                                                .success,
                                                             size: 16.0,
                                                           ),
                                                           Text(
@@ -1790,8 +1859,9 @@ class _FavorisWidgetState extends State<FavorisWidget>
                                                                         .bodyMedium
                                                                         .fontStyle,
                                                                   ),
-                                                                  color: Color(
-                                                                      0xFFF5F5F7),
+                                                                  color: FlutterFlowTheme.of(
+                                                                          context)
+                                                                      .primaryText,
                                                                   fontSize:
                                                                       13.0,
                                                                   letterSpacing:
@@ -1822,8 +1892,9 @@ class _FavorisWidgetState extends State<FavorisWidget>
                                                                         .bodyMedium
                                                                         .fontStyle,
                                                                   ),
-                                                                  color: Color(
-                                                                      0xFFA0A0B2),
+                                                                  color: FlutterFlowTheme.of(
+                                                                          context)
+                                                                      .secondaryText,
                                                                   fontSize:
                                                                       13.0,
                                                                   letterSpacing:
@@ -1849,12 +1920,17 @@ class _FavorisWidgetState extends State<FavorisWidget>
                                                   0)
                                                 Container(
                                                   decoration: BoxDecoration(
-                                                    color: Color(0xFF15151F),
+                                                    color: FlutterFlowTheme.of(
+                                                            context)
+                                                        .secondaryBackground,
                                                     borderRadius:
                                                         BorderRadius.circular(
                                                             16.0),
                                                     border: Border.all(
-                                                      color: Color(0xFF2A2A3A),
+                                                      color:
+                                                          FlutterFlowTheme.of(
+                                                                  context)
+                                                              .alternate,
                                                       width: 1.0,
                                                     ),
                                                   ),
@@ -1892,8 +1968,9 @@ class _FavorisWidgetState extends State<FavorisWidget>
                                                           child: Icon(
                                                             Icons
                                                                 .visibility_outlined,
-                                                            color: Color(
-                                                                0xFF2ECC71),
+                                                            color: FlutterFlowTheme
+                                                                    .of(context)
+                                                                .success,
                                                             size: 32.0,
                                                           ),
                                                         ),
@@ -1916,8 +1993,9 @@ class _FavorisWidgetState extends State<FavorisWidget>
                                                                       .headlineMedium
                                                                       .fontStyle,
                                                                 ),
-                                                                color: Color(
-                                                                    0xFFF5F5F7),
+                                                                color: FlutterFlowTheme.of(
+                                                                        context)
+                                                                    .primaryText,
                                                                 fontSize: 20.0,
                                                                 letterSpacing:
                                                                     0.0,
@@ -1949,8 +2027,9 @@ class _FavorisWidgetState extends State<FavorisWidget>
                                                                       .bodyMedium
                                                                       .fontStyle,
                                                                 ),
-                                                                color: Color(
-                                                                    0xFFA0A0B2),
+                                                                color: FlutterFlowTheme.of(
+                                                                        context)
+                                                                    .secondaryText,
                                                                 fontSize: 14.0,
                                                                 letterSpacing:
                                                                     0.0,
@@ -2029,12 +2108,17 @@ class _FavorisWidgetState extends State<FavorisWidget>
                                                         watchedListIndex];
                                                 return Container(
                                                   decoration: BoxDecoration(
-                                                    color: Color(0xFF15151F),
+                                                    color: FlutterFlowTheme.of(
+                                                            context)
+                                                        .secondaryBackground,
                                                     borderRadius:
                                                         BorderRadius.circular(
                                                             12.0),
                                                     border: Border.all(
-                                                      color: Color(0xFF2A2A3A),
+                                                      color:
+                                                          FlutterFlowTheme.of(
+                                                                  context)
+                                                              .alternate,
                                                       width: 1.0,
                                                     ),
                                                   ),
@@ -2154,7 +2238,7 @@ class _FavorisWidgetState extends State<FavorisWidget>
                                                                               Icon(
                                                                             Icons.visibility_outlined,
                                                                             color:
-                                                                                Color(0xFF2ECC71),
+                                                                                FlutterFlowTheme.of(context).success,
                                                                             size:
                                                                                 16.0,
                                                                           ),
@@ -2193,7 +2277,7 @@ class _FavorisWidgetState extends State<FavorisWidget>
                                                                                 fontWeight: FontWeight.w600,
                                                                                 fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
                                                                               ),
-                                                                              color: Color(0xFFF5F5F7),
+                                                                              color: FlutterFlowTheme.of(context).primaryText,
                                                                               fontSize: 14.0,
                                                                               letterSpacing: 0.0,
                                                                               fontWeight: FontWeight.w600,
@@ -2210,7 +2294,7 @@ class _FavorisWidgetState extends State<FavorisWidget>
                                                                                 fontWeight: FontWeight.w600,
                                                                                 fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
                                                                               ),
-                                                                              color: Color(0xFF2ECC71),
+                                                                              color: FlutterFlowTheme.of(context).success,
                                                                               fontSize: 12.0,
                                                                               letterSpacing: 0.0,
                                                                               fontWeight: FontWeight.w600,
@@ -2330,8 +2414,9 @@ class _FavorisWidgetState extends State<FavorisWidget>
                                                           Icon(
                                                             Icons
                                                                 .history_rounded,
-                                                            color: Color(
-                                                                0xFF7C5CFF),
+                                                            color: FlutterFlowTheme
+                                                                    .of(context)
+                                                                .secondary,
                                                             size: 16.0,
                                                           ),
                                                           Text(
@@ -2353,8 +2438,9 @@ class _FavorisWidgetState extends State<FavorisWidget>
                                                                         .bodyMedium
                                                                         .fontStyle,
                                                                   ),
-                                                                  color: Color(
-                                                                      0xFFF5F5F7),
+                                                                  color: FlutterFlowTheme.of(
+                                                                          context)
+                                                                      .primaryText,
                                                                   fontSize:
                                                                       13.0,
                                                                   letterSpacing:
@@ -2385,8 +2471,9 @@ class _FavorisWidgetState extends State<FavorisWidget>
                                                                         .bodyMedium
                                                                         .fontStyle,
                                                                   ),
-                                                                  color: Color(
-                                                                      0xFFA0A0B2),
+                                                                  color: FlutterFlowTheme.of(
+                                                                          context)
+                                                                      .secondaryText,
                                                                   fontSize:
                                                                       13.0,
                                                                   letterSpacing:
@@ -2412,12 +2499,17 @@ class _FavorisWidgetState extends State<FavorisWidget>
                                                   0)
                                                 Container(
                                                   decoration: BoxDecoration(
-                                                    color: Color(0xFF15151F),
+                                                    color: FlutterFlowTheme.of(
+                                                            context)
+                                                        .secondaryBackground,
                                                     borderRadius:
                                                         BorderRadius.circular(
                                                             16.0),
                                                     border: Border.all(
-                                                      color: Color(0xFF2A2A3A),
+                                                      color:
+                                                          FlutterFlowTheme.of(
+                                                                  context)
+                                                              .alternate,
                                                       width: 1.0,
                                                     ),
                                                   ),
@@ -2455,8 +2547,9 @@ class _FavorisWidgetState extends State<FavorisWidget>
                                                           child: Icon(
                                                             Icons
                                                                 .history_rounded,
-                                                            color: Color(
-                                                                0xFF7C5CFF),
+                                                            color: FlutterFlowTheme
+                                                                    .of(context)
+                                                                .secondary,
                                                             size: 32.0,
                                                           ),
                                                         ),
@@ -2479,8 +2572,9 @@ class _FavorisWidgetState extends State<FavorisWidget>
                                                                       .headlineMedium
                                                                       .fontStyle,
                                                                 ),
-                                                                color: Color(
-                                                                    0xFFF5F5F7),
+                                                                color: FlutterFlowTheme.of(
+                                                                        context)
+                                                                    .primaryText,
                                                                 fontSize: 20.0,
                                                                 letterSpacing:
                                                                     0.0,
@@ -2512,8 +2606,9 @@ class _FavorisWidgetState extends State<FavorisWidget>
                                                                       .bodyMedium
                                                                       .fontStyle,
                                                                 ),
-                                                                color: Color(
-                                                                    0xFFA0A0B2),
+                                                                color: FlutterFlowTheme.of(
+                                                                        context)
+                                                                    .secondaryText,
                                                                 fontSize: 14.0,
                                                                 letterSpacing:
                                                                     0.0,
@@ -2562,8 +2657,9 @@ class _FavorisWidgetState extends State<FavorisWidget>
                                                                         0.0),
                                                             iconColor: Color(
                                                                 0xFF14110A),
-                                                            color: Color(
-                                                                0xFFF5B841),
+                                                            color: FlutterFlowTheme
+                                                                    .of(context)
+                                                                .primary,
                                                             textStyle:
                                                                 FlutterFlowTheme.of(
                                                                         context)
@@ -2674,12 +2770,17 @@ class _FavorisWidgetState extends State<FavorisWidget>
                                                         historyListIndex];
                                                 return Container(
                                                   decoration: BoxDecoration(
-                                                    color: Color(0xFF15151F),
+                                                    color: FlutterFlowTheme.of(
+                                                            context)
+                                                        .secondaryBackground,
                                                     borderRadius:
                                                         BorderRadius.circular(
                                                             12.0),
                                                     border: Border.all(
-                                                      color: Color(0xFF2A2A3A),
+                                                      color:
+                                                          FlutterFlowTheme.of(
+                                                                  context)
+                                                              .alternate,
                                                       width: 1.0,
                                                     ),
                                                   ),
@@ -2799,7 +2900,7 @@ class _FavorisWidgetState extends State<FavorisWidget>
                                                                               Icon(
                                                                             Icons.history_rounded,
                                                                             color:
-                                                                                Color(0xFF7C5CFF),
+                                                                                FlutterFlowTheme.of(context).secondary,
                                                                             size:
                                                                                 16.0,
                                                                           ),
@@ -2838,7 +2939,7 @@ class _FavorisWidgetState extends State<FavorisWidget>
                                                                                 fontWeight: FontWeight.w600,
                                                                                 fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
                                                                               ),
-                                                                              color: Color(0xFFF5F5F7),
+                                                                              color: FlutterFlowTheme.of(context).primaryText,
                                                                               fontSize: 14.0,
                                                                               letterSpacing: 0.0,
                                                                               fontWeight: FontWeight.w600,
@@ -2855,7 +2956,7 @@ class _FavorisWidgetState extends State<FavorisWidget>
                                                                                 fontWeight: FontWeight.w600,
                                                                                 fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
                                                                               ),
-                                                                              color: Color(0xFF7C5CFF),
+                                                                              color: FlutterFlowTheme.of(context).secondary,
                                                                               fontSize: 12.0,
                                                                               letterSpacing: 0.0,
                                                                               fontWeight: FontWeight.w600,
@@ -2980,8 +3081,10 @@ class _FavorisWidgetState extends State<FavorisWidget>
                                         iconPadding:
                                             EdgeInsetsDirectional.fromSTEB(
                                                 0.0, 0.0, 0.0, 0.0),
-                                        iconColor: Color(0xFFF5F5F7),
-                                        color: Color(0xFF1E1E2A),
+                                        iconColor: FlutterFlowTheme.of(context)
+                                            .primaryText,
+                                        color: FlutterFlowTheme.of(context)
+                                            .accent4,
                                         textStyle: FlutterFlowTheme.of(context)
                                             .titleSmall
                                             .override(
@@ -2992,7 +3095,9 @@ class _FavorisWidgetState extends State<FavorisWidget>
                                                         .titleSmall
                                                         .fontStyle,
                                               ),
-                                              color: Color(0xFFF5F5F7),
+                                              color:
+                                                  FlutterFlowTheme.of(context)
+                                                      .primaryText,
                                               fontSize: 15.0,
                                               letterSpacing: 0.0,
                                               fontWeight: FontWeight.w600,
@@ -3003,7 +3108,8 @@ class _FavorisWidgetState extends State<FavorisWidget>
                                             ),
                                         elevation: 0.0,
                                         borderSide: BorderSide(
-                                          color: Color(0xFF2A2A3A),
+                                          color: FlutterFlowTheme.of(context)
+                                              .alternate,
                                           width: 1.0,
                                         ),
                                         borderRadius:

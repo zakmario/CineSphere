@@ -51,7 +51,7 @@ class _MotDePasseOublieWidgetState extends State<MotDePasseOublieWidget> {
       },
       child: Scaffold(
         key: scaffoldKey,
-        backgroundColor: Color(0xFF0B0B12),
+        backgroundColor: FlutterFlowTheme.of(context).primaryBackground,
         body: SafeArea(
           top: true,
           child: Padding(
@@ -69,14 +69,15 @@ class _MotDePasseOublieWidgetState extends State<MotDePasseOublieWidget> {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       FlutterFlowIconButton(
-                        borderColor: Color(0xFF2A2A3A),
+                        borderColor: FlutterFlowTheme.of(context).alternate,
                         borderRadius: 22.0,
                         borderWidth: 1.0,
                         buttonSize: 44.0,
-                        fillColor: Color(0xFF15151F),
+                        fillColor:
+                            FlutterFlowTheme.of(context).secondaryBackground,
                         icon: Icon(
                           Icons.arrow_back_rounded,
-                          color: Color(0xFFF5F5F7),
+                          color: FlutterFlowTheme.of(context).primaryText,
                           size: 22.0,
                         ),
                         onPressed: () async {
@@ -104,7 +105,7 @@ class _MotDePasseOublieWidgetState extends State<MotDePasseOublieWidget> {
                         alignment: AlignmentDirectional(0.0, 0.0),
                         child: Icon(
                           Icons.lock_reset_rounded,
-                          color: Color(0xFFF5B841),
+                          color: FlutterFlowTheme.of(context).primary,
                           size: 29.0,
                         ),
                       ),
@@ -124,7 +125,7 @@ class _MotDePasseOublieWidgetState extends State<MotDePasseOublieWidget> {
                                 .headlineMedium
                                 .fontStyle,
                           ),
-                          color: Color(0xFFF5F5F7),
+                          color: FlutterFlowTheme.of(context).primaryText,
                           fontSize: 26.0,
                           letterSpacing: 0.0,
                           fontWeight: FontWeight.bold,
@@ -147,7 +148,7 @@ class _MotDePasseOublieWidgetState extends State<MotDePasseOublieWidget> {
                                 .bodyMedium
                                 .fontStyle,
                           ),
-                          color: Color(0xFFA0A0B2),
+                          color: FlutterFlowTheme.of(context).secondaryText,
                           fontSize: 14.0,
                           letterSpacing: 0.0,
                           fontWeight: FontWeight.normal,
@@ -162,10 +163,10 @@ class _MotDePasseOublieWidgetState extends State<MotDePasseOublieWidget> {
                   ),
                   Container(
                     decoration: BoxDecoration(
-                      color: Color(0xFF15151F),
+                      color: FlutterFlowTheme.of(context).secondaryBackground,
                       borderRadius: BorderRadius.circular(16.0),
                       border: Border.all(
-                        color: Color(0xFF2A2A3A),
+                        color: FlutterFlowTheme.of(context).alternate,
                         width: 1.0,
                       ),
                     ),
@@ -201,7 +202,8 @@ class _MotDePasseOublieWidgetState extends State<MotDePasseOublieWidget> {
                                                   .bodyMedium
                                                   .fontStyle,
                                         ),
-                                        color: Color(0xFFA0A0B2),
+                                        color: FlutterFlowTheme.of(context)
+                                            .secondaryText,
                                         fontSize: 14.0,
                                         letterSpacing: 0.0,
                                         fontWeight: FlutterFlowTheme.of(context)
@@ -247,7 +249,8 @@ class _MotDePasseOublieWidgetState extends State<MotDePasseOublieWidget> {
                                                   .bodySmall
                                                   .fontStyle,
                                         ),
-                                        color: Color(0xFFFF4D5E),
+                                        color:
+                                            FlutterFlowTheme.of(context).error,
                                         fontSize: 12.0,
                                         letterSpacing: 0.0,
                                         fontWeight: FlutterFlowTheme.of(context)
@@ -259,40 +262,44 @@ class _MotDePasseOublieWidgetState extends State<MotDePasseOublieWidget> {
                                       ),
                                   enabledBorder: OutlineInputBorder(
                                     borderSide: BorderSide(
-                                      color: Color(0xFF2A2A3A),
+                                      color: FlutterFlowTheme.of(context)
+                                          .alternate,
                                       width: 1.0,
                                     ),
                                     borderRadius: BorderRadius.circular(12.0),
                                   ),
                                   focusedBorder: OutlineInputBorder(
                                     borderSide: BorderSide(
-                                      color: Color(0xFFF5B841),
+                                      color:
+                                          FlutterFlowTheme.of(context).primary,
                                       width: 1.0,
                                     ),
                                     borderRadius: BorderRadius.circular(12.0),
                                   ),
                                   errorBorder: OutlineInputBorder(
                                     borderSide: BorderSide(
-                                      color: Color(0xFFFF4D5E),
+                                      color: FlutterFlowTheme.of(context).error,
                                       width: 1.0,
                                     ),
                                     borderRadius: BorderRadius.circular(12.0),
                                   ),
                                   focusedErrorBorder: OutlineInputBorder(
                                     borderSide: BorderSide(
-                                      color: Color(0xFFFF4D5E),
+                                      color: FlutterFlowTheme.of(context).error,
                                       width: 1.0,
                                     ),
                                     borderRadius: BorderRadius.circular(12.0),
                                   ),
                                   filled: true,
-                                  fillColor: Color(0xFF1E1E2A),
+                                  fillColor:
+                                      FlutterFlowTheme.of(context).accent4,
                                   contentPadding:
                                       EdgeInsetsDirectional.fromSTEB(
                                           16.0, 18.0, 16.0, 18.0),
                                   prefixIcon: Icon(
                                     Icons.mail_outline_rounded,
-                                    color: Color(0xFFA0A0B2),
+                                    color: FlutterFlowTheme.of(context)
+                                        .secondaryText,
                                     size: 20.0,
                                   ),
                                 ),
@@ -307,7 +314,8 @@ class _MotDePasseOublieWidgetState extends State<MotDePasseOublieWidget> {
                                             .bodyMedium
                                             .fontStyle,
                                       ),
-                                      color: Color(0xFFF5F5F7),
+                                      color: FlutterFlowTheme.of(context)
+                                          .primaryText,
                                       fontSize: 15.0,
                                       letterSpacing: 0.0,
                                       fontWeight: FlutterFlowTheme.of(context)
@@ -318,7 +326,8 @@ class _MotDePasseOublieWidgetState extends State<MotDePasseOublieWidget> {
                                           .fontStyle,
                                     ),
                                 keyboardType: TextInputType.emailAddress,
-                                cursorColor: Color(0xFFF5B841),
+                                cursorColor:
+                                    FlutterFlowTheme.of(context).primary,
                                 validator: _model
                                     .emailFieldTextControllerValidator
                                     .asValidator(context),
@@ -380,7 +389,7 @@ class _MotDePasseOublieWidgetState extends State<MotDePasseOublieWidget> {
                               iconPadding: EdgeInsetsDirectional.fromSTEB(
                                   0.0, 0.0, 0.0, 0.0),
                               iconColor: Color(0xFF14110A),
-                              color: Color(0xFFF5B841),
+                              color: FlutterFlowTheme.of(context).primary,
                               textStyle: FlutterFlowTheme.of(context)
                                   .titleSmall
                                   .override(
@@ -424,7 +433,7 @@ class _MotDePasseOublieWidgetState extends State<MotDePasseOublieWidget> {
                                     .bodyMedium
                                     .fontStyle,
                               ),
-                              color: Color(0xFFA0A0B2),
+                              color: FlutterFlowTheme.of(context).secondaryText,
                               fontSize: 14.0,
                               letterSpacing: 0.0,
                               fontWeight: FontWeight.normal,
@@ -455,7 +464,7 @@ class _MotDePasseOublieWidgetState extends State<MotDePasseOublieWidget> {
                                         .bodyMedium
                                         .fontStyle,
                                   ),
-                                  color: Color(0xFFF5B841),
+                                  color: FlutterFlowTheme.of(context).primary,
                                   fontSize: 14.0,
                                   letterSpacing: 0.0,
                                   fontWeight: FontWeight.w600,
