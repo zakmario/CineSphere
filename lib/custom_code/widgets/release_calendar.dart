@@ -17,6 +17,7 @@ import 'package:shimmer/shimmer.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 import '/custom_code/actions/cine_local_db.dart';
+import '/custom_code/actions/cine_notification_service.dart';
 import '/custom_code/actions/cine_sync_service.dart';
 import '/custom_code/actions/firebase_service.dart';
 
@@ -42,19 +43,9 @@ class ReleaseCalendar extends StatefulWidget {
   final String? initialView;
   final Future Function(String selectedMediaId)? onItemTap;
 
-  /// Programmation des rappels (remplacée dans les tests).
-  @visibleForTesting
-  static ReminderScheduler scheduleReminder = scheduleReleaseNotification;
-
-  @visibleForTesting
-  static Future Function(String key) cancelReminder = cancelReleaseNotification;
-
   @override
   State<ReleaseCalendar> createState() => _ReleaseCalendarState();
 }
-
-typedef ReminderScheduler = Future<bool> Function(
-    String key, String title, String body, DateTime scheduledAt);
 
 // Fonctions pures (testées) ---------------------------------------------------
 
@@ -105,32 +96,7 @@ Map<DateTime, List<Map<String, dynamic>>> groupReleaseEventsByDay(
   return days;
 }
 
-/// Heure du rappel d'une sortie : la veille ([dayBefore]) ou le jour même à
-/// [hour]:[minute], jamais après la sortie. Trop tard : une heure avant la
-/// sortie ; sortie passée ou imminente : null.
-DateTime? reminderDateFor(
-  DateTime releaseAt, {
-  required DateTime now,
-  int hour = 18,
-  int minute = 0,
-  bool dayBefore = true,
-}) {
-  final release = releaseAt.toLocal();
-  var remindAt = DateTime(release.year, release.month,
-      release.day - (dayBefore ? 1 : 0), hour, minute);
-  if (remindAt.isAfter(release)) {
-    remindAt = release;
-  }
-  if (remindAt.isAfter(now)) {
-    return remindAt;
-  }
-  final lastCall = release.subtract(const Duration(hours: 1));
-  return lastCall.isAfter(now) ? lastCall : null;
-}
-
-String _two(int value) => value.toString().padLeft(2, '0');
-
-String _time(DateTime date) => '${_two(date.hour)}:${_two(date.minute)}';
+String _time(DateTime date) => notificationTimeLabel(date);
 
 /// « S2 · É5 » pour un épisode, « Série » sinon.
 String episodeLabel(Map<String, dynamic> event) {
@@ -315,8 +281,9 @@ class _ReleaseCalendarState extends State<ReleaseCalendar> {
   Future<void> _toggleReminder(Map<String, dynamic> event) async {
     final key = event['id'] as String;
     final messenger = ScaffoldMessenger.of(context)..hideCurrentSnackBar();
+    final notifications = CineNotificationService.instance;
     if (_reminders.contains(key)) {
-      await ReleaseCalendar.cancelReminder(key);
+      await notifications.cancelReminder(key);
       if (!mounted) {
         return;
       }
@@ -325,36 +292,23 @@ class _ReleaseCalendarState extends State<ReleaseCalendar> {
       return;
     }
 
-    final release = releaseDateOf(event)!.toLocal();
-    final remindAt = reminderDateFor(release, now: _local.now().toLocal());
-    if (remindAt == null) {
-      messenger.showSnackBar(const SnackBar(
-          content:
-              Text('Trop tard pour un rappel : la sortie est imminente.')));
+    final reminder = ReleaseReminder.fromEvent(event);
+    if (reminder == null) {
       return;
     }
-    final title = event['title'] as String? ?? 'Nouvelle sortie';
-    final what = isEpisodeEvent(event)
-        ? 'Nouvel épisode (${episodeLabel(event)})'
-        : 'Sortie';
-    final platform = event['platform'] as String?;
-    final ok = await ReleaseCalendar.scheduleReminder(
-      key,
-      title,
-      '$what le ${formatReleaseDate(release)} à ${_time(release)}'
-      '${platform == null || platform.isEmpty ? '' : ' sur $platform'}',
-      remindAt,
-    );
+    // Heure et jour (veille / jour J) choisis dans les réglages.
+    final result = await notifications.scheduleReminder(reminder);
     if (!mounted) {
       return;
     }
-    if (ok) {
+    final at = result.at;
+    if (at != null) {
       setState(() => _reminders.add(key));
     }
     messenger.showSnackBar(SnackBar(
-      content: Text(ok
-          ? 'Rappel le ${formatReleaseDate(remindAt)} à ${_time(remindAt)}'
-          : 'Impossible de programmer le rappel (notifications refusées ?)'),
+      content: Text(at != null
+          ? 'Rappel le ${formatReleaseDate(at)} à ${_time(at)}'
+          : result.error!),
     ));
   }
 

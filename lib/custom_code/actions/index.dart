@@ -39,3 +39,8 @@ export 'sync_sqlite_with_firestore.dart' show syncSqliteWithFirestore;
 export 'clear_local_cache.dart' show clearLocalCache;
 export 'get_local_cache_size.dart' show getLocalCacheSize;
 export 'check_internet_connection.dart' show checkInternetConnection;
+export 'cine_notification_service.dart' show cineNotificationService;
+export 'reschedule_all_notifications.dart' show rescheduleAllNotifications;
+export 'cancel_all_notifications.dart' show cancelAllNotifications;
+export 'mark_all_notifications_read.dart' show markAllNotificationsRead;
+export 'get_unread_notifications_count.dart' show getUnreadNotificationsCount;

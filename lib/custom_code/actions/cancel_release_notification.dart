@@ -8,26 +8,9 @@ import 'package:flutter/material.dart';
 // Begin custom action code
 // DO NOT REMOVE OR MODIFY THE CODE ABOVE!
 
-import 'package:flutter/foundation.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import '/custom_code/actions/cine_notification_service.dart';
 
-/// Annule un rappel programmé avec scheduleReleaseNotification.
-Future cancelReleaseNotification(String reminderKey) async {
-  final prefs = await SharedPreferences.getInstance();
-  final keys = prefs.getStringList('cs_reminders') ?? <String>[];
-  await prefs.setStringList(
-    'cs_reminders',
-    keys.where((k) => k != reminderKey).toList(),
-  );
-  if (kIsWeb) {
-    // Le Timer web vérifie la liste ci-dessus avant d'afficher quoi que ce soit.
-    return;
-  }
-  try {
-    await FlutterLocalNotificationsPlugin()
-        .cancel(id: notificationIdFromString(reminderKey));
-  } catch (e) {
-    debugPrint('cancelReleaseNotification: $e');
-  }
-}
+/// Annule un rappel programmé (scheduleReleaseNotification ou
+/// « Me prévenir »).
+Future cancelReleaseNotification(String reminderKey) =>
+    CineNotificationService.instance.cancelReminder(reminderKey);

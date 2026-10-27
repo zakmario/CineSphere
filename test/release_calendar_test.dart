@@ -1,4 +1,5 @@
 import 'package:cine_sphere/custom_code/actions/cine_local_db.dart';
+import 'package:cine_sphere/custom_code/actions/cine_notification_service.dart';
 import 'package:cine_sphere/custom_code/actions/cine_sync_service.dart';
 import 'package:cine_sphere/custom_code/actions/firebase_service.dart';
 import 'package:cine_sphere/custom_code/widgets/release_calendar.dart';
@@ -9,6 +10,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'fake_firebase_service.dart';
+import 'notification_test_utils.dart';
 import 'offline_test_utils.dart';
 
 /// Sortie `releaseEvents` au format [releaseEventRow] ; [at] en heure locale.
@@ -71,27 +73,6 @@ void main() {
       expect(days[DateTime.utc(2026, 11, 11)]!.single['id'], 'next');
     });
 
-    test('heure du rappel : la veille à 18 h par défaut', () {
-      final releaseAt = DateTime(2026, 11, 20, 21);
-      expect(reminderDateFor(releaseAt, now: DateTime(2026, 11, 10)),
-          DateTime(2026, 11, 19, 18));
-      expect(
-          reminderDateFor(releaseAt,
-              now: DateTime(2026, 11, 10), dayBefore: false, hour: 9),
-          DateTime(2026, 11, 20, 9));
-      // Rappel le jour J après l'heure de sortie : à la sortie.
-      expect(
-          reminderDateFor(DateTime(2026, 11, 20, 14),
-              now: DateTime(2026, 11, 10), dayBefore: false),
-          DateTime(2026, 11, 20, 14));
-      // La veille est passée : une heure avant.
-      expect(reminderDateFor(releaseAt, now: DateTime(2026, 11, 20, 9)),
-          DateTime(2026, 11, 20, 20));
-      // Sortie imminente : pas de rappel.
-      expect(reminderDateFor(releaseAt, now: DateTime(2026, 11, 20, 20, 30)),
-          isNull);
-    });
-
     test('libellé d\'épisode', () {
       expect(
           episodeLabel(
@@ -105,7 +86,8 @@ void main() {
     final today = DateTime(2026, 11, 10, 9);
     late MemoryLocalDb local;
     late FakeCineFirebaseService remote;
-    late List<String> scheduled;
+    late FakeNotifier notifier;
+    late FakeNotificationStore store;
     late List<String> taps;
 
     setUpAll(() => GoogleFonts.config.allowRuntimeFetching = false);
@@ -125,19 +107,22 @@ void main() {
       CineLocalDb.debugInstance = local;
       CineSyncService.debugInstance =
           CineSyncService(local: local, remote: remote, network: FakeNetwork());
-      scheduled = [];
+      notifier = FakeNotifier();
+      store = FakeNotificationStore();
+      CineNotificationService.debugInstance = CineNotificationService(
+          notifier: notifier,
+          store: store,
+          local: local,
+          remote: remote,
+          now: () => today);
       taps = [];
-      ReleaseCalendar.scheduleReminder = (key, title, body, at) async {
-        scheduled.add('$key|$title|$body|${at.toIso8601String()}');
-        return true;
-      };
-      ReleaseCalendar.cancelReminder = (key) async => scheduled.remove(key);
     });
 
     tearDown(() {
       CineFirebaseService.debugInstance = null;
       CineLocalDb.debugInstance = null;
       CineSyncService.debugInstance = null;
+      CineNotificationService.debugInstance = null;
     });
 
     Future<void> settle(WidgetTester tester) async {
@@ -237,17 +222,18 @@ void main() {
       await settle(tester);
 
       // La veille à 18 h est passée : une heure avant la sortie de 20 h.
-      expect(
-          scheduled.single,
-          startsWith(
-              'e1|Titre e1|Sortie le 10 novembre 2026 à 20:00 sur Netflix|'
-              '${DateTime(2026, 11, 10, 19).toIso8601String()}'));
+      final scheduled = notifier.scheduled.values.single;
+      expect(scheduled.title, 'Titre e1');
+      expect(scheduled.body, 'Sortie le 10 novembre 2026 à 20:00 sur Netflix');
+      expect(scheduled.at, DateTime(2026, 11, 10, 19));
+      expect(store.docs.keys, ['e1']);
       expect(find.textContaining('à 19:00'), findsOneWidget);
       expect(find.byTooltip('Supprimer le rappel'), findsOneWidget);
 
       await tester.tap(find.byTooltip('Supprimer le rappel'));
       await settle(tester);
       expect(find.text('Rappel supprimé'), findsOneWidget);
+      expect(notifier.scheduled, isEmpty);
       expect(find.text('Me prévenir'), findsNWidgets(2));
     });
 
