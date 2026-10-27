@@ -15,3 +15,5 @@ export 'trailer_player.dart' show TrailerPlayer;
 export 'reviews_section.dart' show ReviewsSection;
 export 'profile_stats.dart' show ProfileStats;
 export 'preferences_panel.dart' show PreferencesPanel;
+export 'offline_banner.dart' show OfflineBanner;
+export 'offline_screen.dart' show OfflineScreen;
