@@ -1550,6 +1550,7 @@ class _ParametresWidgetState extends State<ParametresWidget> {
                                     backgroundColor: Color(0xFF2ECC71),
                                   ),
                                 );
+                                await actions.signOutCleanup();
                                 GoRouter.of(context).prepareAuthEvent();
                                 await authManager.signOut();
                                 GoRouter.of(context).clearRedirectLocation();
@@ -1677,6 +1678,7 @@ class _ParametresWidgetState extends State<ParametresWidget> {
                   ),
                   FFButtonWidget(
                     onPressed: () async {
+                      await actions.signOutCleanup();
                       GoRouter.of(context).prepareAuthEvent();
                       await authManager.signOut();
                       GoRouter.of(context).clearRedirectLocation();

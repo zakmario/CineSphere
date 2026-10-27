@@ -1,4 +1,12 @@
 {
+  "lib/custom_code/actions/sign_out_cleanup.dart": {
+    "old_identifier_name": "signOutCleanup",
+    "new_identifier_name": "signOutCleanup",
+    "type": "A",
+    "is_deleted": false,
+    "current_checksum": "a4d2b6db35981f101c860ffb372ee82a8e39e147a105ddd682747c9f2408db8f",
+    "original_checksum": "a4d2b6db35981f101c860ffb372ee82a8e39e147a105ddd682747c9f2408db8f"
+  },
   "pubspec.yaml": {
     "old_identifier_name": "pubspec.yaml",
     "new_identifier_name": "pubspec.yaml",

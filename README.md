@@ -268,6 +268,12 @@ Les actions qui modifient des données retournent `""` en cas de succès, sinon
 le message d'erreur en français à afficher (*SnackBar*). `toggleFavorite` et
 `toggleWatched` retournent le nouvel état.
 
+**Déconnexion** (section 8) : avant *Log Out*, le bouton « Se déconnecter »
+et la suppression de compte appellent `signOutCleanup` : rappels programmés
+annulés (téléphone et web), genres et rappels du membre effacés de
+l'appareil. L'onboarding, propre à l'appareil, est gardé ; le cache SQLite
+du membre 3 s'ajoutera à ce nettoyage.
+
 **Suppression de compte** : `deleteMyAccount` vérifie que la connexion date
 de moins de 5 minutes (exigence de Firebase), efface les documents du membre
 (profil, pseudo, favoris, vus, listes, notifications, historique) puis le
@@ -362,6 +368,7 @@ convertit un film ou une série en ligne commune lue par les widgets.
 | `test/cine_models_test.dart` | modèles (`fromJson`, `toJson`, SQLite, égalité) |
 | `test/avatar_picker_test.dart` | `AvatarPicker` (galerie simulée, service en mémoire) |
 | `test/mark_watched_button_test.dart` | `MarkWatchedButton` et `FavoriteButton` : mise à jour optimiste, hors connexion, écriture refusée, boutons synchronisés |
+| `test/sign_out_cleanup_test.dart` | `signOutCleanup` : rappels et genres du membre effacés, onboarding gardé |
 | `test/preferences_panel_test.dart` | `PreferencesPanel` : genres et plateformes enregistrés en une écriture, thème, au moins un type de contenu, déconnecté |
 | `test/profile_stats_test.dart` | `computeUserStats` (films, séries, durée, genre préféré), `watchTimeLabel`, `ProfileStats` recalculé après un « vu » |
 | `test/reviews_section_test.dart` | `ReviewsSection` : état vide, publier, modifier, supprimer, like annulé si refusé, pagination |
