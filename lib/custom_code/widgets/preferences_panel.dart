@@ -141,14 +141,31 @@ class _PreferencesPanelState extends State<PreferencesPanel> {
 
   void _setTheme(ThemeMode mode) {
     setState(() => _themeMode = mode);
-    try {
-      setDarkModeSetting(context, mode);
-    } catch (_) {
-      // Hors de l'application FlutterFlow (tests) : pas de MyApp.
-    }
+    _applyTheme(mode);
     final prefs = _prefs;
     if (prefs != null) {
       _update(prefs.copyWith(themeMode: _appMode(mode)));
+    }
+  }
+
+  /// Équivaut à setDarkModeSetting de flutter_flow_util, que l'éditeur
+  /// FlutterFlow ne fournit pas au code personnalisé : appelle
+  /// setThemeMode de l'état de MyApp (main.dart), qui enregistre aussi le
+  /// choix. Sans MyApp (tests), ne fait rien.
+  void _applyTheme(ThemeMode mode) {
+    State? app;
+    context.visitAncestorElements((element) {
+      if (element is StatefulElement &&
+          element.state.runtimeType.toString() == '_MyAppState') {
+        app = element.state;
+        return false;
+      }
+      return true;
+    });
+    try {
+      (app as dynamic)?.setThemeMode(mode);
+    } catch (error) {
+      debugPrint('PreferencesPanel: $error');
     }
   }
 
