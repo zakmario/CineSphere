@@ -591,6 +591,38 @@ class _ProfilWidgetState extends State<ProfilWidget> {
                         padding:
                             EdgeInsetsDirectional.fromSTEB(4.0, 8.0, 0.0, 0.0),
                         child: Text(
+                          'MES STATISTIQUES',
+                          style:
+                              FlutterFlowTheme.of(context).bodyMedium.override(
+                                    font: GoogleFonts.inter(
+                                      fontWeight: FontWeight.w600,
+                                      fontStyle: FlutterFlowTheme.of(context)
+                                          .bodyMedium
+                                          .fontStyle,
+                                    ),
+                                    color: Color(0xFF5E5E70),
+                                    fontSize: 12.0,
+                                    letterSpacing: 0.0,
+                                    fontWeight: FontWeight.w600,
+                                    fontStyle: FlutterFlowTheme.of(context)
+                                        .bodyMedium
+                                        .fontStyle,
+                                  ),
+                        ),
+                      ),
+                      Container(
+                        height: 8.0,
+                        decoration: BoxDecoration(),
+                      ),
+                      custom_widgets.ProfileStats(),
+                      Container(
+                        height: 24.0,
+                        decoration: BoxDecoration(),
+                      ),
+                      Padding(
+                        padding:
+                            EdgeInsetsDirectional.fromSTEB(4.0, 8.0, 0.0, 0.0),
+                        child: Text(
                           'MODIFIER MON PROFIL',
                           style:
                               FlutterFlowTheme.of(context).bodyMedium.override(

@@ -270,6 +270,74 @@ Map<String, dynamic> mediaSummary(Map<String, dynamic> row) => {
       'posterUrl': row['poster_url'],
     };
 
+/// Durée retenue pour un épisode : TMDB ne la donne pas dans le catalogue.
+const int kEpisodeMinutes = 45;
+
+/// Statistiques personnelles du profil (section 6.11).
+class UserStats {
+  const UserStats({
+    this.moviesWatched = 0,
+    this.seriesWatched = 0,
+    this.seriesFollowed = 0,
+    this.watchMinutes = 0,
+    this.favoriteGenre,
+  });
+
+  final int moviesWatched;
+  final int seriesWatched;
+
+  /// Séries en favoris.
+  final int seriesFollowed;
+
+  /// Durée des films vus + épisodes des séries vues × [kEpisodeMinutes].
+  final int watchMinutes;
+
+  /// Genre le plus fréquent parmi les titres vus et favoris (null sans titre).
+  final String? favoriteGenre;
+}
+
+/// Calcule [UserStats] à partir des clés vues / favorites et des lignes du
+/// catalogue ([catalogRow], indexées par clé `movie_550`).
+UserStats computeUserStats({
+  required Iterable<String> watchedKeys,
+  required Iterable<String> favoriteKeys,
+  required Map<String, Map<String, dynamic>> catalogByKey,
+}) {
+  var movies = 0, series = 0, minutes = 0;
+  for (final key in watchedKeys.toSet()) {
+    final parsed = parseMediaKey(key);
+    if (parsed == null) {
+      continue;
+    }
+    final row = catalogByKey[key];
+    if (parsed.type == 'movie') {
+      movies++;
+      minutes += (row?['runtime_minutes'] as num?)?.toInt() ?? 0;
+    } else {
+      series++;
+      minutes += ((row?['episodes'] as num?)?.toInt() ?? 0) * kEpisodeMinutes;
+    }
+  }
+  final favorites = favoriteKeys.toSet();
+  final counts = <String, int>{};
+  for (final key in {...watchedKeys, ...favorites}) {
+    for (final genre in (catalogByKey[key]?['genres'] as List? ?? const [])) {
+      counts['$genre'] = (counts['$genre'] ?? 0) + 1;
+    }
+  }
+  final ranked = counts.entries.toList()
+    ..sort((a, b) =>
+        b.value != a.value ? b.value - a.value : a.key.compareTo(b.key));
+  return UserStats(
+    moviesWatched: movies,
+    seriesWatched: series,
+    seriesFollowed:
+        favorites.where((k) => parseMediaKey(k)?.type == 'series').length,
+    watchMinutes: minutes,
+    favoriteGenre: ranked.isEmpty ? null : ranked.first.key,
+  );
+}
+
 enum MediaFlag { favorite, watched }
 
 /// Un titre ajouté aux favoris / vus ([value] = true) ou retiré.
@@ -1032,6 +1100,24 @@ class CineFirebaseService {
         batch.update(review, {'likesCount': FieldValue.increment(liked ? -1 : 1)});
         await batch.commit();
         return !liked;
+      });
+
+  // Statistiques -----------------------------------------------------------
+
+  /// Statistiques du membre connecté (titres vus, favoris et catalogue).
+  Future<UserStats> fetchMyStats() => guard('fetchMyStats', () async {
+        // Future.wait (et non record.wait) : l'erreur reste une erreur
+        // Firestore que guard sait traduire.
+        final results = await Future.wait<Object>(
+            [mine('watched').get(), mine('favorites').get(), catalog()]);
+        final watched = results[0] as QuerySnapshot<Map<String, dynamic>>;
+        final favorites = results[1] as QuerySnapshot<Map<String, dynamic>>;
+        final rows = results[2] as List<Map<String, dynamic>>;
+        return computeUserStats(
+          watchedKeys: watched.docs.map((d) => d.id),
+          favoriteKeys: favorites.docs.map((d) => d.id),
+          catalogByKey: {for (final row in rows) row['id'] as String: row},
+        );
       });
 
   // Historique des titres consultés ----------------------------------------

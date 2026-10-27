@@ -233,7 +233,7 @@ depuis l'application.
 | `ConfirmationEmail` | `email` | « J'ai confirmé mon adresse » après le clic sur le lien reçu par e-mail, renvoi du lien | `authConfirmSignUp`, `authResendCode`, `syncTmdbCatalog` |
 | `MotDePasseOublie` | — | envoi du lien Firebase de réinitialisation | `authSendResetCode` |
 | `NouveauMotDePasse` | `email` | changement du mot de passe du membre connecté (depuis Paramètres) | `authResetPassword` |
-| `Profil` | — | photo de profil (`AvatarPicker`), pseudo et bio modifiables, nombre d'avis publiés | `updateMyProfile` |
+| `Profil` | — | photo de profil (`AvatarPicker`), pseudo et bio modifiables, nombre de favoris, listes et avis, **statistiques** (`ProfileStats`) | `updateMyProfile` |
 | `Parametres` | — | profil, favoris, changer de mot de passe, notifications, revoir l'onboarding, **actualiser le catalogue TMDB**, **supprimer mon compte** (avec confirmation), déconnexion | `initLocalNotifications`, `showInstantNotification`, `syncTmdbCatalog`, `deleteMyAccount`, *Log Out* |
 | `Favoris` | `onglet` (0 à 3) | 4 onglets : **Favoris**, **Mes listes** (création), **Vus**, **Historique** (50 dernières fiches ouvertes, « Effacer l'historique ») | `createWatchlist`, `clearViewHistory` |
 | `DetailListe` | `watchlist` (référence) | titres d'une liste, renommer, retirer un titre, supprimer la liste (avec confirmation) | `renameWatchlist`, `removeWatchlistItem`, `deleteWatchlist` |
@@ -248,6 +248,7 @@ membre 1 a ajouté ces widgets :
 | `MarkWatchedButton` | `mediaId`, `onChanged(isWatched)` | « Marquer comme vu » relié à `users/{uid}/watched` (onglet Vus) |
 | `TrailerPlayer` | `trailerUrl`, `autoPlay` | lecteur YouTube intégré, basé sur le lecteur natif de FlutterFlow (`FlutterFlowYoutubePlayer`) : le bouton « Bande-annonce » ouvre la vidéo dans une fenêtre de l'application (`showTrailerDialog`) au lieu de YouTube |
 | `AvatarPicker` | `avatarUrl`, `onChanged(avatarUrl)` | photo choisie dans la galerie, réduite à 256 px, enregistrée en base64 dans `users/{uid}.avatarData` (Storage demande le forfait payant Blaze) ; accepte aussi une URL http |
+| `ProfileStats` | — | page Profil : films vus, séries suivies (en favoris), heures de visionnage (durée des films + épisodes des séries vues × 45 min, TMDB ne donnant pas la durée d'un épisode), genre préféré (le plus fréquent parmi les titres vus et favoris) ; recalculé quand un favori ou un « vu » change |
 | `ReviewsSection` | `mediaId` | section **Avis** en bas de la fiche : note moyenne des avis publics, son avis (donner, modifier, supprimer, option privé), avis des autres membres paginés par 20, likes |
 
 La fiche note aussi chaque ouverture dans l'historique (`recordView`, onglet
@@ -358,6 +359,7 @@ convertit un film ou une série en ligne commune lue par les widgets.
 | `test/cine_models_test.dart` | modèles (`fromJson`, `toJson`, SQLite, égalité) |
 | `test/avatar_picker_test.dart` | `AvatarPicker` (galerie simulée, service en mémoire) |
 | `test/mark_watched_button_test.dart` | `MarkWatchedButton` et `FavoriteButton` : mise à jour optimiste, hors connexion, écriture refusée, boutons synchronisés |
+| `test/profile_stats_test.dart` | `computeUserStats` (films, séries, durée, genre préféré), `watchTimeLabel`, `ProfileStats` recalculé après un « vu » |
 | `test/reviews_section_test.dart` | `ReviewsSection` : état vide, publier, modifier, supprimer, like annulé si refusé, pagination |
 | `test/trailer_player_test.dart` | adresses YouTube, `TrailerPlayer` sans vidéo valide |
 | `test/sync_tmdb_catalog_test.dart` | conversion des résultats TMDB, fusion sans doublon, envoi par lots, TMDB injoignable, détails (bande-annonce, plateformes, séries terminées) |

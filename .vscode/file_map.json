@@ -1,4 +1,12 @@
 {
+  "lib/custom_code/widgets/profile_stats.dart": {
+    "old_identifier_name": "ProfileStats",
+    "new_identifier_name": "ProfileStats",
+    "type": "W",
+    "is_deleted": false,
+    "current_checksum": "e570c495a5f7ffc1fc583a968194332320f26325ec093813ea45936ad235ae6a",
+    "original_checksum": "e570c495a5f7ffc1fc583a968194332320f26325ec093813ea45936ad235ae6a"
+  },
   "lib/custom_code/actions/clear_view_history.dart": {
     "old_identifier_name": "clearViewHistory",
     "new_identifier_name": "clearViewHistory",
@@ -348,7 +356,7 @@
     "new_identifier_name": "firebaseService",
     "type": "A",
     "is_deleted": false,
-    "current_checksum": "68aef09ac85433bc1798d201bf097527173e9c9c276b91daaf877d2bcd7734c3",
-    "original_checksum": "68aef09ac85433bc1798d201bf097527173e9c9c276b91daaf877d2bcd7734c3"
+    "current_checksum": "c9448f1842da402cff0b79b4bb16a3a869c80fe3351a546e5ad8306a94fd8dcf",
+    "original_checksum": "c9448f1842da402cff0b79b4bb16a3a869c80fe3351a546e5ad8306a94fd8dcf"
   }
 }

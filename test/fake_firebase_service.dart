@@ -101,6 +101,18 @@ class FakeCineFirebaseService extends CineFirebaseService {
     avatar = bytes;
   }
 
+  /// Statistiques renvoyées par [fetchMyStats] (null = calculées à partir
+  /// de [favorites] et [watched] sans catalogue).
+  UserStats? stats;
+
+  @override
+  Future<UserStats> fetchMyStats() async {
+    calls.add('fetchMyStats');
+    return stats ??
+        computeUserStats(
+            watchedKeys: watched, favoriteKeys: favorites, catalogByKey: {});
+  }
+
   // Avis : reviews[] du plus récent au plus ancien, likes = ids likés.
   final reviews = <Review>[];
   final likedReviews = <String>{};
