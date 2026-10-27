@@ -213,6 +213,40 @@ void main() {
     });
   });
 
+  group('avis', () {
+    test('reviewFromDoc : auteur, titre visé, note, likes, date', () {
+      final review = CineFirebaseService.reviewFromDoc(_doc('r1', {
+        'userId': 'u1',
+        'username': 'zak',
+        'mediaType': 'series',
+        'tmdbId': 1399,
+        'rating': 9,
+        'content': 'Épique',
+        'isPrivate': true,
+        'likesCount': 3,
+        'createdAt': Timestamp.fromDate(DateTime.utc(2026, 10, 27, 18)),
+      }));
+      expect(review.id, 'r1');
+      expect(review.userId, 'u1');
+      expect(review.authorUsername, 'zak');
+      expect(review.seriesId, 'series_1399');
+      expect(review.movieId, isNull);
+      expect(review.rating, 9);
+      expect(review.content, 'Épique');
+      expect(review.isPrivate, isTrue);
+      expect(review.likesCount, 3);
+      expect(review.createdAt, DateTime.utc(2026, 10, 27, 18));
+    });
+
+    test('validateReview : note 1-10, 2000 caractères', () {
+      expect(validateReview(1, null), isNull);
+      expect(validateReview(10, 'x' * 2000), isNull);
+      expect(validateReview(0, null), contains('entre 1 et 10'));
+      expect(validateReview(11, null), contains('entre 1 et 10'));
+      expect(validateReview(5, 'x' * 2001), contains('2000'));
+    });
+  });
+
   test('requireUserId sans session : CineFailure unauthenticated', () {
     final service = CineFirebaseService(_UnusedDb(), currentUserId: () => null);
     expect(() => service.requireUserId,

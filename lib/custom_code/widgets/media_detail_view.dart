@@ -288,6 +288,8 @@ class _MediaDetailViewState extends State<MediaDetailView> {
             mediaId: widget.mediaId,
           ),
         ),
+        // Avis (ReviewsSection, membre 1).
+        SliverToBoxAdapter(child: ReviewsSection(mediaId: widget.mediaId)),
       ],
     );
   }

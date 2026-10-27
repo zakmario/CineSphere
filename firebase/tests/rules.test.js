@@ -9,13 +9,18 @@ import {
   initializeTestEnvironment,
 } from '@firebase/rules-unit-testing';
 import {
+  collection,
   deleteDoc,
   doc,
+  getCountFromServer,
   getDoc,
+  getDocs,
   increment,
+  query,
   serverTimestamp,
   setDoc,
   updateDoc,
+  where,
   writeBatch,
 } from 'firebase/firestore';
 
@@ -177,6 +182,27 @@ describe('reviews', () => {
     await assertFails(updateDoc(doc(bob, 'reviews', 'r1'), { likesCount: increment(2) }));
     await assertFails(updateDoc(doc(bob, 'reviews', 'r1'), { content: 'Modifié par Bob' }));
     await assertFails(setDoc(doc(bob, 'reviews', 'r1', 'likes', ALICE), { createdAt: serverTimestamp() }));
+  });
+
+  it('requêtes de l\'app : avis publics d\'un titre, et son propre avis', async () => {
+    const reviews = (d, ...filters) => query(collection(d, 'reviews'), ...filters);
+    const ofMovie = [where('mediaType', '==', 'movie'), where('tmdbId', '==', 550)];
+    await assertSucceeds(getDocs(reviews(db(BOB), ...ofMovie, where('isPrivate', '==', false))));
+    await assertSucceeds(getCountFromServer(reviews(db(BOB), ...ofMovie, where('isPrivate', '==', false))));
+    await assertFails(getDocs(reviews(db(BOB), ...ofMovie)));
+    await assertSucceeds(getDocs(reviews(db(ALICE), where('userId', '==', ALICE), ...ofMovie)));
+    await assertFails(getDocs(reviews(db(BOB), where('userId', '==', ALICE), ...ofMovie)));
+  });
+
+  it('suppression d\'un avis liké : l\'auteur efface aussi les likes des autres', async () => {
+    await seed((d) => setDoc(doc(d, 'reviews', 'r1', 'likes', BOB), { createdAt: serverTimestamp() }));
+    const carol = db('carol');
+    await assertFails(deleteDoc(doc(carol, 'reviews', 'r1', 'likes', BOB)));
+    const alice = db(ALICE);
+    const batch = writeBatch(alice);
+    batch.delete(doc(alice, 'reviews', 'r1', 'likes', BOB));
+    batch.delete(doc(alice, 'reviews', 'r1'));
+    await assertSucceeds(batch.commit());
   });
 });
 

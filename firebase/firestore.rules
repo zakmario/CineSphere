@@ -130,9 +130,14 @@ service cloud.firestore {
           || (onlyChanges(['likesCount']) && likeDelta()));
       allow delete: if isSignedIn() && resource.data.userId == request.auth.uid;
 
+      // L'auteur de l'avis peut aussi effacer les likes des autres, pour
+      // supprimer son avis ou son compte sans laisser de likes orphelins.
       match /likes/{uid} {
         allow read: if isSignedIn();
-        allow create, delete: if isOwner(uid);
+        allow create: if isOwner(uid);
+        allow delete: if isOwner(uid)
+            || (isSignedIn()
+                && get(/databases/$(database)/documents/reviews/$(reviewId)).data.userId == request.auth.uid);
       }
     }
 

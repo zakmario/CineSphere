@@ -164,8 +164,8 @@
     "new_identifier_name": "cineModels",
     "type": "A",
     "is_deleted": false,
-    "current_checksum": "50f7714e62ff983b95bd0f8cbc5ad03d57996416635c27175df17172d9650ff5",
-    "original_checksum": "50f7714e62ff983b95bd0f8cbc5ad03d57996416635c27175df17172d9650ff5"
+    "current_checksum": "9db86330f37deb420c3595d11f4fe364883b35abe5e31813a44da122368d1e70",
+    "original_checksum": "9db86330f37deb420c3595d11f4fe364883b35abe5e31813a44da122368d1e70"
   },
   "lib/custom_code/actions/auth_service.dart": {
     "old_identifier_name": "authService",
@@ -327,12 +327,20 @@
     "current_checksum": "380d2d5cb270eafef5899d8283383a58142e5a3a06e4039d45181a97ec28ea43",
     "original_checksum": "380d2d5cb270eafef5899d8283383a58142e5a3a06e4039d45181a97ec28ea43"
   },
+  "lib/custom_code/widgets/reviews_section.dart": {
+    "old_identifier_name": "ReviewsSection",
+    "new_identifier_name": "ReviewsSection",
+    "type": "W",
+    "is_deleted": false,
+    "current_checksum": "407d74ece81ab7c51077e650be6b98efed450999d4f342ef791980624e6cb872",
+    "original_checksum": "407d74ece81ab7c51077e650be6b98efed450999d4f342ef791980624e6cb872"
+  },
   "lib/custom_code/actions/firebase_service.dart": {
     "old_identifier_name": "firebaseService",
     "new_identifier_name": "firebaseService",
     "type": "A",
     "is_deleted": false,
-    "current_checksum": "601e0eb6986662e4f518d9c652654d64494f0c4997b8a55bcd3e5aa2a4e3204b",
-    "original_checksum": "601e0eb6986662e4f518d9c652654d64494f0c4997b8a55bcd3e5aa2a4e3204b"
+    "current_checksum": "7df3bf9ac70f8d42f9cd85eb58dd7f5b67ee040d4f082f76657b0bc9e87ad3cc",
+    "original_checksum": "7df3bf9ac70f8d42f9cd85eb58dd7f5b67ee040d4f082f76657b0bc9e87ad3cc"
   }
 }

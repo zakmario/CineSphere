@@ -267,6 +267,23 @@ Map<String, dynamic> mediaSummary(Map<String, dynamic> row) => {
       'posterUrl': row['poster_url'],
     };
 
+/// Note moyenne (null sans avis) et nombre des avis publics d'un titre.
+class ReviewStats {
+  const ReviewStats({required this.count, this.average});
+
+  final int count;
+  final double? average;
+}
+
+/// Une page d'avis ; [cursor] se passe à l'appel suivant.
+class ReviewPage {
+  const ReviewPage({required this.reviews, this.cursor, this.hasMore = false});
+
+  final List<Review> reviews;
+  final Object? cursor;
+  final bool hasMore;
+}
+
 /// Accès aux données de Firebase (cahier des charges, section 5).
 ///
 /// Données privées en sous-collections de `users/{uid}`, catalogue dans
@@ -788,7 +805,97 @@ class CineFirebaseService {
 
   // Avis -------------------------------------------------------------------
 
+  ({String type, int tmdbId}) _requireKey(String key) {
+    final parsed = parseMediaKey(key);
+    if (parsed == null) {
+      throw const CineFailure(CineFailureKind.invalid, 'Titre inconnu.');
+    }
+    return parsed;
+  }
+
+  /// Avis publics d'un titre, les plus récents d'abord (index reviews :
+  /// mediaType, tmdbId, isPrivate, createdAt).
+  Query<Map<String, dynamic>> _publicReviews(String key) {
+    final parsed = _requireKey(key);
+    return col('reviews')
+        .where('mediaType', isEqualTo: parsed.type)
+        .where('tmdbId', isEqualTo: parsed.tmdbId)
+        .where('isPrivate', isEqualTo: false);
+  }
+
+  /// Document `reviews/{id}` -> [Review] (pseudo de l'auteur inclus).
+  static Review reviewFromDoc(DocumentSnapshot<Object?> doc) {
+    final row = cineRow(doc);
+    final key = mediaKey('${row['media_type']}', (row['tmdb_id'] as num).toInt());
+    return Review.fromJson(row
+      ..['author_username'] = row['username']
+      ..['movie_id'] = row['media_type'] == 'movie' ? key : null
+      ..['series_id'] = row['media_type'] == 'series' ? key : null);
+  }
+
+  /// Note moyenne et nombre des avis publics d'un titre.
+  Future<ReviewStats> reviewStats(String key) => guard('reviewStats', () async {
+        final snap =
+            await _publicReviews(key).aggregate(count(), average('rating')).get();
+        return ReviewStats(
+          count: snap.count ?? 0,
+          average: snap.getAverage('rating'),
+        );
+      });
+
+  /// Une page d'avis publics ; [after] = [ReviewPage.cursor] de la page
+  /// précédente (null pour la première).
+  Future<ReviewPage> fetchReviews(String key,
+          {Object? after, int pageSize = kPageSize}) =>
+      guard('fetchReviews', () async {
+        var query = _publicReviews(key)
+            .orderBy('createdAt', descending: true)
+            .limit(pageSize);
+        if (after is DocumentSnapshot) {
+          query = query.startAfterDocument(after);
+        }
+        final snap = await query.get();
+        return ReviewPage(
+          reviews: snap.docs.map(reviewFromDoc).toList(),
+          cursor: snap.docs.isEmpty ? after : snap.docs.last,
+          hasMore: snap.docs.length == pageSize,
+        );
+      });
+
+  /// L'avis du membre connecté sur ce titre (public ou privé), ou null.
+  Future<Review?> fetchMyReview(String key) => guard('fetchMyReview', () async {
+        final userId = currentUserId;
+        if (userId == null) {
+          return null;
+        }
+        final parsed = _requireKey(key);
+        final snap = await col('reviews')
+            .where('userId', isEqualTo: userId)
+            .where('mediaType', isEqualTo: parsed.type)
+            .where('tmdbId', isEqualTo: parsed.tmdbId)
+            .limit(1)
+            .get();
+        return snap.docs.isEmpty ? null : reviewFromDoc(snap.docs.first);
+      });
+
+  /// Parmi [reviewIds], ceux que le membre connecté a likés.
+  Future<Set<String>> likedReviewIds(Iterable<String> reviewIds) =>
+      guard('likedReviewIds', () async {
+        final userId = currentUserId;
+        if (userId == null) {
+          return <String>{};
+        }
+        final ids = reviewIds.toList();
+        final likes = await Future.wait(ids.map((id) =>
+            col('reviews').doc(id).collection('likes').doc(userId).get()));
+        return {
+          for (var i = 0; i < ids.length; i++)
+            if (likes[i].exists) ids[i],
+        };
+      });
+
   /// Crée l'avis du membre sur un titre (pseudo et avatar dénormalisés).
+  /// Un seul avis par titre : le suivant se fait par [updateReview].
   Future<String> createReview(String key,
           {required int rating, String? content, bool isPrivate = false}) =>
       guard('createReview', () async {
@@ -796,9 +903,10 @@ class CineFirebaseService {
         if (error != null) {
           throw CineFailure(CineFailureKind.invalid, error);
         }
-        final parsed = parseMediaKey(key);
-        if (parsed == null) {
-          throw const CineFailure(CineFailureKind.invalid, 'Titre inconnu.');
+        final parsed = _requireKey(key);
+        if (await fetchMyReview(key) != null) {
+          throw const CineFailure(CineFailureKind.conflict,
+              'Vous avez déjà donné votre avis sur ce titre.');
         }
         final profile = (await _me.get()).data() ?? const {};
         final now = FieldValue.serverTimestamp();
@@ -816,6 +924,32 @@ class CineFirebaseService {
           'updatedAt': now,
         });
         return ref.id;
+      });
+
+  /// Modifie note, texte et visibilité de son avis (likesCount inchangé).
+  Future<void> updateReview(String reviewId,
+          {required int rating, String? content, required bool isPrivate}) =>
+      guard('updateReview', () async {
+        final error = validateReview(rating, content);
+        if (error != null) {
+          throw CineFailure(CineFailureKind.invalid, error);
+        }
+        await col('reviews').doc(reviewId).update({
+          'rating': rating,
+          'content': content?.trim(),
+          'isPrivate': isPrivate,
+          'updatedAt': FieldValue.serverTimestamp(),
+        });
+      });
+
+  /// Supprime son avis et ses likes.
+  Future<void> deleteReview(String reviewId) => guard('deleteReview', () async {
+        final review = col('reviews').doc(reviewId);
+        final likes = await review.collection('likes').get();
+        await commitInChunks([
+          for (final like in likes.docs) (batch) => batch.delete(like.reference),
+          (batch) => batch.delete(review),
+        ]);
       });
 
   /// Like / unlike : `likes/{uid}` et `likesCount` dans le même lot.
