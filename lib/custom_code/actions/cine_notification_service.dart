@@ -881,6 +881,17 @@ class CineNotificationService {
     return rescheduleAll(settings: settings);
   }
 
+  /// Réglages déjà écrits dans le profil (fin du walkthrough) : copie sur
+  /// l'appareil et reprogrammation, sans nouvelle écriture Firestore.
+  Future<int> applyPreferences(UserPreferences preferences) async {
+    final prefs = await SharedPreferences.getInstance();
+    final settings = NotificationSettings.fromPreferences(preferences,
+        dayBefore: (await _mirror(prefs)).dayBefore);
+    await prefs.setString(
+        kNotificationSettingsKey, jsonEncode(settings.toJson()));
+    return rescheduleAll(settings: settings);
+  }
+
   // Registre des rappels ------------------------------------------------
 
   Future<Map<String, ReleaseReminder>> _details(SharedPreferences prefs) async {

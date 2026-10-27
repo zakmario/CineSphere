@@ -44,3 +44,6 @@ export 'reschedule_all_notifications.dart' show rescheduleAllNotifications;
 export 'cancel_all_notifications.dart' show cancelAllNotifications;
 export 'mark_all_notifications_read.dart' show markAllNotificationsRead;
 export 'get_unread_notifications_count.dart' show getUnreadNotificationsCount;
+export 'should_start_home_tour.dart' show shouldStartHomeTour;
+export 'mark_home_tour_done.dart' show markHomeTourDone;
+export 'reset_onboarding.dart' show resetOnboarding;
