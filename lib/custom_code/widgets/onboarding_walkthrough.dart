@@ -9,12 +9,17 @@ import 'package:flutter/material.dart';
 // Begin custom widget code
 // DO NOT REMOVE OR MODIFY THE CODE ABOVE!
 
-import '/custom_code/actions/firebase_service.dart';
+import '/custom_code/actions/cine_models.dart';
+import '/custom_code/actions/complete_onboarding.dart';
 
-/// Écran de première utilisation : 4 étapes de présentation puis choix des
-/// genres préférés. À la fin, enregistre les choix (completeOnboarding) puis
-/// appelle [onFinish] — dans FlutterFlow, branchez-y la navigation vers
-/// la HomePage (et le démarrage du Walkthrough FlutterFlow de la HomePage).
+/// Écran de première utilisation (section 6.1) : 4 étapes de présentation
+/// puis l'écran Préférences (genres, plateformes, types de contenus,
+/// notifications). « Commencer » demande l'autorisation des notifications
+/// si elles sont gardées, enregistre les choix (appareil + profil
+/// Firestore) puis appelle [onFinish] — dans FlutterFlow, y brancher la
+/// navigation vers la HomePage (qui lance la visite guidée).
+///
+/// Revu depuis Paramètres, l'écran Préférences reprend les choix du profil.
 class OnboardingWalkthrough extends StatefulWidget {
   const OnboardingWalkthrough({
     super.key,
@@ -49,23 +54,23 @@ const _steps = [
       'Recevez une notification à la sortie d’un film ou d’un nouvel épisode.'),
 ];
 
-const _fallbackGenres = [
-  'Action',
-  'Animation',
-  'Comédie',
-  'Drame',
-  'Fantastique',
-  'Horreur',
-  'Science-fiction',
-  'Thriller',
-];
+const _contentTypeLabels = {
+  MediaType.movie: 'Films',
+  MediaType.series: 'Séries',
+};
 
 class _OnboardingWalkthroughState extends State<OnboardingWalkthrough> {
   final _pageController = PageController();
   int _page = 0;
-  List<String> _genres = _fallbackGenres;
-  final Set<String> _selected = {};
+  List<Genre> _genres = kFallbackGenres;
+  List<Platform> _platforms = kFallbackPlatforms;
+  final Set<int> _selectedGenres = {};
+  final Set<String> _selectedPlatforms = {};
+  final Set<MediaType> _contentTypes = {MediaType.movie, MediaType.series};
+  bool _notify = true;
   bool _saving = false;
+
+  OnboardingService get _service => OnboardingService.instance;
 
   int get _pageCount => _steps.length + 1;
   bool get _isLast => _page == _pageCount - 1;
@@ -73,7 +78,7 @@ class _OnboardingWalkthroughState extends State<OnboardingWalkthrough> {
   @override
   void initState() {
     super.initState();
-    _loadGenres();
+    _load();
   }
 
   @override
@@ -82,16 +87,27 @@ class _OnboardingWalkthroughState extends State<OnboardingWalkthrough> {
     super.dispose();
   }
 
-  Future<void> _loadGenres() async {
-    try {
-      final genres = await CineFirebaseService.instance.fetchGenres();
-      final names = genres.map((g) => g.name).toList();
-      if (mounted && names.isNotEmpty) {
-        setState(() => _genres = names);
-      }
-    } catch (_) {
-      // Hors connexion : on garde la liste par défaut.
+  Future<void> _load() async {
+    final genres = await _service.genres();
+    final platforms = await _service.platforms();
+    final saved = await _service.currentPreferences();
+    if (!mounted) {
+      return;
     }
+    setState(() {
+      _genres = genres;
+      _platforms = platforms;
+      if (saved != null && saved.onboardingCompleted) {
+        _selectedGenres.addAll(saved.favoriteGenres);
+        _selectedPlatforms.addAll(saved.favoritePlatforms);
+        if (saved.contentTypes.isNotEmpty) {
+          _contentTypes
+            ..clear()
+            ..addAll(saved.contentTypes);
+        }
+        _notify = saved.notificationsEnabled;
+      }
+    });
   }
 
   void _next() {
@@ -103,8 +119,36 @@ class _OnboardingWalkthroughState extends State<OnboardingWalkthrough> {
 
   Future<void> _finish() async {
     setState(() => _saving = true);
-    final genres = _selected.toList();
-    await completeOnboarding(genres);
+    final messenger = ScaffoldMessenger.maybeOf(context);
+    var notify = _notify;
+    if (notify) {
+      // L'étape 4 a expliqué pourquoi : on demande l'autorisation ici.
+      notify = await _service.notifications.init(requestPermission: true);
+      if (!notify) {
+        messenger?.showSnackBar(const SnackBar(
+            content: Text('Notifications refusées : vous pourrez les '
+                'activer dans Paramètres.')));
+      }
+    }
+    await _service.complete(OnboardingChoices(
+      genreIds: [
+        for (final g in _genres)
+          if (_selectedGenres.contains(g.id)) g.id,
+      ],
+      genreNames: [
+        for (final g in _genres)
+          if (_selectedGenres.contains(g.id)) g.name,
+      ],
+      platforms: [
+        for (final p in _platforms)
+          if (_selectedPlatforms.contains(p.name)) p.name,
+      ],
+      contentTypes: [
+        for (final type in MediaType.values)
+          if (_contentTypes.contains(type)) type,
+      ],
+      notificationsEnabled: notify,
+    ));
     if (!mounted) {
       return;
     }
@@ -144,7 +188,7 @@ class _OnboardingWalkthroughState extends State<OnboardingWalkthrough> {
                 onPageChanged: (i) => setState(() => _page = i),
                 children: [
                   for (final step in _steps) _buildStep(theme, step),
-                  _buildGenres(theme),
+                  _buildPreferences(theme),
                 ],
               ),
             ),
@@ -213,7 +257,31 @@ class _OnboardingWalkthroughState extends State<OnboardingWalkthrough> {
         ),
       );
 
-  Widget _buildGenres(FlutterFlowTheme theme) => SingleChildScrollView(
+  Widget _chip(FlutterFlowTheme theme, String label, bool selected,
+          ValueChanged<bool> onSelected) =>
+      FilterChip(
+        label: Text(label),
+        selected: selected,
+        selectedColor: theme.primary.withValues(alpha: 0.2),
+        checkmarkColor: theme.primary,
+        onSelected: onSelected,
+      );
+
+  Widget _section(FlutterFlowTheme theme, String title, String? hint) =>
+      Padding(
+        padding: const EdgeInsets.only(top: 24, bottom: 8),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(title, style: theme.titleMedium),
+            if (hint != null)
+              Text(hint,
+                  style: theme.bodySmall.copyWith(color: theme.secondaryText)),
+          ],
+        ),
+      );
+
+  Widget _buildPreferences(FlutterFlowTheme theme) => SingleChildScrollView(
         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -229,16 +297,66 @@ class _OnboardingWalkthroughState extends State<OnboardingWalkthrough> {
             Wrap(
               spacing: 8,
               runSpacing: 8,
-              children: _genres
-                  .map((g) => FilterChip(
-                        label: Text(g),
-                        selected: _selected.contains(g),
-                        selectedColor: theme.primary.withValues(alpha: 0.2),
-                        checkmarkColor: theme.primary,
-                        onSelected: (on) => setState(
-                            () => on ? _selected.add(g) : _selected.remove(g)),
-                      ))
-                  .toList(),
+              children: [
+                for (final g in _genres)
+                  _chip(
+                      theme,
+                      g.name,
+                      _selectedGenres.contains(g.id),
+                      (on) => setState(() => on
+                          ? _selectedGenres.add(g.id)
+                          : _selectedGenres.remove(g.id))),
+              ],
+            ),
+            _section(theme, 'Vos plateformes',
+                'Leurs nouveautés vous seront signalées.'),
+            Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              children: [
+                for (final p in _platforms)
+                  _chip(
+                      theme,
+                      p.name,
+                      _selectedPlatforms.contains(p.name),
+                      (on) => setState(() => on
+                          ? _selectedPlatforms.add(p.name)
+                          : _selectedPlatforms.remove(p.name))),
+              ],
+            ),
+            _section(theme, 'Types de contenus', null),
+            Wrap(
+              spacing: 8,
+              children: [
+                for (final MapEntry(key: type, value: label)
+                    in _contentTypeLabels.entries)
+                  _chip(
+                      theme,
+                      label,
+                      _contentTypes.contains(type),
+                      // Au moins un type reste choisi.
+                      (on) => setState(() => on
+                          ? _contentTypes.add(type)
+                          : _contentTypes.length > 1
+                              ? _contentTypes.remove(type)
+                              : null)),
+              ],
+            ),
+            const SizedBox(height: 16),
+            Material(
+              color: theme.primary.withValues(alpha: 0.08),
+              borderRadius: BorderRadius.circular(14),
+              clipBehavior: Clip.antiAlias,
+              child: SwitchListTile(
+                secondary: Icon(Icons.notifications_active_outlined,
+                    color: theme.primary),
+                title: const Text('Me prévenir des sorties'),
+                subtitle: const Text('Nouveaux épisodes de vos séries '
+                    'favorites et films de vos plateformes. L’autorisation '
+                    'vous sera demandée.'),
+                value: _notify,
+                onChanged: (v) => setState(() => _notify = v),
+              ),
             ),
           ],
         ),
