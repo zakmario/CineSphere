@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:cine_sphere/custom_code/actions/cine_local_db.dart';
 import 'package:cine_sphere/custom_code/actions/cine_sync_service.dart';
+import 'package:cine_sphere/custom_code/actions/firebase_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 /// Réseau simulé : [online] au démarrage, [set] simule un changement.
@@ -45,7 +46,46 @@ class FakeRemoteWriter {
 /// vrais délais, que `testWidgets` (temps simulé) ne laisse pas passer.
 /// SQLite lui-même est testé dans cine_local_db_test.dart.
 class MemoryLocalDb extends CineLocalDb {
-  MemoryLocalDb() : super(supported: true);
+  MemoryLocalDb({super.now}) : super(supported: true);
+
+  /// Sorties en cache (calendar_events) et date de leur enregistrement.
+  final calendar = <Map<String, dynamic>>[];
+  DateTime? calendarCachedAt;
+
+  /// Sorties renvoyées par « Firestore » ; [offline] : erreur réseau.
+  List<Map<String, dynamic>> remoteEvents = [];
+  bool offline = false;
+
+  bool _inRange(Map<String, dynamic> e, DateTime from, DateTime to) {
+    final date = releaseDateOf(e)!;
+    return !date.isBefore(from) && date.isBefore(to);
+  }
+
+  @override
+  Future<CachedValue<List<Map<String, dynamic>>>?> readCalendarRange(
+      DateTime from, DateTime to) async {
+    final rows = calendar.where((e) => _inRange(e, from, to)).toList();
+    return rows.isEmpty ? null : CachedValue(rows, calendarCachedAt ?? now());
+  }
+
+  @override
+  Future<void> replaceCalendarRange(
+      DateTime from, DateTime to, List<Map<String, dynamic>> rows) async {
+    calendar
+      ..removeWhere((e) => _inRange(e, from, to))
+      ..addAll(rows);
+    calendarCachedAt = now();
+  }
+
+  @override
+  Future<List<Map<String, dynamic>>> fetchReleaseEvents(
+      DateTime from, DateTime to) async {
+    if (offline) {
+      throw const CineFailure(
+          CineFailureKind.network, 'Pas de connexion Internet.');
+    }
+    return remoteEvents.where((e) => _inRange(e, from, to)).toList();
+  }
 
   final catalog = <Map<String, dynamic>>[];
   final favorites = <String, List<Map<String, dynamic>>>{};

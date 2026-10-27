@@ -414,4 +414,62 @@ void main() {
       expect(await db.readCatalog(), isNotNull);
     });
   });
+
+  group('calendrier par période', () {
+    final from = DateTime.utc(2026, 10, 25);
+    final to = DateTime.utc(2026, 12, 8);
+
+    test('replaceCalendarRange remplace la période, garde le reste', () async {
+      await db.saveCalendarEvents([
+        event('old', 'movie_1', DateTime.utc(2026, 11, 3)),
+        event('dec', 'movie_2', DateTime.utc(2026, 12, 20)),
+      ]);
+      await db.replaceCalendarRange(
+          from, to, [event('new', 'movie_3', DateTime.utc(2026, 11, 5))]);
+
+      final range = await db.readCalendarRange(from, to);
+      expect(range!.value.map((e) => e['id']), ['new']);
+      expect(range.cachedAt, clock);
+      expect(
+          (await db.readCalendarEvents()).map((e) => e['id']), ['new', 'dec']);
+      expect(await db.readCalendarRange(DateTime.utc(2027), DateTime.utc(2028)),
+          isNull);
+    });
+
+    test('watchCalendar : Firestore puis cache hors connexion', () async {
+      final calendar = _CalendarDb(
+          factory: databaseFactoryFfi,
+          path: inMemoryDatabasePath,
+          now: () => clock)
+        ..events = [event('e1', 'movie_1', DateTime.utc(2026, 11, 3))];
+      addTearDown(calendar.close);
+
+      final first = await calendar.watchCalendar(from, to).toList();
+      expect(first.single.source, CacheSource.network);
+
+      clock = clock.add(const Duration(days: 2));
+      calendar.offline = true;
+      final offline = await calendar.watchCalendar(from, to).toList();
+      expect(offline.last.fromCache, isTrue);
+      expect(offline.last.error, isA<CineFailure>());
+      expect(offline.last.data.single['id'], 'e1');
+    });
+  });
+}
+
+/// Base dont « Firestore » renvoie [events] (ou une erreur réseau).
+class _CalendarDb extends CineLocalDb {
+  _CalendarDb({super.factory, super.path, super.now});
+
+  List<Map<String, dynamic>> events = [];
+  bool offline = false;
+
+  @override
+  Future<List<Map<String, dynamic>>> fetchReleaseEvents(
+      DateTime from, DateTime to) async {
+    if (offline) {
+      throw const CineFailure(CineFailureKind.network, 'Hors ligne');
+    }
+    return events;
+  }
 }
