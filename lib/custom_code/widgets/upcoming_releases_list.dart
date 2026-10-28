@@ -159,13 +159,16 @@ class _UpcomingReleasesListState extends State<UpcomingReleasesList> {
 
   Future<void> _toggleReminder(Map<String, dynamic> event) async {
     final key = event['id'] as String;
-    final messenger = ScaffoldMessenger.of(context);
+    // Le nouveau message remplace le précédent au lieu d'attendre derrière.
+    final messenger = ScaffoldMessenger.of(context)..hideCurrentSnackBar();
 
     if (_reminders.contains(key)) {
       await cancelReleaseNotification(key);
+      if (!mounted) {
+        return;
+      }
       setState(() => _reminders.remove(key));
-      messenger.showSnackBar(
-          const SnackBar(content: Text('Rappel supprimé')));
+      messenger.showSnackBar(const SnackBar(content: Text('Rappel supprimé')));
       return;
     }
 
@@ -182,7 +185,7 @@ class _UpcomingReleasesListState extends State<UpcomingReleasesList> {
       key,
       mediaTitle,
       '${event['title']} — ${releaseCountdownLabel(releaseAt).toLowerCase()}'
-          '${event['platform'] != null ? ' sur ${event['platform']}' : ''}',
+      '${event['platform'] != null ? ' sur ${event['platform']}' : ''}',
       remindAt,
     );
     if (!mounted) {
@@ -283,22 +286,26 @@ class _UpcomingReleasesListState extends State<UpcomingReleasesList> {
         padding: const EdgeInsets.fromLTRB(16, 16, 16, 4),
         child: Row(
           children: [
-            Text(formatReleaseDate(date), style: theme.titleSmall),
+            // Écran étroit ou grand texte : la date se tronque, sans
+            // déborder.
+            Flexible(
+              child: Text(formatReleaseDate(date),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: theme.titleSmall),
+            ),
             const SizedBox(width: 8),
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
               decoration: BoxDecoration(
-                color: isReleaseSoon(date, 1)
-                    ? theme.primary
-                    : theme.alternate,
+                color: isReleaseSoon(date, 1) ? theme.primary : theme.alternate,
                 borderRadius: BorderRadius.circular(10),
               ),
               child: Text(
                 releaseCountdownLabel(date),
                 style: theme.bodySmall.copyWith(
-                  color: isReleaseSoon(date, 1)
-                      ? Colors.white
-                      : theme.primaryText,
+                  color:
+                      isReleaseSoon(date, 1) ? Colors.white : theme.primaryText,
                   fontWeight: FontWeight.w600,
                 ),
               ),
@@ -349,9 +356,7 @@ class _UpcomingReleasesListState extends State<UpcomingReleasesList> {
         tooltip: hasReminder ? 'Supprimer le rappel' : 'Me le rappeler',
         onPressed: () => _toggleReminder(event),
         icon: Icon(
-          hasReminder
-              ? Icons.notifications_active
-              : Icons.notifications_none,
+          hasReminder ? Icons.notifications_active : Icons.notifications_none,
           color: hasReminder ? theme.primary : theme.secondaryText,
         ),
       ),
