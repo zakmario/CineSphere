@@ -9,11 +9,13 @@ import 'package:flutter/material.dart';
 // Begin custom widget code
 // DO NOT REMOVE OR MODIFY THE CODE ABOVE!
 
-import '/flutter_flow/flutter_flow_youtube_player.dart';
+import 'package:youtube_player_iframe/youtube_player_iframe.dart';
 
 /// Lecteur de bande-annonce YouTube intégré à l'application (membre 1) :
-/// la vidéo se lit dans la page, sans ouvrir YouTube. Utilise le lecteur
-/// natif de FlutterFlow (FlutterFlowYoutubePlayer, page BandeAnnonce). [trailerUrl] est une
+/// la vidéo se lit dans la page, sans ouvrir YouTube. Utilise directement
+/// youtube_player_iframe, le paquet du lecteur natif de FlutterFlow (page
+/// BandeAnnonce) : l'analyseur de code custom de FlutterFlow ne voit pas le
+/// fichier généré flutter_flow_youtube_player.dart. [trailerUrl] est une
 /// adresse YouTube (`watch?v=`, `youtu.be/`, `embed/`).
 class TrailerPlayer extends StatefulWidget {
   const TrailerPlayer({
@@ -101,10 +103,50 @@ String? youtubeVideoId(String url) {
 }
 
 class _TrailerPlayerState extends State<TrailerPlayer> {
+  YoutubePlayerController? _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _load();
+  }
+
+  @override
+  void didUpdateWidget(TrailerPlayer oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.trailerUrl != widget.trailerUrl) {
+      _controller?.close();
+      _load();
+    }
+  }
+
+  @override
+  void dispose() {
+    _controller?.close();
+    super.dispose();
+  }
+
+  /// Mêmes réglages que le lecteur FlutterFlow (vidéos suggérées limitées à
+  /// la chaîne, domaine youtube-nocookie).
+  void _load() {
+    final id = youtubeVideoId(widget.trailerUrl);
+    _controller = id == null
+        ? null
+        : YoutubePlayerController.fromVideoId(
+            videoId: id,
+            autoPlay: widget.autoPlay,
+            params: const YoutubePlayerParams(
+              origin: 'https://www.youtube-nocookie.com',
+              showFullscreenButton: true,
+              strictRelatedVideos: true,
+            ),
+          );
+  }
+
   @override
   Widget build(BuildContext context) {
-    final id = youtubeVideoId(widget.trailerUrl);
-    final player = id == null
+    final controller = _controller;
+    final player = controller == null
         ? AspectRatio(
             aspectRatio: 16 / 9,
             child: Center(
@@ -114,13 +156,9 @@ class _TrailerPlayerState extends State<TrailerPlayer> {
                       .override(color: Colors.white70)),
             ),
           )
-        : FlutterFlowYoutubePlayer(
-            url: 'https://www.youtube.com/watch?v=$id',
-            width: widget.width,
-            height: widget.height,
-            autoPlay: widget.autoPlay,
-            showFullScreen: true,
-            strictRelatedVideos: true,
+        : YoutubePlayer(
+            controller: controller,
+            enableFullScreenOnVerticalDrag: false,
           );
     return SizedBox(
       width: widget.width,

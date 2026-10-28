@@ -9,17 +9,18 @@ import 'package:flutter/material.dart';
 // DO NOT REMOVE OR MODIFY THE CODE ABOVE!
 
 import 'dart:async';
+import 'dart:convert';
 import 'dart:developer' as developer;
 
+import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '/backend/api_requests/api_calls.dart';
 import '/custom_code/actions/firebase_service.dart';
 
-/// Met à jour le catalogue (collections `movies` et `series`) avec les listes TMDB du groupe
-/// d'appels FlutterFlow « TMDB » : tendances, films et séries populaires,
-/// prochaines sorties, séries en cours ; puis complète les fiches
-/// incomplètes avec DetailFilm / DetailSerie (membre 1).
+/// Met à jour le catalogue (collections `movies` et `series`) avec les listes
+/// TMDB (mêmes appels que le groupe FlutterFlow « TMDB ») : tendances, films
+/// et séries populaires, prochaines sorties, séries en cours ; puis complète
+/// les fiches incomplètes avec DetailFilm / DetailSerie (membre 1).
 ///
 /// [force] = false (connexion, ouverture des Paramètres) : au plus une fois
 /// toutes les 12 h, en arrière-plan ; retourne "" tout de suite.
@@ -57,9 +58,46 @@ const kTmdbLastSyncKey = 'tmdb_last_sync';
 const kTmdbSyncInterval = Duration(hours: 12);
 const kTmdbImageBase = 'https://image.tmdb.org/t/p/';
 
+/// Réponse d'un appel TMDB : [jsonBody] décodé (null si illisible) et code
+/// HTTP (-1 si TMDB est injoignable).
+class TmdbResponse {
+  const TmdbResponse(this.jsonBody, this.statusCode);
+
+  final dynamic jsonBody;
+  final int statusCode;
+
+  bool get succeeded => statusCode >= 200 && statusCode < 300;
+}
+
+/// GET sur l'API TMDB, en français, avec la clé de l'environnement
+/// FlutterFlow. Reprend les paramètres du groupe d'appels « TMDB » sans
+/// passer par le fichier généré api_calls.dart, que l'analyseur de code
+/// custom de FlutterFlow ne voit pas.
+Future<TmdbResponse> tmdbGet(String path,
+    [Map<String, String> params = const {}]) async {
+  final uri = Uri.https('api.themoviedb.org', '/3$path', {
+    'api_key': FFDevEnvironmentValues().tmdbApiKey,
+    'language': 'fr-FR',
+    ...params,
+  });
+  final http.Response response;
+  try {
+    response = await http.get(uri);
+  } catch (_) {
+    return const TmdbResponse(null, -1);
+  }
+  dynamic body;
+  try {
+    body = jsonDecode(utf8.decode(response.bodyBytes));
+  } on FormatException {
+    body = null;
+  }
+  return TmdbResponse(body, response.statusCode);
+}
+
 /// Une liste TMDB à importer ; [type] = 'movie' ou 'tv' quand la réponse
 /// ne précise pas `media_type` (tout sauf les tendances).
-typedef TmdbSource = ({String? type, Future<ApiCallResponse> Function() fetch});
+typedef TmdbSource = ({String? type, Future<TmdbResponse> Function() fetch});
 
 /// Convertit un résultat de liste TMDB en ligne pour [TmdbCatalogImporter._importToFirestore].
 /// Retourne null pour une personne ou un résultat incomplet.
@@ -150,7 +188,7 @@ class TmdbCatalogImporter {
     List<TmdbSource>? sources,
     Future<int> Function(List<Map<String, dynamic>> items)? save,
     Future<List<TmdbTitle>> Function()? loadIncomplete,
-    Future<ApiCallResponse> Function(TmdbTitle title)? fetchDetails,
+    Future<TmdbResponse> Function(TmdbTitle title)? fetchDetails,
     Future<int> Function(List<Map<String, dynamic>> items)? saveDetails,
   })  : _sources = sources ?? defaultSources,
         _save = save ?? _importToFirestore,
@@ -161,7 +199,7 @@ class TmdbCatalogImporter {
   final List<TmdbSource> _sources;
   final Future<int> Function(List<Map<String, dynamic>> items) _save;
   final Future<List<TmdbTitle>> Function() _loadIncomplete;
-  final Future<ApiCallResponse> Function(TmdbTitle title) _fetchDetails;
+  final Future<TmdbResponse> Function(TmdbTitle title) _fetchDetails;
   final Future<int> Function(List<Map<String, dynamic>> items) _saveDetails;
 
   /// Taille maximale d'un envoi à [_importToFirestore].
@@ -177,12 +215,12 @@ class TmdbCatalogImporter {
   static const detailsInParallel = 8;
 
   static List<TmdbSource> get defaultSources => [
-        (type: null, fetch: () => TmdbGroup.tendancesCall.call()),
-        (type: null, fetch: () => TmdbGroup.tendancesCall.call(page: 2)),
-        (type: 'movie', fetch: () => TmdbGroup.filmsPopulairesCall.call()),
-        (type: 'tv', fetch: () => TmdbGroup.seriesPopulairesCall.call()),
-        (type: 'movie', fetch: () => TmdbGroup.prochainesSortiesCall.call()),
-        (type: 'tv', fetch: () => TmdbGroup.seriesEnCoursCall.call()),
+        (type: null, fetch: () => tmdbGet('/trending/all/week')),
+        (type: null, fetch: () => tmdbGet('/trending/all/week', {'page': '2'})),
+        (type: 'movie', fetch: () => tmdbGet('/movie/popular', {'region': 'FR'})),
+        (type: 'tv', fetch: () => tmdbGet('/tv/popular')),
+        (type: 'movie', fetch: () => tmdbGet('/movie/upcoming', {'region': 'FR'})),
+        (type: 'tv', fetch: () => tmdbGet('/tv/on_the_air')),
       ];
 
   /// Clé `media_type:tmdb_id` -> ligne du catalogue.
@@ -330,10 +368,16 @@ class TmdbCatalogImporter {
     ];
   }
 
-  static Future<ApiCallResponse> _fetchDetailsFromTmdb(TmdbTitle title) =>
-      title.kind == 'movie'
-          ? TmdbGroup.detailFilmCall.call(movieId: title.tmdbId)
-          : TmdbGroup.detailSerieCall.call(seriesId: title.tmdbId);
+  /// DetailFilm / DetailSerie.
+  static Future<TmdbResponse> _fetchDetailsFromTmdb(TmdbTitle title) =>
+      tmdbGet(
+          title.kind == 'movie'
+              ? '/movie/${title.tmdbId}'
+              : '/tv/${title.tmdbId}',
+          const {
+            'append_to_response': 'videos,watch/providers',
+            'include_video_language': 'fr,en,null',
+          });
 
   /// Récupère toutes les listes (sans doublon) puis les enregistre.
   /// Retourne le nombre de titres créés ou mis à jour.

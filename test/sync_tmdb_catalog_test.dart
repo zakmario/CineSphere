@@ -1,10 +1,9 @@
-import 'package:cine_sphere/backend/api_requests/api_calls.dart';
 import 'package:cine_sphere/custom_code/actions/firebase_service.dart';
 import 'package:cine_sphere/custom_code/actions/sync_tmdb_catalog.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-ApiCallResponse _ok(List<Map<String, dynamic>> results) =>
-    ApiCallResponse({'page': 1, 'results': results, 'total_pages': 1}, {}, 200);
+TmdbResponse _ok(List<Map<String, dynamic>> results) =>
+    TmdbResponse({'page': 1, 'results': results, 'total_pages': 1}, 200);
 
 const _film = {
   'id': 693134,
@@ -122,7 +121,7 @@ void main() {
         sources: [
           (
             type: 'movie',
-            fetch: () async => const ApiCallResponse(null, {}, 500)
+            fetch: () async => const TmdbResponse(null, 500)
           ),
           (type: 'tv', fetch: () async => _ok([_serie])),
         ],
@@ -139,11 +138,11 @@ void main() {
         sources: [
           (
             type: 'movie',
-            fetch: () async => const ApiCallResponse(null, {}, -1)
+            fetch: () async => const TmdbResponse(null, -1)
           ),
           (
             type: 'tv',
-            fetch: () async => const ApiCallResponse({'x': 1}, {}, 401)
+            fetch: () async => const TmdbResponse({'x': 1}, 401)
           ),
         ],
         save: (items) async {
@@ -269,9 +268,9 @@ void main() {
         fetchDetails: (title) async {
           called.add('${title.kind}:${title.tmdbId}');
           return title.tmdbId == 3
-              ? const ApiCallResponse(null, {}, 404)
-              : const ApiCallResponse(
-                  {'runtime': 100, 'number_of_seasons': 2}, {}, 200);
+              ? const TmdbResponse(null, 404)
+              : const TmdbResponse(
+                  {'runtime': 100, 'number_of_seasons': 2}, 200);
         },
         saveDetails: (items) async {
           saved.addAll(items);
