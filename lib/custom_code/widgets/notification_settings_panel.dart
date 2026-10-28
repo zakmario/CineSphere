@@ -132,8 +132,8 @@ class _NotificationSettingsPanelState extends State<NotificationSettingsPanel> {
     if (settings == null) {
       return SizedBox(
         width: widget.width,
-        height: widget.height ?? 120,
-        child: const Center(child: CircularProgressIndicator()),
+        height: widget.height,
+        child: const CineSkeleton(variant: 'list', itemCount: 4),
       );
     }
     final on = settings.enabled;

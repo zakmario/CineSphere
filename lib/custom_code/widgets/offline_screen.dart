@@ -11,10 +11,9 @@ import 'package:flutter/material.dart';
 
 import 'dart:async';
 
-import 'package:shimmer/shimmer.dart';
-
 import '/custom_code/actions/cine_local_db.dart';
 import '/custom_code/actions/cine_sync_service.dart';
+import '/custom_code/widgets/fade_slide_in.dart';
 
 /// Écran « Hors connexion » (page HorsConnexion) : ce qui reste consultable
 /// grâce au cache SQLite (favoris, catalogue enregistré), les modifications
@@ -151,8 +150,9 @@ class _OfflineScreenState extends State<OfflineScreen> {
                     scrollDirection: Axis.horizontal,
                     itemCount: _favorites.length,
                     separatorBuilder: (_, __) => const SizedBox(width: 12),
-                    itemBuilder: (_, i) =>
-                        _card(_favorites[i], width: 120, height: 210),
+                    itemBuilder: (_, i) => FadeSlideIn(
+                        index: i,
+                        child: _card(_favorites[i], width: 120, height: 210)),
                   ),
                 ),
                 const SizedBox(height: 24),
@@ -179,7 +179,8 @@ class _OfflineScreenState extends State<OfflineScreen> {
                     childAspectRatio: 0.55,
                   ),
                   itemCount: _catalog.length,
-                  itemBuilder: (_, i) => _card(_catalog[i]),
+                  itemBuilder: (_, i) =>
+                      FadeSlideIn(index: i, child: _card(_catalog[i])),
                 ),
               ],
             ],
@@ -264,23 +265,6 @@ class _OfflineScreenState extends State<OfflineScreen> {
         ),
       );
 
-  Widget _buildShimmer(FlutterFlowTheme theme) => Shimmer.fromColors(
-        baseColor: theme.alternate,
-        highlightColor: theme.secondaryBackground,
-        child: Wrap(
-          spacing: 12,
-          runSpacing: 16,
-          children: List.generate(
-            6,
-            (_) => Container(
-              width: 100,
-              height: 150,
-              decoration: BoxDecoration(
-                color: theme.alternate,
-                borderRadius: BorderRadius.circular(12),
-              ),
-            ),
-          ),
-        ),
-      );
+  Widget _buildShimmer(FlutterFlowTheme theme) =>
+      const CineSkeleton(variant: 'grid', itemCount: 6);
 }

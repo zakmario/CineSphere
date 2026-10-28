@@ -9,11 +9,11 @@ import 'package:flutter/material.dart';
 // Begin custom widget code
 // DO NOT REMOVE OR MODIFY THE CODE ABOVE!
 
-import 'package:shimmer/shimmer.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
 import '/custom_code/actions/cine_notification_service.dart';
 import '/custom_code/actions/firebase_service.dart';
+import '/custom_code/widgets/fade_slide_in.dart';
 
 /// Page Notifications : notifications remises (`users/{uid}/notifications`),
 /// les plus récentes d'abord, paginées au scroll ; marquer comme lu, tout
@@ -167,7 +167,8 @@ class _NotificationsCenterState extends State<NotificationsCenter> {
       child: Column(
         children: [
           _buildHeader(theme),
-          Expanded(child: _buildBody(theme)),
+          Expanded(
+              child: cineStateSwitcher(context, _state, _buildBody(theme))),
         ],
       ),
     );
@@ -194,13 +195,24 @@ class _NotificationsCenterState extends State<NotificationsCenter> {
         ),
       );
 
+  /// État affiché (fondu enchaîné quand il change).
+  String get _state => _service.store.userId == null
+      ? 'signed-out'
+      : _items.isNotEmpty
+          ? 'list'
+          : _loading
+              ? 'loading'
+              : _error != null
+                  ? 'error'
+                  : 'empty';
+
   Widget _buildBody(FlutterFlowTheme theme) {
     if (_service.store.userId == null) {
       return _message(theme, Icons.lock_outline_rounded,
           'Connectez-vous pour voir vos notifications.');
     }
     if (_items.isEmpty && _loading) {
-      return _shimmer(theme);
+      return const CineSkeleton(variant: 'list', itemCount: 6);
     }
     if (_items.isEmpty && _error != null) {
       return _message(theme, Icons.cloud_off_rounded, _error!, retry: true);
@@ -221,7 +233,12 @@ class _NotificationsCenterState extends State<NotificationsCenter> {
         separatorBuilder: (_, __) => Divider(height: 1, color: theme.alternate),
         itemBuilder: (context, index) => index == _items.length
             ? _buildFooter(theme)
-            : _buildTile(theme, _items[index]),
+            : FadeSlideIn(
+                index: index,
+                // Pages suivantes (scroll) : pas de cascade.
+                enabled: index < _pageSize,
+                child: _buildTile(theme, _items[index]),
+              ),
       ),
     );
   }
@@ -306,21 +323,5 @@ class _NotificationsCenterState extends State<NotificationsCenter> {
               ),
             ),
         ],
-      );
-
-  Widget _shimmer(FlutterFlowTheme theme) => Shimmer.fromColors(
-        baseColor: theme.alternate,
-        highlightColor: theme.secondaryBackground,
-        child: ListView(
-          physics: const NeverScrollableScrollPhysics(),
-          children: List.generate(
-            5,
-            (_) => ListTile(
-              leading: const CircleAvatar(),
-              title: Container(height: 12, color: theme.alternate),
-              subtitle: Container(height: 10, color: theme.alternate),
-            ),
-          ),
-        ),
       );
 }

@@ -18,6 +18,7 @@ import 'package:table_calendar/table_calendar.dart';
 
 import '/custom_code/actions/cine_local_db.dart';
 import '/custom_code/actions/cine_notification_service.dart';
+import '/custom_code/widgets/fade_slide_in.dart';
 import '/custom_code/actions/cine_sync_service.dart';
 import '/custom_code/actions/firebase_service.dart';
 
@@ -526,18 +527,16 @@ class _ReleaseCalendarState extends State<ReleaseCalendar> {
                   style: theme.titleSmall,
                 ),
               )
-            : _buildEventTile(theme, events[index - 1]),
+            : FadeSlideIn(
+                index: index - 1,
+                child: _buildEventTile(theme, events[index - 1]),
+              ),
       );
     }
     return RefreshIndicator(
       onRefresh: () async => _load(force: true),
-      child: AnimatedSwitcher(
-        duration: const Duration(milliseconds: 250),
-        child: KeyedSubtree(
-          key: ValueKey('${_selectedDay.toIso8601String()}-${events.length}'),
-          child: content,
-        ),
-      ),
+      child: cineStateSwitcher(context,
+          '${_selectedDay.toIso8601String()}-${events.length}', content),
     );
   }
 

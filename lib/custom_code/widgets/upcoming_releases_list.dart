@@ -10,6 +10,7 @@ import 'package:flutter/material.dart';
 // DO NOT REMOVE OR MODIFY THE CODE ABOVE!
 
 import '/custom_code/actions/firebase_service.dart';
+import '/custom_code/widgets/fade_slide_in.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
 /// Calendrier des prochaines sorties (table `release_events`), groupé par jour,
@@ -205,13 +206,24 @@ class _UpcomingReleasesListState extends State<UpcomingReleasesList> {
     return SizedBox(
       width: widget.width,
       height: widget.height,
-      child: _buildBody(theme),
+      child: cineStateSwitcher(context, _state, _buildBody(theme)),
     );
   }
 
+  /// État affiché (fondu enchaîné quand il change).
+  String get _state => _events.isNotEmpty
+      ? 'list'
+      : _loading
+          ? 'loading'
+          : _error != null
+              ? 'error'
+              : _hasMore
+                  ? 'loading'
+                  : 'empty';
+
   Widget _buildBody(FlutterFlowTheme theme) {
-    if (_events.isEmpty && _loading) {
-      return const Center(child: CircularProgressIndicator());
+    if (_events.isEmpty && (_loading || (_error == null && _hasMore))) {
+      return const CineSkeleton(variant: 'list', itemCount: 6);
     }
     if (_events.isEmpty && _error != null) {
       return Center(
@@ -250,12 +262,17 @@ class _UpcomingReleasesListState extends State<UpcomingReleasesList> {
               previous.year != date.year ||
               previous.month != date.month ||
               previous.day != date.day;
-          return Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              if (newDay) _buildDayHeader(theme, date),
-              _buildEventTile(theme, event, date),
-            ],
+          return FadeSlideIn(
+            index: index,
+            // Pages suivantes (scroll) : pas de cascade.
+            enabled: index < _pageSize,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                if (newDay) _buildDayHeader(theme, date),
+                _buildEventTile(theme, event, date),
+              ],
+            ),
           );
         },
       ),

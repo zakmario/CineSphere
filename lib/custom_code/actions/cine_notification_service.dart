@@ -16,6 +16,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_timezone/flutter_timezone.dart';
 import 'package:go_router/go_router.dart';
+import 'package:page_transition/page_transition.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:timezone/data/latest_all.dart' as tz_data;
 import 'package:timezone/timezone.dart' as tz;
@@ -76,6 +77,13 @@ const Duration kRescheduleInterval = Duration(hours: 6);
 
 /// Nom de la route FlutterFlow de la fiche d'un titre (page du membre 2).
 const String kMediaDetailRoute = 'MediaDetail';
+
+/// Fiche ouverte depuis une notification : elle monte du bas de l'écran.
+const kNotificationOpenTransition = TransitionInfo(
+  hasTransition: true,
+  transitionType: PageTransitionType.bottomToTop,
+  duration: Duration(milliseconds: 300),
+);
 
 // Clés shared_preferences.
 const kRemindersKey = 'cs_reminders';
@@ -1192,8 +1200,11 @@ class CineNotificationService {
         return;
       }
       try {
-        GoRouter.of(context)
-            .pushNamed(kMediaDetailRoute, queryParameters: {'mediaId': key});
+        GoRouter.of(context).pushNamed(
+          kMediaDetailRoute,
+          queryParameters: {'mediaId': key},
+          extra: {kTransitionInfoKey: kNotificationOpenTransition},
+        );
       } catch (e) {
         debugPrint('ouverture de $key : $e');
       }

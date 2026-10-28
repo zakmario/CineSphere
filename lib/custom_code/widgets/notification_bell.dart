@@ -88,7 +88,15 @@ class _NotificationBellState extends State<NotificationBell> {
         icon: Badge(
           isLabelVisible: count > 0,
           backgroundColor: theme.tertiary,
-          label: Text(count > 9 ? '9+' : '$count'),
+          // Le nombre « saute » quand il change.
+          label: AnimatedSwitcher(
+            duration: (MediaQuery.maybeOf(context)?.disableAnimations ?? false)
+                ? Duration.zero
+                : const Duration(milliseconds: 220),
+            transitionBuilder: (child, animation) =>
+                ScaleTransition(scale: animation, child: child),
+            child: Text(count > 9 ? '9+' : '$count', key: ValueKey(count)),
+          ),
           child: Icon(
             count > 0
                 ? Icons.notifications_rounded
