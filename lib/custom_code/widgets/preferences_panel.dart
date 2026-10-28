@@ -179,6 +179,7 @@ class _PreferencesPanelState extends State<PreferencesPanel> {
       ..clear()
       ..clearLiveImages();
     _service.invalidateCatalog();
+    await clearLocalCache(); // cache SQLite (membre 3)
     if (mounted) {
       _snack('Cache vidé : affiches et catalogue seront rechargés.');
     }

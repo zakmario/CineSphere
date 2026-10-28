@@ -252,7 +252,7 @@ membre 1 a ajouté ces widgets :
 | `MarkWatchedButton` | `mediaId`, `onChanged(isWatched)` | « Marquer comme vu » relié à `users/{uid}/watched` (onglet Vus) |
 | `TrailerPlayer` | `trailerUrl`, `autoPlay` | lecteur YouTube intégré, basé sur le lecteur natif de FlutterFlow (`FlutterFlowYoutubePlayer`) : le bouton « Bande-annonce » ouvre la vidéo dans une fenêtre de l'application (`showTrailerDialog`) au lieu de YouTube |
 | `AvatarPicker` | `avatarUrl`, `onChanged(avatarUrl)` | photo choisie dans la galerie, réduite à 256 px, enregistrée en base64 dans `users/{uid}.avatarData` (Storage demande le forfait payant Blaze) ; accepte aussi une URL http |
-| `PreferencesPanel` | — | page Paramètres : thème **Sombre / Clair / Système** (appliqué tout de suite par FlutterFlow), types de contenus, genres et plateformes préférés (`users/{uid}.preferences`, genres recopiés pour « Pour vous »), **Vider le cache** (affiches et catalogue en mémoire ; le cache SQLite du membre 3 s'y ajoutera) |
+| `PreferencesPanel` | — | page Paramètres : thème **Sombre / Clair / Système** (appliqué tout de suite par FlutterFlow), types de contenus, genres et plateformes préférés (`users/{uid}.preferences`, genres recopiés pour « Pour vous »), **Vider le cache** (affiches, catalogue en mémoire et cache SQLite du membre 3 via `clearLocalCache`) |
 | `ProfileStats` | — | page Profil : films vus, séries suivies (en favoris), heures de visionnage (durée des films + épisodes des séries vues × 45 min, TMDB ne donnant pas la durée d'un épisode), genre préféré (le plus fréquent parmi les titres vus et favoris) ; recalculé quand un favori ou un « vu » change |
 | `ReviewsSection` | `mediaId` | section **Avis** en bas de la fiche : note moyenne des avis publics, son avis (donner, modifier, supprimer, option privé), avis des autres membres paginés par 20, likes |
 
@@ -408,7 +408,7 @@ et 5 (manifeste Android) ci-dessus, écrites avant ce travail.
 | HomePage, Walkthrough | chaque étape affiche un component qui contient `WalkthroughStep` (`title`, `text`, `stepNumber`, `stepCount`) |
 | App Bar de la HomePage | `NotificationBell` ; `onTap` → *Navigate To* Notifications |
 | Haut des pages principales | `OfflineBanner` (bandeau « Hors connexion », puis « Synchronisation en cours… », puis « À jour ») |
-| Parametres | `NotificationSettingsPanel` ; « Revoir la présentation » : `resetOnboarding` puis *Navigate To* Onboarding |
+| Parametres | fait : `NotificationSettingsPanel` dans la section Notifications (remplace « Activer les rappels » et « Tester une notification ») ; « Revoir la présentation » : `resetOnboarding` puis *Navigate To* Onboarding |
 | Parametres, déconnexion | rien à ajouter : `signOutCleanup` (déjà appelé avant *Log Out* et après la suppression du compte) appelle `clearPrivateLocalData`. En option, `getPendingChangesCount` avant, avec une confirmation si > 0 |
 | Écrans de chargement | `CineSkeleton` (`variant` : `list`, `grid`, `row`, `detail`) à la place d'un spinner |
 
