@@ -7,7 +7,6 @@ export 'home_feed.dart' show HomeFeed;
 export 'media_detail_view.dart' show MediaDetailView;
 export 'favorites_grid.dart' show FavoritesGrid;
 export 'news_feed.dart' show NewsFeed;
-export 'settings_panel.dart' show SettingsPanel;
 export 'add_to_watchlist_button.dart' show AddToWatchlistButton;
 export 'mark_watched_button.dart' show MarkWatchedButton;
 export 'avatar_picker.dart' show AvatarPicker;
