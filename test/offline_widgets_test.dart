@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:cine_sphere/custom_code/actions/cine_local_db.dart';
 import 'package:cine_sphere/custom_code/actions/cine_sync_service.dart';
 import 'package:cine_sphere/custom_code/actions/firebase_service.dart';
@@ -119,6 +121,37 @@ void main() {
       await tester.pump(kSyncedBannerDuration);
       await settle(tester);
       expect(find.text('À jour'), findsNothing);
+    });
+
+    testWidgets(
+        'toucher « Hors connexion » appelle onTap, pas pendant la '
+        'synchronisation', (tester) async {
+      final taps = <String>[];
+      final gate = Completer<void>();
+      writer.gate = gate;
+      await local.enqueuePending(favoriteOp('movie_1'));
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: Column(children: [
+            OfflineBanner(onTap: () async => taps.add('tap')),
+          ]),
+        ),
+      ));
+      await settle(tester);
+
+      expect(find.byIcon(Icons.chevron_right_rounded), findsOneWidget);
+      await tester.tap(find.text('Hors connexion'));
+      expect(taps, ['tap']);
+
+      network.set(true);
+      await settle(tester);
+      expect(find.text('Synchronisation en cours…'), findsOneWidget);
+      expect(find.byIcon(Icons.chevron_right_rounded), findsNothing);
+      await tester.tap(find.text('Connexion rétablie'));
+      expect(taps, ['tap']);
+
+      gate.complete();
+      await settle(tester);
     });
   });
 

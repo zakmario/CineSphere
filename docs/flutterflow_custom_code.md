@@ -58,7 +58,7 @@ FlutterFlow) : `cloud_firestore`, `firebase_auth`, `cached_network_image`,
 | `NotificationBell` | `iconColor` Color?, `onTap` Action | cloche avec le nombre de non lues | membre 3 |
 | `NotificationsCenter` | `pageSize` int?, `onOpenMedia(mediaId)` Action | page Notifications : remises, paginées, lu / tout marquer comme lu | membre 3 |
 | `NotificationSettingsPanel` | — | réglages des notifications (à placer dans Parametres) | membre 3 |
-| `OfflineBanner` | `onBackOnline` Action | bandeau hors connexion / synchronisation / à jour | membre 3 |
+| `OfflineBanner` | `onBackOnline` Action, `onTap` Action | bandeau hors connexion / synchronisation / à jour ; toucher « Hors connexion » → HorsConnexion | membre 3 |
 | `OfflineScreen` | `onBackOnline` Action, `onItemTap(mediaId)` Action | page Hors connexion : favoris et catalogue enregistrés, modifications en attente | membre 3 |
 | `WalkthroughStep` | `title` String (requis), `text` String (requis), `stepNumber` int?, `stepCount` int?, `onNext` Action, `onSkip` Action | bulle d'une étape de la visite guidée (Walkthrough FlutterFlow) | membre 3 |
 | `CineSkeleton` | `variant` String? (`list`, `grid`, `row`, `detail`), `itemCount` int? | squelette de chargement (shimmer) | membre 3 |

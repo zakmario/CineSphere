@@ -23,6 +23,7 @@ class OfflineBanner extends StatefulWidget {
     this.width,
     this.height,
     this.onBackOnline,
+    this.onTap,
   });
 
   final double? width;
@@ -31,6 +32,10 @@ class OfflineBanner extends StatefulWidget {
   /// Appelé quand la synchronisation est finie au retour du réseau
   /// (ex. rafraîchir la page).
   final Future Function()? onBackOnline;
+
+  /// Toucher le bandeau « Hors connexion » (ex. *Navigate To*
+  /// HorsConnexion). Sans effet pendant la synchronisation et « À jour ».
+  final Future Function()? onTap;
 
   @override
   State<OfflineBanner> createState() => _OfflineBannerState();
@@ -153,6 +158,7 @@ class _OfflineBannerState extends State<OfflineBanner> {
         ),
     };
     final visible = _phase != _BannerPhase.hidden;
+    final onTap = _phase == _BannerPhase.offline ? widget.onTap : null;
 
     return SizedBox(
       width: widget.width,
@@ -163,42 +169,50 @@ class _OfflineBannerState extends State<OfflineBanner> {
             ? const SizedBox(width: double.infinity)
             : Semantics(
                 liveRegion: true,
-                child: AnimatedContainer(
-                  key: const ValueKey('offline-banner'),
-                  duration: const Duration(milliseconds: 250),
-                  width: double.infinity,
-                  constraints: BoxConstraints(minHeight: widget.height ?? 0),
-                  color: color,
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-                  child: Row(
-                    children: [
-                      Icon(icon, color: Colors.white, size: 20),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Text(title,
-                                style: theme.bodyMedium.copyWith(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.w600)),
-                            if (subtitle != null)
-                              Text(subtitle,
-                                  style: theme.bodySmall
-                                      .copyWith(color: Colors.white)),
-                          ],
+                button: onTap != null,
+                child: GestureDetector(
+                  behavior: HitTestBehavior.opaque,
+                  onTap: onTap == null ? null : () => onTap(),
+                  child: AnimatedContainer(
+                    key: const ValueKey('offline-banner'),
+                    duration: const Duration(milliseconds: 250),
+                    width: double.infinity,
+                    constraints: BoxConstraints(minHeight: widget.height ?? 0),
+                    color: color,
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 16, vertical: 10),
+                    child: Row(
+                      children: [
+                        Icon(icon, color: Colors.white, size: 20),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(title,
+                                  style: theme.bodyMedium.copyWith(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.w600)),
+                              if (subtitle != null)
+                                Text(subtitle,
+                                    style: theme.bodySmall
+                                        .copyWith(color: Colors.white)),
+                            ],
+                          ),
                         ),
-                      ),
-                      if (_phase == _BannerPhase.syncing)
-                        const SizedBox(
-                          width: 16,
-                          height: 16,
-                          child: CircularProgressIndicator(
-                              strokeWidth: 2, color: Colors.white),
-                        ),
-                    ],
+                        if (_phase == _BannerPhase.syncing)
+                          const SizedBox(
+                            width: 16,
+                            height: 16,
+                            child: CircularProgressIndicator(
+                                strokeWidth: 2, color: Colors.white),
+                          ),
+                        if (onTap != null)
+                          const Icon(Icons.chevron_right_rounded,
+                              color: Colors.white, size: 22),
+                      ],
+                    ),
                   ),
                 ),
               ),

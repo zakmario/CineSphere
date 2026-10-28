@@ -31,7 +31,11 @@ class FakeRemoteWriter {
   final errors = <String, String>{};
   List<Map<String, dynamic>> favorites = [];
 
+  /// Si présent, chaque envoi attend sa fin (synchronisation « en cours »).
+  Completer<void>? gate;
+
   Future<void> call(PendingSyncOperation operation) async {
+    await gate?.future;
     final code = errors[operation.docId];
     if (code != null) {
       throw FirebaseException(plugin: 'cloud_firestore', code: code);

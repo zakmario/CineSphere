@@ -78,6 +78,12 @@ class _CalendrierWidgetState extends State<CalendrierWidget> {
           child: Column(
             mainAxisSize: MainAxisSize.max,
             children: [
+              custom_widgets.OfflineBanner(
+                width: double.infinity,
+                onTap: () async {
+                  context.pushNamed(HorsConnexionWidget.routeName);
+                },
+              ),
               Expanded(
                 child: custom_widgets.ReleaseCalendar(
                   initialView: 'month',
