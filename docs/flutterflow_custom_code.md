@@ -92,7 +92,7 @@ sinon le message d'erreur en français (à afficher dans une *SnackBar*).
 | `cineModels` | → int | version du schéma (fichier des modèles Dart) | commun |
 | `updateMyProfile` | `username`, `bio` → String | profil | membre 1 |
 | `deleteMyAccount` | → String | suppression du compte et des données | membre 1 |
-| `signOutCleanup` | → (rien) | à appeler avant *Log Out* : rappels annulés, données locales du membre effacées | membre 1 |
+| `signOutCleanup` | → (rien) | à appeler avant *Log Out* : appelle `clearPrivateLocalData` (envoi des modifications hors connexion, notifications annulées, données privées SQLite effacées), puis efface les préférences locales du membre | membre 1 (+ membre 3) |
 | `toggleFavorite` | `mediaId` → bool | ajoute / retire un favori | membre 1 |
 | `toggleWatched` | `mediaId` → bool | marque / retire « vu » | membre 1 |
 | `createWatchlist` | `name` → String | nouvelle liste | membre 1 |
@@ -125,7 +125,7 @@ sinon le message d'erreur en français (à afficher dans une *SnackBar*).
 | `getLocalCacheSize` | → String | taille du cache (« 1,2 Mo ») | membre 3 |
 | `clearLocalCache` | → String | vide le cache public | membre 3 |
 | `getPendingChangesCount` | → int | modifications hors connexion pas encore envoyées | membre 3 |
-| `clearPrivateLocalData` | → int | à appeler avant *Log Out* : envoie, puis efface les données privées et les notifications ; nombre de modifications perdues | membre 3 |
+| `clearPrivateLocalData` | → int | appelée par `signOutCleanup` : envoie, puis efface les données privées et les notifications ; nombre de modifications perdues | membre 3 |
 
 ## Fonctions
 

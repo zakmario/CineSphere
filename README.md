@@ -409,7 +409,7 @@ et 5 (manifeste Android) ci-dessus, écrites avant ce travail.
 | App Bar de la HomePage | `NotificationBell` ; `onTap` → *Navigate To* Notifications |
 | Haut des pages principales | `OfflineBanner` (bandeau « Hors connexion », puis « Synchronisation en cours… », puis « À jour ») |
 | Parametres | `NotificationSettingsPanel` ; « Revoir la présentation » : `resetOnboarding` puis *Navigate To* Onboarding |
-| Parametres, déconnexion | `getPendingChangesCount` (confirmation si > 0), puis `clearPrivateLocalData`, `signOutCleanup`, *Log Out* |
+| Parametres, déconnexion | rien à ajouter : `signOutCleanup` (déjà appelé avant *Log Out* et après la suppression du compte) appelle `clearPrivateLocalData`. En option, `getPendingChangesCount` avant, avec une confirmation si > 0 |
 | Écrans de chargement | `CineSkeleton` (`variant` : `list`, `grid`, `row`, `detail`) à la place d'un spinner |
 
 SQLite et les notifications programmées ne fonctionnent pas en *Test Mode*
@@ -559,11 +559,13 @@ disparaissent au redémarrage du téléphone :
 
 ### Déconnexion
 
-`clearPrivateLocalData`, à appeler **avant** *Log Out*, pendant que le membre
-est encore connecté :
+`clearPrivateLocalData` est appelée par `signOutCleanup` (membre 1, avec son
+accord), que la page Parametres lance avant *Log Out* et après la
+suppression du compte. Elle tourne donc pendant que le membre est encore
+connecté :
 
 1. envoie les modifications faites hors connexion, si le réseau répond
-   (6 s au plus) ;
+   (6 s au plus) et si le compte existe encore ;
 2. annule toutes les notifications programmées et efface les rappels et
    réglages gardés sur le téléphone ;
 3. efface les données privées SQLite (voir le tableau plus haut).
@@ -589,7 +591,7 @@ flutter test                 # toute la suite
 flutter test --coverage      # couverture dans coverage/lcov.info
 ```
 
-153 tests pour le domaine du membre 3. SQLite est testé sur une vraie base
+154 tests pour le domaine du membre 3. SQLite est testé sur une vraie base
 en mémoire (`sqflite_common_ffi`). Dans les tests de widgets, sqflite se
 bloque : on y utilise `MemoryLocalDb` (`test/offline_test_utils.dart`).
 Firestore, le réseau et le plugin de notifications sont remplacés par des
@@ -610,7 +612,7 @@ faux (`FakeCineFirebaseService`, `FakeNetwork`, `FakeRemoteWriter`,
 | `test/notification_widgets_test.dart` | 14 | `NotificationBell`, `NotificationsCenter`, `NotificationSettingsPanel` |
 | `test/onboarding_test.dart` | 16 | flag sur le téléphone et dans Firestore, hors connexion, écran Préférences, autorisation, visite guidée, `WalkthroughStep` |
 | `test/ux_test.dart` | 14 | `CineSkeleton`, `FadeSlideIn`, `cineStateSwitcher`, réduction des animations |
-| `test/clear_private_local_data_test.dart` | 4 | déconnexion en ligne, hors connexion, envoi refusé, web |
+| `test/clear_private_local_data_test.dart` | 5 | déconnexion en ligne, hors connexion, envoi refusé, compte supprimé, web |
 
 Non couverts volontairement : le vrai réseau et les écritures réelles dans
 Firestore (remplacés par des faux), et les pages générées par FlutterFlow
