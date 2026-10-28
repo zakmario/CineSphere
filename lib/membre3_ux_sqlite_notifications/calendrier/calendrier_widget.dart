@@ -79,7 +79,8 @@ class _CalendrierWidgetState extends State<CalendrierWidget> {
             mainAxisSize: MainAxisSize.max,
             children: [
               Expanded(
-                child: custom_widgets.UpcomingReleasesList(
+                child: custom_widgets.ReleaseCalendar(
+                  initialView: 'month',
                   onItemTap: (selectedMediaId) async {
                     context.pushNamed(
                       MediaDetailWidget.routeName,
