@@ -47,3 +47,5 @@ export 'get_unread_notifications_count.dart' show getUnreadNotificationsCount;
 export 'should_start_home_tour.dart' show shouldStartHomeTour;
 export 'mark_home_tour_done.dart' show markHomeTourDone;
 export 'reset_onboarding.dart' show resetOnboarding;
+export 'clear_private_local_data.dart' show clearPrivateLocalData;
+export 'get_pending_changes_count.dart' show getPendingChangesCount;

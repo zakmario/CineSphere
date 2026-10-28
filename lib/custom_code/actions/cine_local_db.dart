@@ -986,6 +986,11 @@ class CineLocalDb {
         return size;
       });
 
+  /// Vide les sections d'accueil enregistrées : « Pour vous » dépend des
+  /// genres du membre connecté.
+  Future<void> clearPersonalCache() =>
+      _use(null, (db) => db.delete('cached_home_sections'));
+
   /// Efface les données privées (favoris, recherches, file d'attente) de
   /// [userId], ou de tous les membres si null (déconnexion).
   Future<void> clearPrivateData({String? userId}) => _use(null, (db) async {
