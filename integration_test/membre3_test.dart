@@ -5,6 +5,17 @@
 //
 //   flutter test integration_test/membre3_test.dart -d <id de l'appareil>
 //
+// Le paquet integration_test n'est pas dans pubspec.yaml : FlutterFlow ne
+// lit pas les dépendances « sdk: flutter » et affiche alors l'erreur
+// « Unrecognized dependency format ». L'ajouter le temps du test, sans le
+// pousser vers FlutterFlow ni le commiter :
+//
+//   dev_dependencies:
+//     integration_test:
+//       sdk: flutter
+//
+// puis `git checkout pubspec.yaml pubspec.lock` une fois le test terminé.
+//
 // Contrairement aux tests de test/, tout tourne sur l'appareil : vraie base
 // sqflite (fichier séparé de celle de l'application) et vrai plugin
 // flutter_local_notifications (Android). Firestore reste remplacé par les

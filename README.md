@@ -621,11 +621,21 @@ Firestore (remplacés par des faux), et les pages générées par FlutterFlow
 (leurs widgets sont testés).
 
 **Test d'intégration** (sur un émulateur ou un téléphone Android, pas sur
-le web) :
+le web). Le paquet `integration_test` n'est pas dans `pubspec.yaml` :
+FlutterFlow ne lit pas les dépendances `sdk: flutter` (erreur « Unrecognized
+dependency format »). L'ajouter le temps du test, sans le pousser vers
+FlutterFlow ni le commiter :
+
+```yaml
+dev_dependencies:
+  integration_test:
+    sdk: flutter
+```
 
 ```bash
 flutter devices                                          # id de l'appareil
 flutter test integration_test/membre3_test.dart -d <id>
+git checkout pubspec.yaml pubspec.lock                   # après le test
 ```
 
 `integration_test/membre3_test.dart` (5 tests) utilise la vraie base sqflite

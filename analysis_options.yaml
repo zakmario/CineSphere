@@ -11,6 +11,9 @@ analyzer:
     - ios/**
     - web/**
     - ff_flutter_sdk/**
+    # Le paquet integration_test n'est ajouté au pubspec que le temps de
+    # lancer ce test (FlutterFlow ne lit pas « sdk: flutter »).
+    - integration_test/**
     # Code généré par FlutterFlow (régénéré à chaque export, non modifiable).
     - lib/main.dart
     - lib/index.dart
