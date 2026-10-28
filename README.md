@@ -118,7 +118,6 @@ Liste complète (signatures, paramètres, ajout dans l'éditeur) :
 | `MediaDetailView` | `mediaId` | Page détail complète : couverture, infos, genres, plateformes, synopsis, favori, bande-annonce, prochaines diffusions |
 | `FavoritesGrid` | `pageSize`, `onItemTap(tappedMediaId)` | Favoris de l'utilisateur, paginés |
 | `NewsFeed` | `pageSize`, `onItemTap(linkedMediaId)` | Actualités paginées |
-| `SettingsPanel` | `onReplayOnboarding()`, `onSignOut()` | Notifications (activer, tester, rappels), genres, revoir le walkthrough, déconnexion |
 
 ### Actions
 
@@ -148,7 +147,7 @@ Column de la page.
 | **Calendrier** | `UpcomingReleasesList` | `onItemTap` → MediaDetail (`selectedMediaId`) |
 | **Favoris** | `FavoritesGrid` | `onItemTap` → MediaDetail (`tappedMediaId`) |
 | **Actualites** | `NewsFeed` | `onItemTap` → MediaDetail (`linkedMediaId`) |
-| **Parametres** | `SettingsPanel` | `onReplayOnboarding` → Onboarding ; `onSignOut` → *Log Out* puis Login |
+| **Parametres** | page native (membre 1) + `NotificationSettingsPanel` | voir les sections Membre 1 et Membre 3 |
 
 Navigation principale : **Nav Bar** FlutterFlow (*App Settings → Nav Bar &
 App Bar*) avec HomePage, Catalogue, Calendrier, Favoris, Parametres. Dans

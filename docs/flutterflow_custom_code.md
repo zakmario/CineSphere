@@ -63,7 +63,6 @@ FlutterFlow) : `cloud_firestore`, `firebase_auth`, `cached_network_image`,
 | `WalkthroughStep` | `title` String (requis), `text` String (requis), `stepNumber` int?, `stepCount` int?, `onNext` Action, `onSkip` Action | bulle d'une étape de la visite guidée (Walkthrough FlutterFlow) | membre 3 |
 | `CineSkeleton` | `variant` String? (`list`, `grid`, `row`, `detail`), `itemCount` int? | squelette de chargement (shimmer) | membre 3 |
 | `FadeSlideIn` | `child` Widget (requis), `index` int?, `enabled` bool? | apparition en cascade (utilisé depuis le code) | membre 3 |
-| `SettingsPanel` | `onReplayOnboarding` Action, `onSignOut` Action | ancien panneau de réglages (remplacé par la page Parametres native et `NotificationSettingsPanel`) ; utilisé par aucune page | membre 3 |
 | `FavoriteButton` | `mediaId` String (requis), `iconSize` double?, `onChanged(isFavorite)` Action | cœur, mise à jour optimiste | membre 1 |
 | `FavoritesGrid` | `pageSize` int?, `onItemTap(tappedMediaId)` Action | grille des favoris paginée | membre 1 |
 | `AddToWatchlistButton` | `mediaId` String (requis) | ajout à une liste (feuille du bas) | membre 1 |

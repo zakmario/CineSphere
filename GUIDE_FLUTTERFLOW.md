@@ -101,12 +101,15 @@ de la page suivante sera ainsi bien visible en test.
 
 ## Étape 7 — Page Parametres (3 min)
 
-1. **+** → **Blank**, nom `Parametres`, puis glissez **SettingsPanel** et
-   cochez **Expanded**.
-2. **onReplayOnboarding** → **Navigate To** → `Onboarding`.
-3. **onSignOut** → **+ Add Action** → **Log Out** (catégorie
-   *Authentication*). Puis **+ Add Action** en dessous → **Navigate To** →
-   `Login`.
+La page `Parametres` est construite par le membre 1 (page native ; l'ancien
+widget `SettingsPanel` a été supprimé).
+
+1. Glissez **NotificationSettingsPanel** dans la page (réglages des
+   notifications).
+2. « Revoir la présentation » → action **resetOnboarding**, puis
+   **Navigate To** → `Onboarding`.
+3. « Se déconnecter » → **signOutCleanup**, puis **Log Out** (catégorie
+   *Authentication*), puis **Navigate To** → `Login`.
 
 ## Étape 8 — Barre de navigation (3 min)
 
