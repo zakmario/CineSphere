@@ -16,6 +16,7 @@ import '/custom_code/actions/cine_local_db.dart';
 import '/custom_code/actions/cine_notification_service.dart';
 import '/custom_code/actions/cine_sync_service.dart';
 import '/custom_code/actions/complete_onboarding.dart';
+import '/custom_code/actions/firebase_service.dart';
 
 /// Temps laissé aux modifications hors connexion pour partir avant la
 /// déconnexion.
@@ -47,7 +48,8 @@ Future<int> clearPrivateLocalData() async {
 
   if (local.isSupported) {
     try {
-      if (await local.pendingCount() > 0) {
+      // Compte supprimé ou déjà déconnecté : rien ne peut plus être envoyé.
+      if (_signedIn() && await local.pendingCount() > 0) {
         final sync = CineSyncService.instance;
         if (await sync.checkConnection()) {
           await sync.syncNow().timeout(kLogoutSyncTimeout);
@@ -76,4 +78,12 @@ Future<int> clearPrivateLocalData() async {
     }
   }
   return lost;
+}
+
+bool _signedIn() {
+  try {
+    return CineFirebaseService.instance.currentUserId != null;
+  } catch (_) {
+    return false; // Firebase pas initialisé.
+  }
 }

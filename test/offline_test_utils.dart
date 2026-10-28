@@ -151,6 +151,19 @@ class MemoryLocalDb extends CineLocalDb {
 
   @override
   Future<void> markPendingFailed(int id, Object error) async {}
+
+  @override
+  Future<void> clearPrivateData({String? userId}) async {
+    if (userId == null) {
+      favorites.clear();
+    } else {
+      favorites.remove(userId);
+    }
+    pending.removeWhere((o) => userId == null || o.userId == userId);
+  }
+
+  @override
+  Future<void> clearPersonalCache() async {}
 }
 
 PendingSyncOperation favoriteOp(

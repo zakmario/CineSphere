@@ -62,6 +62,7 @@ void main() {
       writer: writer.call,
       fetchFavorites: writer.fetchFavorites,
     );
+    CineFirebaseService.debugInstance = remote;
     CineLocalDb.debugInstance = local;
     CineSyncService.debugInstance = sync;
     CineNotificationService.debugInstance = CineNotificationService(
@@ -93,6 +94,7 @@ void main() {
   });
 
   tearDown(() async {
+    CineFirebaseService.debugInstance = null;
     CineLocalDb.debugInstance = null;
     CineSyncService.debugInstance = null;
     CineNotificationService.debugInstance = null;
@@ -145,6 +147,14 @@ void main() {
     // Erreur non réseau : l'opération reste en file (nouvel essai plus tard).
     final lost = await clearPrivateLocalData();
     expect(lost, 1);
+    expect(writer.sent, isEmpty);
+    await expectPrivateDataCleared();
+  });
+
+  test('compte supprimé : rien n\'est envoyé, tout est effacé', () async {
+    remote.userId = null;
+    expect(await clearPrivateLocalData(), 1);
+
     expect(writer.sent, isEmpty);
     await expectPrivateDataCleared();
   });
