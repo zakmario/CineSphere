@@ -403,11 +403,11 @@ et 5 (manifeste Android) ci-dessus, écrites avant ce travail.
 
 | Où | Quoi |
 |---|---|
-| HomePage, *On Page Load* | action `cineNotificationService` (prépare les notifications, ouvre la fiche si une notification a lancé l'app, reprogramme les rappels) |
+| HomePage, *On Page Load* | fait : action `cineNotificationService` (prépare les notifications, ouvre la fiche si une notification a lancé l'app, reprogramme les rappels) |
 | HomePage, *On Page Load* | `shouldStartHomeTour` → si vrai, *Start Walkthrough* ; *On Walkthrough Complete / Skip* → `markHomeTourDone` |
 | HomePage, Walkthrough | chaque étape affiche un component qui contient `WalkthroughStep` (`title`, `text`, `stepNumber`, `stepCount`) |
-| App Bar de la HomePage | `NotificationBell` ; `onTap` → *Navigate To* Notifications |
-| Haut des pages principales | `OfflineBanner` (bandeau « Hors connexion », puis « Synchronisation en cours… », puis « À jour ») |
+| App Bar de la HomePage | fait : `NotificationBell` ; `onTap` → *Navigate To* Notifications (*Right to Left* 250 ms) |
+| Haut des pages principales | `OfflineBanner` (bandeau « Hors connexion », puis « Synchronisation en cours… », puis « À jour ») ; `onTap` → *Navigate To* HorsConnexion. Fait sur HomePage et Calendrier |
 | Parametres | fait : `NotificationSettingsPanel` dans la section Notifications (remplace « Activer les rappels » et « Tester une notification ») ; « Revoir la présentation » : `resetOnboarding` puis *Navigate To* Onboarding |
 | Parametres, déconnexion | rien à ajouter : `signOutCleanup` (déjà appelé avant *Log Out* et après la suppression du compte) appelle `clearPrivateLocalData`. En option, `getPendingChangesCount` avant, avec une confirmation si > 0 |
 | Écrans de chargement | `CineSkeleton` (`variant` : `list`, `grid`, `row`, `detail`) à la place d'un spinner |
@@ -593,7 +593,7 @@ flutter test                 # toute la suite
 flutter test --coverage      # couverture dans coverage/lcov.info
 ```
 
-154 tests pour le domaine du membre 3. SQLite est testé sur une vraie base
+155 tests pour le domaine du membre 3. SQLite est testé sur une vraie base
 en mémoire (`sqflite_common_ffi`). Dans les tests de widgets, sqflite se
 bloque : on y utilise `MemoryLocalDb` (`test/offline_test_utils.dart`).
 Firestore, le réseau et le plugin de notifications sont remplacés par des
@@ -604,7 +604,7 @@ faux (`FakeCineFirebaseService`, `FakeNetwork`, `FakeRemoteWriter`,
 |---|---|---|
 | `test/cine_local_db_test.dart` | 27 | migrations, cache et durée de 24 h, cache puis réseau, file `pending_sync` (fusion, ordre), favoris, recherches, calendrier, taille et vidage du cache |
 | `test/cine_sync_service_test.dart` | 17 | envoi direct ou en file, réseau perdu pendant l'envoi, reprise dans l'ordre, abandon après 5 essais, actions FlutterFlow |
-| `test/offline_widgets_test.dart` | 6 | `OfflineBanner` (hors connexion → synchronisation → à jour), `OfflineScreen` |
+| `test/offline_widgets_test.dart` | 7 | `OfflineBanner` (hors connexion → synchronisation → à jour, toucher le bandeau), `OfflineScreen` |
 | `test/release_calendar_test.dart` | 13 | filtres, points colorés, liste du jour, rappel, affichage hors connexion |
 | `test/upcoming_releases_list_test.dart` | 6 | liste groupée par jour, pagination, rappel, erreur (faux Firestore) |
 | `test/cine_notification_service_test.dart` | 21 | heure du rappel, réglages, notifications automatiques, reprogrammation, tap, écritures par la file |

@@ -2,9 +2,11 @@ import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
 import 'dart:ui';
+import '/custom_code/actions/index.dart' as actions;
 import '/custom_code/widgets/index.dart' as custom_widgets;
 import '/index.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'home_page_model.dart';
@@ -29,6 +31,11 @@ class _HomePageWidgetState extends State<HomePageWidget> {
   void initState() {
     super.initState();
     _model = createModel(context, () => HomePageModel());
+
+    // On page load action.
+    SchedulerBinding.instance.addPostFrameCallback((_) async {
+      _model.notificationsEnabled = await actions.cineNotificationService();
+    });
   }
 
   @override
@@ -69,7 +76,32 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                       FlutterFlowTheme.of(context).headlineMedium.fontStyle,
                 ),
           ),
-          actions: [],
+          actions: [
+            Padding(
+              padding: EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 8.0, 0.0),
+              child: Container(
+                width: 48.0,
+                height: 48.0,
+                child: custom_widgets.NotificationBell(
+                  width: 48.0,
+                  height: 48.0,
+                  iconColor: Colors.white,
+                  onTap: () async {
+                    context.pushNamed(
+                      NotificationsWidget.routeName,
+                      extra: <String, dynamic>{
+                        kTransitionInfoKey: TransitionInfo(
+                          hasTransition: true,
+                          transitionType: PageTransitionType.rightToLeft,
+                          duration: Duration(milliseconds: 250),
+                        ),
+                      },
+                    );
+                  },
+                ),
+              ),
+            ),
+          ],
           centerTitle: false,
           elevation: 2.0,
         ),
@@ -78,6 +110,12 @@ class _HomePageWidgetState extends State<HomePageWidget> {
           child: Column(
             mainAxisSize: MainAxisSize.max,
             children: [
+              custom_widgets.OfflineBanner(
+                width: double.infinity,
+                onTap: () async {
+                  context.pushNamed(HorsConnexionWidget.routeName);
+                },
+              ),
               Expanded(
                 child: custom_widgets.HomeFeed(
                   onItemTap: (tappedMediaId) async {
