@@ -506,8 +506,10 @@ enregistrés), le nombre de modifications en attente et un bouton
   notification la marque comme lue et ouvre `MediaDetail` en glissant du bas,
   même quand elle lance l'application.
 
-**AndroidManifest.xml** (FlutterFlow → *Custom Code → Configuration Files*).
-Sans ces lignes, rien ne s'affiche sur Android 13+ et les rappels
+**AndroidManifest.xml** : ces lignes sont dans
+`android/app/src/main/AndroidManifest.xml`. Il faut aussi les ajouter dans
+FlutterFlow (*Custom Code → Configuration Files*), sinon un export FlutterFlow
+les efface. Sans elles, rien ne s'affiche sur Android 13+ et les rappels
 disparaissent au redémarrage du téléphone :
 
 ```xml
