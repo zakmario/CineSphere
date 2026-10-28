@@ -377,3 +377,256 @@ convertit un film ou une série en ligne commune lue par les widgets.
 | `test/reviews_section_test.dart` | `ReviewsSection` : état vide, publier, modifier, supprimer, like annulé si refusé, pagination |
 | `test/trailer_player_test.dart` | adresses YouTube, `TrailerPlayer` sans vidéo valide |
 | `test/sync_tmdb_catalog_test.dart` | conversion des résultats TMDB, fusion sans doublon, envoi par lots, TMDB injoignable, détails (bande-annonce, plateformes, séries terminées) |
+
+## Membre 3 — UX, stockage local SQLite et notifications
+
+Cahier des charges, sections 6.1 (walkthrough), 6.8 (calendrier), 6.9
+(notifications) et 6.10 (SQLite et hors connexion). Pages dans le dossier
+FlutterFlow `membre3_ux_sqlite_notifications` ; tout le reste est du code
+personnalisé (`lib/custom_code/`), une action ou un widget par fichier.
+Signatures complètes : [docs/flutterflow_custom_code.md](docs/flutterflow_custom_code.md)
+(lignes « membre 3 »).
+
+Ces paragraphes remplacent, pour le membre 3, les sections 4 (visite guidée)
+et 5 (manifeste Android) ci-dessus, écrites avant ce travail.
+
+### Pages et branchements FlutterFlow
+
+| Page | Widget (en *Expanded*) | Réglages |
+|---|---|---|
+| **Onboarding** | `OnboardingWalkthrough` | sans App Bar ; `onFinish` → *Navigate To* HomePage (*Replace Route*, transition *Fade* 300 ms) |
+| **Calendrier** | `ReleaseCalendar` | `initialView` = `month` (ou `week`) ; `onItemTap` → MediaDetail (`mediaId` = `selectedMediaId`) |
+| **Notifications** | `NotificationsCenter` | `onOpenMedia` → MediaDetail (`mediaId`) ; transition *Right to Left* 250 ms |
+| **HorsConnexion** | `OfflineScreen` | `onBackOnline` → *Navigate Back* ; `onItemTap` → MediaDetail (`mediaId`) |
+
+Éléments à placer dans les pages des autres membres (avec leur accord) :
+
+| Où | Quoi |
+|---|---|
+| HomePage, *On Page Load* | action `cineNotificationService` (prépare les notifications, ouvre la fiche si une notification a lancé l'app, reprogramme les rappels) |
+| HomePage, *On Page Load* | `shouldStartHomeTour` → si vrai, *Start Walkthrough* ; *On Walkthrough Complete / Skip* → `markHomeTourDone` |
+| HomePage, Walkthrough | chaque étape affiche un component qui contient `WalkthroughStep` (`title`, `text`, `stepNumber`, `stepCount`) |
+| App Bar de la HomePage | `NotificationBell` ; `onTap` → *Navigate To* Notifications |
+| Haut des pages principales | `OfflineBanner` (bandeau « Hors connexion », puis « Synchronisation en cours… », puis « À jour ») |
+| Parametres | `NotificationSettingsPanel` ; « Revoir la présentation » : `resetOnboarding` puis *Navigate To* Onboarding |
+| Parametres, déconnexion | `getPendingChangesCount` (confirmation si > 0), puis `clearPrivateLocalData`, `signOutCleanup`, *Log Out* |
+| Écrans de chargement | `CineSkeleton` (`variant` : `list`, `grid`, `row`, `detail`) à la place d'un spinner |
+
+SQLite et les notifications programmées ne fonctionnent pas en *Test Mode*
+web : tester sur un émulateur Android ou en *Run Mode*. Sur le web, le code
+lit Firestore directement et un rappel ne s'affiche que si l'onglet est
+ouvert.
+
+### Stockage local SQLite (6.10)
+
+`lib/custom_code/actions/cine_local_db.dart` (`CineLocalDb`) gère la base
+`cinesphere.db` (paquet `sqflite`).
+
+- **Versionnée** : la version est dans `PRAGMA user_version` ; chaque
+  évolution du schéma est une migration **ajoutée à la fin** de
+  `kLocalDbMigrations`, exécutée par `onUpgrade`. Une version plus récente
+  que le code (retour en arrière) recrée la base.
+- **Tables**
+
+  | Table | Contenu | Effacée à la déconnexion |
+  |---|---|---|
+  | `cached_movies`, `cached_series` | catalogue (une ligne JSON par titre) | non |
+  | `cached_home_sections` | sections de l'accueil (`trending`, « Pour vous »…) | oui (dépend des genres du membre) |
+  | `calendar_events` | sorties du calendrier | non |
+  | `local_favorites` | favoris du membre (`user_id`) | oui |
+  | `recent_searches` | 20 dernières recherches du membre | oui |
+  | `pending_sync` | écritures faites hors connexion : opération, collection, document, payload JSON, `created_at`, `retry_count`, dernière erreur | oui (après un dernier essai d'envoi) |
+
+- **Cache puis réseau** (`cacheThenNetwork`, `watchCatalog`, `watchMedia`,
+  `watchCalendar`, `watchHomeSection`) : le cache s'affiche tout de suite ;
+  s'il a plus de **24 h** (`cached_at`), Firestore est interrogé et le cache
+  mis à jour. Hors connexion, le cache est affiché même périmé avec la date
+  « enregistré le … » (`CacheResult.isStale`, `error`).
+- `saveToSqlite`, `getLocalCacheSize` (« 1,2 Mo ») et `clearLocalCache`
+  (vide le cache public, puis `VACUUM`) sont les actions FlutterFlow
+  correspondantes.
+
+### Hors connexion et synchronisation
+
+`CineSyncService` (`cine_sync_service.dart`) :
+
+- **réseau** : `connectivity_plus` et une requête vers les serveurs Firestore
+  (4 s). Un Wi-Fi sans Internet compte comme hors connexion ;
+- **`write`** : l'écriture part tout de suite ; en cas d'échec réseau elle
+  attend dans `pending_sync`. Plusieurs écritures sur le même document
+  n'en font qu'une (la dernière gagne) ;
+- **au retour du réseau** : la file est rejouée dans l'ordre. Une erreur
+  réseau arrête la reprise sans compter d'essai ; une autre erreur (règles
+  Firestore…) compte un essai, et l'écriture est abandonnée après
+  5 essais. Les favoris sont ensuite recopiés dans `local_favorites` ;
+- utilisé par les notifications (lu, supprimé) ; les autres membres peuvent
+  passer leurs écritures par `CineSyncService.instance.write`.
+
+`OfflineScreen` montre ce qui reste consultable (favoris et catalogue
+enregistrés), le nombre de modifications en attente et un bouton
+« Réessayer ».
+
+### Calendrier des sorties (6.8)
+
+- `ReleaseCalendar` : vue mois ou semaine (`table_calendar`, en français).
+  Chaque jour porte un point **doré** pour un film et **violet** pour un
+  épisode. Les filtres sont « Mes favoris » et les plateformes. Sous le
+  calendrier, la liste du jour propose « Me prévenir ». Le mois affiché est
+  chargé avec 7 jours de marge, par le cache puis le réseau.
+- `UpcomingReleasesList` : les mêmes sorties en liste groupée par jour,
+  paginée au scroll, utilisée dans la fiche d'un titre (`mediaId`).
+
+### Notifications (6.9)
+
+`CineNotificationService` (`cine_notification_service.dart`) :
+
+- **3 canaux Android**, que l'utilisateur peut couper séparément :
+  `cinesphere_releases` (sorties de films), `cinesphere_episodes` (nouveaux
+  épisodes), `cinesphere_reminders` (rappels demandés). Le fuseau horaire est
+  celui du téléphone (`flutter_timezone`). Le mode inexact évite la
+  permission « alarmes exactes ».
+- **« Me prévenir »** : le rappel tombe à l'heure choisie (18 h par défaut),
+  la veille ou le jour J, jamais après la sortie. S'il est trop tard, il tombe
+  une heure avant ; une sortie imminente n'a pas de rappel.
+- **Automatiques**, sur les 30 prochains jours (20 au plus) : épisodes des
+  séries favorites, films favoris ou des plateformes suivies, sans doublon
+  avec un rappel demandé.
+- **Reprogrammation** au démarrage (au plus toutes les 6 h) et à chaque
+  changement de réglage.
+- **Réglages** : `users/{uid}.preferences` (`notificationsEnabled`,
+  `notifyReleases`, `notifyFavoriteSeries`, `reminderTime`,
+  `favoritePlatforms`), copiés sur le téléphone pour fonctionner hors
+  connexion. « La veille / le jour J » est gardé sur le téléphone seulement.
+- **Page Notifications** : chaque notification programmée est enregistrée
+  dans `users/{uid}/notifications`. La page montre celles déjà remises
+  (`scheduledAt` passé), les plus récentes d'abord, 20 par page. La requête
+  ne porte que sur `scheduledAt` : pas d'index composite. Le badge compte
+  les `isRead == false`.
+- **Tap** : la notification porte `{"type", "tmdbId", "id"}`. Toucher la
+  notification la marque comme lue et ouvre `MediaDetail` en glissant du bas,
+  même quand elle lance l'application.
+
+**AndroidManifest.xml** (FlutterFlow → *Custom Code → Configuration Files*).
+Sans ces lignes, rien ne s'affiche sur Android 13+ et les rappels
+disparaissent au redémarrage du téléphone :
+
+```xml
+<!-- sous <manifest> -->
+<uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
+<uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
+
+<!-- dans <application> -->
+<receiver android:exported="false"
+    android:name="com.dexterous.flutterlocalnotifications.ScheduledNotificationReceiver"/>
+<receiver android:exported="false"
+    android:name="com.dexterous.flutterlocalnotifications.ScheduledNotificationBootReceiver">
+    <intent-filter>
+        <action android:name="android.intent.action.BOOT_COMPLETED"/>
+        <action android:name="android.intent.action.MY_PACKAGE_REPLACED"/>
+        <action android:name="android.intent.action.QUICKBOOT_POWERON"/>
+    </intent-filter>
+</receiver>
+```
+
+### Walkthrough (6.1)
+
+- `OnboardingWalkthrough` : 4 étapes, puis l'écran **Préférences** : genres,
+  plateformes et types de contenus en chips (au moins un type reste coché),
+  et « Me prévenir des sorties ». L'autorisation des notifications est
+  demandée à « Commencer », juste après l'étape qui explique à quoi elles
+  servent ; un refus désactive les notifications dans le profil.
+- **Flag « terminé »** : `cs_onboarding_done` sur le téléphone et
+  `preferences.onboardingCompleted` dans Firestore. Après une réinstallation,
+  le profil suffit. Hors connexion, les choix attendent sur le téléphone et
+  sont écrits au retour du réseau, sans écraser des préférences modifiées
+  entre-temps.
+- Revu depuis Parametres, l'écran Préférences reprend les choix du profil.
+- **Visite guidée de la HomePage** (bonus) : Walkthrough FlutterFlow dont
+  chaque étape affiche `WalkthroughStep` (« Étape 2 sur 5 », Passer /
+  Suivant / Terminer). `shouldStartHomeTour` et `markHomeTourDone` la
+  proposent une seule fois.
+
+### Expérience utilisateur
+
+- Thème clair / sombre : travail du membre 1 (`PreferencesPanel`). Les
+  widgets du membre 3 n'utilisent que les couleurs du thème.
+- **Chargement** : `CineSkeleton` (shimmer) à la place des spinners.
+- **Animations** : `FadeSlideIn` (apparition en cascade au premier
+  chargement), `cineStateSwitcher` (fondu entre chargement, contenu, erreur),
+  badge de la cloche animé, fiche ouverte depuis une notification en
+  glissant du bas. Tout est coupé si le téléphone demande de réduire les
+  animations.
+
+### Déconnexion
+
+`clearPrivateLocalData`, à appeler **avant** *Log Out*, pendant que le membre
+est encore connecté :
+
+1. envoie les modifications faites hors connexion, si le réseau répond
+   (6 s au plus) ;
+2. annule toutes les notifications programmées et efface les rappels et
+   réglages gardés sur le téléphone ;
+3. efface les données privées SQLite (voir le tableau plus haut).
+
+Elle renvoie le nombre de modifications perdues faute de réseau.
+`getPendingChangesCount` permet de prévenir le membre avant.
+
+Clés `shared_preferences` du membre 3 :
+
+| Clé | Contenu | À la déconnexion |
+|---|---|---|
+| `cs_onboarding_done`, `cs_home_tour_done` | walkthrough et visite guidée vus sur ce téléphone | gardées |
+| `cs_onboarding_pending` | choix du walkthrough pas encore écrits dans Firestore | effacée |
+| `cs_favorite_genres` | genres choisis, par nom (lus par HomeFeed) | effacée |
+| `cs_reminders`, `cs_reminder_details` | rappels « Me prévenir » | effacées |
+| `cs_auto_reminders`, `cs_last_reschedule` | notifications automatiques, dernière reprogrammation | effacées |
+| `cs_notification_settings` | copie locale des réglages + veille / jour J | effacée |
+
+### Tests
+
+```bash
+flutter test                 # toute la suite
+flutter test --coverage      # couverture dans coverage/lcov.info
+```
+
+153 tests pour le domaine du membre 3. SQLite est testé sur une vraie base
+en mémoire (`sqflite_common_ffi`). Dans les tests de widgets, sqflite se
+bloque : on y utilise `MemoryLocalDb` (`test/offline_test_utils.dart`).
+Firestore, le réseau et le plugin de notifications sont remplacés par des
+faux (`FakeCineFirebaseService`, `FakeNetwork`, `FakeRemoteWriter`,
+`FakeNotifier`, `Fake` de mocktail).
+
+| Fichier | Tests | Contenu |
+|---|---|---|
+| `test/cine_local_db_test.dart` | 27 | migrations, cache et durée de 24 h, cache puis réseau, file `pending_sync` (fusion, ordre), favoris, recherches, calendrier, taille et vidage du cache |
+| `test/cine_sync_service_test.dart` | 17 | envoi direct ou en file, réseau perdu pendant l'envoi, reprise dans l'ordre, abandon après 5 essais, actions FlutterFlow |
+| `test/offline_widgets_test.dart` | 6 | `OfflineBanner` (hors connexion → synchronisation → à jour), `OfflineScreen` |
+| `test/release_calendar_test.dart` | 13 | filtres, points colorés, liste du jour, rappel, affichage hors connexion |
+| `test/upcoming_releases_list_test.dart` | 6 | liste groupée par jour, pagination, rappel, erreur (faux Firestore) |
+| `test/cine_notification_service_test.dart` | 21 | heure du rappel, réglages, notifications automatiques, reprogrammation, tap, écritures par la file |
+| `test/notification_actions_test.dart` | 7 | actions de notification FlutterFlow |
+| `test/flutter_local_notifier_test.dart` | 6 | ce que reçoit le canal Android du plugin : canaux, mode inexact, fuseau, tap, lancement |
+| `test/notification_navigation_test.dart` | 2 | tap → `MediaDetail`, y compris au lancement de l'app |
+| `test/notification_widgets_test.dart` | 14 | `NotificationBell`, `NotificationsCenter`, `NotificationSettingsPanel` |
+| `test/onboarding_test.dart` | 16 | flag sur le téléphone et dans Firestore, hors connexion, écran Préférences, autorisation, visite guidée, `WalkthroughStep` |
+| `test/ux_test.dart` | 14 | `CineSkeleton`, `FadeSlideIn`, `cineStateSwitcher`, réduction des animations |
+| `test/clear_private_local_data_test.dart` | 4 | déconnexion en ligne, hors connexion, envoi refusé, web |
+
+Non couverts volontairement : le vrai réseau et les écritures réelles dans
+Firestore (remplacés par des faux), et les pages générées par FlutterFlow
+(leurs widgets sont testés).
+
+### Note technique : version de `sqlite3`
+
+`sqflite_common_ffi` 2.3.5 (tests) ne fonctionne pas avec `sqlite3` 3.x.
+`pubspec.lock` fixe donc `sqlite3` à **2.7.6**, sans changer `pubspec.yaml`
+(versions fixées par FlutterFlow). Si un `flutter pub upgrade` la fait
+monter :
+
+1. ajouter temporairement `dependency_overrides: sqlite3: 2.7.6` dans
+   `pubspec.yaml` ;
+2. `flutter pub get` ;
+3. retirer l'override, puis `flutter pub get` à nouveau.
+
+`flutter pub get` modifie aussi `ios/Flutter/ephemeral/…` : ne pas le
+committer.
