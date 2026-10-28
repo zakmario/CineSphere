@@ -98,7 +98,7 @@ properly deployed » : c'est attendu.
 | — | `posterUrl` dans `watched`, `popularity` dans `movies` / `series`, collection `news` | affichage de l'onglet Vus, tri « Tendances », page Actualites |
 | — | sous-collection `users/{uid}/history` | onglet Historique (6.7) : la section 5 ne prévoit pas où ranger les titres consultés |
 | `reviews/{id}/likes/{uid}` supprimé par son auteur seulement | l'auteur de l'avis peut aussi effacer les likes des autres | sinon la suppression d'un avis liké (ou du compte) échoue |
-| SQLite (cache TMDB, `pending_sync`, `SyncService`) | non fait | partie hors ligne du membre 3 (section 6.10) |
+| SQLite (cache TMDB, `pending_sync`, `SyncService`) | fait : `CineLocalDb` (cache du catalogue Firestore, lui-même rempli depuis TMDB, et `pending_sync`) et `CineSyncService` | l'app lit le catalogue dans Firestore, pas directement dans TMDB ; voir la section Membre 3 |
 
 ## 2. Custom code fourni
 
@@ -273,8 +273,9 @@ le message d'erreur en français à afficher (*SnackBar*). `toggleFavorite` et
 **Déconnexion** (section 8) : avant *Log Out*, le bouton « Se déconnecter »
 et la suppression de compte appellent `signOutCleanup` : rappels programmés
 annulés (téléphone et web), genres et rappels du membre effacés de
-l'appareil. L'onboarding, propre à l'appareil, est gardé ; le cache SQLite
-du membre 3 s'ajoutera à ce nettoyage.
+l'appareil. L'onboarding, propre à l'appareil, est gardé. `signOutCleanup`
+appelle aussi `clearPrivateLocalData` (membre 3) : modifications faites hors
+connexion envoyées, puis données privées SQLite effacées.
 
 **Suppression de compte** : `deleteMyAccount` vérifie que la connexion date
 de moins de 5 minutes (exigence de Firebase), efface les documents du membre
