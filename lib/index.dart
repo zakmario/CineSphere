@@ -30,3 +30,7 @@ export '/membre1_auth_profil_supabase/bande_annonce/bande_annonce_widget.dart'
     show BandeAnnonceWidget;
 export '/membre1_auth_profil_supabase/detail_liste/detail_liste_widget.dart'
     show DetailListeWidget;
+export '/membre3_ux_sqlite_notifications/notifications/notifications_widget.dart'
+    show NotificationsWidget;
+export '/membre3_ux_sqlite_notifications/hors_connexion/hors_connexion_widget.dart'
+    show HorsConnexionWidget;
