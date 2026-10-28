@@ -618,6 +618,29 @@ Non couverts volontairement : le vrai réseau et les écritures réelles dans
 Firestore (remplacés par des faux), et les pages générées par FlutterFlow
 (leurs widgets sont testés).
 
+**Test d'intégration** (sur un émulateur ou un téléphone Android, pas sur
+le web) :
+
+```bash
+flutter devices                                          # id de l'appareil
+flutter test integration_test/membre3_test.dart -d <id>
+```
+
+`integration_test/membre3_test.dart` (5 tests) utilise la vraie base sqflite
+de l'appareil (un fichier séparé, supprimé après chaque test) et le vrai
+plugin de notifications. Firestore reste simulé : pas besoin de compte, et
+rien n'est écrit dans Firebase. Il couvre :
+
+- le walkthrough complet, jusqu'au profil et au flag ;
+- un rappel « Me prévenir » visible dans les notifications programmées
+  d'Android, puis annulé ;
+- le schéma SQLite et le cache du calendrier ;
+- une écriture hors connexion envoyée au retour du réseau ;
+- la déconnexion.
+
+Le test de déconnexion annule toutes les notifications programmées de
+l'application sur l'appareil.
+
 ### Note technique : version de `sqlite3`
 
 `sqflite_common_ffi` 2.3.5 (tests) ne fonctionne pas avec `sqlite3` 3.x.
