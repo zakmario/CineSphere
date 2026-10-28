@@ -22,3 +22,5 @@ export 'notification_bell.dart' show NotificationBell;
 export 'notifications_center.dart' show NotificationsCenter;
 export 'notification_settings_panel.dart' show NotificationSettingsPanel;
 export 'walkthrough_step.dart' show WalkthroughStep;
+export 'cine_skeleton.dart' show CineSkeleton;
+export 'fade_slide_in.dart' show FadeSlideIn;
