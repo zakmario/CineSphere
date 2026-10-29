@@ -137,61 +137,153 @@ class _FavoritesGridState extends State<FavoritesGrid> {
     final theme = FlutterFlowTheme.of(context);
     Widget body;
     if (_items.isEmpty && _loading) {
-      body = const Center(child: CircularProgressIndicator());
+      body = const SingleChildScrollView(
+        physics: NeverScrollableScrollPhysics(),
+        child: CineSkeleton(variant: 'grid', itemCount: 6),
+      );
     } else if (_items.isEmpty && (_error != null || !_hasMore)) {
-      body = Center(
-        child: Padding(
-          padding: const EdgeInsets.all(32),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Icon(Icons.favorite_border, size: 64, color: theme.secondaryText),
-              const SizedBox(height: 12),
-              Text(
-                _error ??
-                    'Aucun favori pour l’instant.\nTouchez le cœur sur un film '
-                        'ou une série pour l’ajouter ici.',
-                textAlign: TextAlign.center,
-                style: theme.bodyMedium,
-              ),
-              const SizedBox(height: 12),
-              TextButton(onPressed: _refresh, child: const Text('Actualiser')),
-            ],
-          ),
-        ),
+      final signedOut = CineFirebaseService.instance.currentUserId == null;
+      body = _emptyState(
+        theme,
+        icon: signedOut
+            ? Icons.lock_outline_rounded
+            : _error != null
+                ? Icons.wifi_off_rounded
+                : Icons.favorite_rounded,
+        title: signedOut
+            ? 'Connexion requise'
+            : _error != null
+                ? 'Oups…'
+                : 'Aucun favori pour l’instant',
+        text: _error ??
+            'Touchez le cœur sur un film ou une série pour le retrouver ici.',
       );
     } else {
       body = RefreshIndicator(
+        color: theme.primary,
         onRefresh: _refresh,
-        child: GridView.builder(
+        child: CustomScrollView(
           controller: _scrollController,
           physics: const AlwaysScrollableScrollPhysics(),
-          padding: const EdgeInsets.all(12),
-          gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-            maxCrossAxisExtent: 180,
-            mainAxisSpacing: 16,
-            crossAxisSpacing: 12,
-            childAspectRatio: 0.52,
-          ),
-          itemCount: _items.length,
-          itemBuilder: (context, index) {
-            final item = _items[index];
-            final id = item['id'] as String;
-            return MediaCard(
-              key: ValueKey(id),
-              title: item['title'] as String? ?? '',
-              posterUrl: item['poster_url'] as String?,
-              mediaType: item['media_type'] as String?,
-              rating: (item['rating'] as num?)?.toDouble(),
-              releaseDate: item['release_date'] == null
-                  ? null
-                  : DateTime.tryParse(item['release_date'] as String),
-              onTap: () => _open(id),
-            );
-          },
+          slivers: [
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(16, 16, 16, 4),
+                child: Row(
+                  children: [
+                    Icon(Icons.favorite_rounded,
+                        size: 18, color: theme.tertiary),
+                    const SizedBox(width: 8),
+                    Text(
+                      '${_items.length}${_hasMore ? '+' : ''} favori'
+                      '${_items.length > 1 ? 's' : ''}',
+                      style: theme.titleSmall
+                          .copyWith(fontWeight: FontWeight.w700),
+                    ),
+                    const Spacer(),
+                    Text(
+                      'Plus récents',
+                      style: theme.labelMedium
+                          .copyWith(color: theme.secondaryText),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            SliverPadding(
+              padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
+              sliver: SliverGrid(
+                gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+                  maxCrossAxisExtent: 180,
+                  mainAxisSpacing: 20,
+                  crossAxisSpacing: 14,
+                  childAspectRatio: 0.52,
+                ),
+                delegate: SliverChildBuilderDelegate(
+                  (context, index) {
+                    final item = _items[index];
+                    final id = item['id'] as String;
+                    return MediaCard(
+                      key: ValueKey(id),
+                      title: item['title'] as String? ?? '',
+                      posterUrl: item['poster_url'] as String?,
+                      mediaType: item['media_type'] as String?,
+                      rating: (item['rating'] as num?)?.toDouble(),
+                      releaseDate: item['release_date'] == null
+                          ? null
+                          : DateTime.tryParse(item['release_date'] as String),
+                      onTap: () => _open(id),
+                    );
+                  },
+                  childCount: _items.length,
+                ),
+              ),
+            ),
+            if (_loading)
+              SliverToBoxAdapter(
+                child: Padding(
+                  padding: const EdgeInsets.only(bottom: 24),
+                  child: Center(
+                    child: SizedBox(
+                      width: 28,
+                      height: 28,
+                      child: CircularProgressIndicator(
+                          strokeWidth: 2.5, color: theme.primary),
+                    ),
+                  ),
+                ),
+              ),
+          ],
         ),
       );
     }
     return SizedBox(width: widget.width, height: widget.height, child: body);
   }
+
+  Widget _emptyState(
+    FlutterFlowTheme theme, {
+    required IconData icon,
+    required String title,
+    required String text,
+  }) =>
+      Center(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(32),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                width: 96,
+                height: 96,
+                decoration: BoxDecoration(
+                  color: theme.tertiary.withValues(alpha: 0.1),
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(icon, size: 44, color: theme.tertiary),
+              ),
+              const SizedBox(height: 20),
+              Text(title,
+                  textAlign: TextAlign.center,
+                  style:
+                      theme.titleMedium.copyWith(fontWeight: FontWeight.w700)),
+              const SizedBox(height: 6),
+              Text(text,
+                  textAlign: TextAlign.center,
+                  style: theme.bodyMedium.copyWith(color: theme.secondaryText)),
+              const SizedBox(height: 20),
+              OutlinedButton.icon(
+                onPressed: _refresh,
+                icon: const Icon(Icons.refresh_rounded),
+                label: const Text('Actualiser'),
+                style: OutlinedButton.styleFrom(
+                  foregroundColor: theme.primary,
+                  side: BorderSide(color: theme.primary),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(14)),
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
 }
