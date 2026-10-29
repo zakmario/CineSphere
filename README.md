@@ -404,8 +404,8 @@ et 5 (manifeste Android) ci-dessus, écrites avant ce travail.
 | Où | Quoi |
 |---|---|
 | HomePage, *On Page Load* | fait : action `cineNotificationService` (prépare les notifications, ouvre la fiche si une notification a lancé l'app, reprogramme les rappels) |
-| HomePage, *On Page Load* | `shouldStartHomeTour` → si vrai, *Start Walkthrough* ; *On Walkthrough Complete / Skip* → `markHomeTourDone` |
-| HomePage, Walkthrough | chaque étape affiche un component qui contient `WalkthroughStep` (`title`, `text`, `stepNumber`, `stepCount`) |
+| HomePage | rien à ajouter : le guide de l'application (`AppTour`) se lance tout seul après l'onboarding |
+| Parametres (option) | ligne « Guide de l'application » → action `startAppTour` |
 | App Bar de la HomePage | fait : `NotificationBell` ; `onTap` → *Navigate To* Notifications (*Right to Left* 250 ms) |
 | Haut des pages principales | `OfflineBanner` (bandeau « Hors connexion », puis « Synchronisation en cours… », puis « À jour ») ; `onTap` → *Navigate To* HorsConnexion. Fait sur HomePage et Calendrier |
 | Parametres | fait : `NotificationSettingsPanel` dans la section Notifications (remplace « Activer les rappels » et « Tester une notification ») ; « Revoir la présentation » : `resetOnboarding` puis *Navigate To* Onboarding |
@@ -543,10 +543,13 @@ disparaissent au redémarrage du téléphone :
   sont écrits au retour du réseau, sans écraser des préférences modifiées
   entre-temps.
 - Revu depuis Parametres, l'écran Préférences reprend les choix du profil.
-- **Visite guidée de la HomePage** (bonus) : Walkthrough FlutterFlow dont
-  chaque étape affiche `WalkthroughStep` (« Étape 2 sur 5 », Passer /
-  Suivant / Terminer). `shouldStartHomeTour` et `markHomeTourDone` la
-  proposent une seule fois.
+- **Guide de l'application** (`app_tour.dart`) : après « Commencer », un
+  voile sombre met en lumière chaque onglet de la barre de navigation
+  (retrouvés par leur libellé) avec une carte « Étape 2 sur 9 », une barre
+  de progression et Passer / Retour / Suivant. Proposé une seule fois par
+  appareil (`shouldStartHomeTour` / `markHomeTourDone`), à nouveau après
+  « Revoir la présentation », ou à la demande avec l'action `startAppTour`.
+  Aucun réglage Walkthrough FlutterFlow n'est nécessaire.
 
 ### Expérience utilisateur
 
