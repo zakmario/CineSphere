@@ -210,7 +210,8 @@ class _CatalogBrowserState extends State<CatalogBrowser> {
       if (_mediaType != null && row['media_type'] != _mediaType) {
         return false;
       }
-      if (_genre != null && !((row['genres'] as List?) ?? []).contains(_genre)) {
+      if (_genre != null &&
+          !((row['genres'] as List?) ?? []).contains(_genre)) {
         return false;
       }
       if (_minRating > 0 && ((row['rating'] as num?) ?? 0) < _minRating) {
@@ -262,67 +263,148 @@ class _CatalogBrowserState extends State<CatalogBrowser> {
       isScrollControlled: true,
       backgroundColor: theme.secondaryBackground,
       shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+        borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
       ),
       builder: (context) => StatefulBuilder(
         builder: (context, setSheetState) => SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(20, 16, 20, 16),
-            child: SingleChildScrollView(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text('Filtres', style: theme.titleLarge),
-                  const SizedBox(height: 16),
-                  Text('Genre', style: theme.titleSmall),
-                  const SizedBox(height: 8),
-                  Wrap(
-                    spacing: 8,
-                    runSpacing: 8,
-                    children: _genres
-                        .map((g) => ChoiceChip(
-                              label: Text(g),
-                              selected: genre == g,
-                              onSelected: (selected) => setSheetState(
-                                  () => genre = selected ? g : null),
-                            ))
-                        .toList(),
+          child: ConstrainedBox(
+            constraints: BoxConstraints(
+              maxHeight: MediaQuery.sizeOf(context).height * 0.85,
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Center(
+                  child: Container(
+                    margin: const EdgeInsets.only(top: 10),
+                    width: 40,
+                    height: 4,
+                    decoration: BoxDecoration(
+                      color: theme.alternate,
+                      borderRadius: BorderRadius.circular(2),
+                    ),
                   ),
-                  const SizedBox(height: 16),
-                  Text(
-                    minRating > 0
-                        ? 'Note minimale : ${minRating.toStringAsFixed(0)}/10'
-                        : 'Note minimale : aucune',
-                    style: theme.titleSmall,
+                ),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(24, 16, 12, 4),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          'Filtres',
+                          style: theme.headlineSmall
+                              .copyWith(fontWeight: FontWeight.w700),
+                        ),
+                      ),
+                      IconButton(
+                        tooltip: 'Fermer',
+                        onPressed: () => Navigator.pop(context, false),
+                        icon: Icon(Icons.close_rounded,
+                            color: theme.secondaryText),
+                      ),
+                    ],
                   ),
-                  Slider(
-                    value: minRating,
-                    min: 0,
-                    max: 9,
-                    divisions: 9,
-                    label: minRating.toStringAsFixed(0),
-                    onChanged: (v) => setSheetState(() => minRating = v),
+                ),
+                Flexible(
+                  child: SingleChildScrollView(
+                    padding: const EdgeInsets.fromLTRB(24, 8, 24, 8),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        _sheetTitle(theme, Icons.category_outlined, 'Genre'),
+                        if (_genres.isEmpty)
+                          Text('Aucun genre disponible.',
+                              style: theme.bodySmall
+                                  .copyWith(color: theme.secondaryText))
+                        else
+                          Wrap(
+                            spacing: 8,
+                            runSpacing: 8,
+                            children: [
+                              for (final g in _genres)
+                                _choice(
+                                    theme,
+                                    g,
+                                    genre == g,
+                                    () => setSheetState(
+                                        () => genre = genre == g ? null : g)),
+                            ],
+                          ),
+                        const SizedBox(height: 24),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: _sheetTitle(theme,
+                                  Icons.star_outline_rounded, 'Note minimale'),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.only(bottom: 12),
+                              child: Text(
+                                minRating > 0
+                                    ? '★ ${minRating.toStringAsFixed(0)}+'
+                                    : 'Toutes',
+                                style: theme.titleSmall.copyWith(
+                                  color: minRating > 0
+                                      ? theme.primary
+                                      : theme.secondaryText,
+                                  fontWeight: FontWeight.w700,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        SliderTheme(
+                          data: SliderTheme.of(context).copyWith(
+                            activeTrackColor: theme.primary,
+                            inactiveTrackColor: theme.alternate,
+                            thumbColor: theme.primary,
+                            overlayColor: theme.primary.withValues(alpha: 0.12),
+                            valueIndicatorColor: theme.primary,
+                            trackHeight: 4,
+                          ),
+                          child: Slider(
+                            value: minRating,
+                            min: 0,
+                            max: 9,
+                            divisions: 9,
+                            label: minRating.toStringAsFixed(0),
+                            onChanged: (v) =>
+                                setSheetState(() => minRating = v),
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                        _sheetTitle(theme, Icons.event_outlined, 'Statut'),
+                        Wrap(
+                          spacing: 8,
+                          runSpacing: 8,
+                          children: [
+                            for (final s in _statusOptions)
+                              _choice(
+                                  theme,
+                                  statusLabel(s),
+                                  status == s,
+                                  () => setSheetState(
+                                      () => status = status == s ? null : s)),
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
-                  Text('Statut', style: theme.titleSmall),
-                  const SizedBox(height: 8),
-                  Wrap(
-                    spacing: 8,
-                    runSpacing: 8,
-                    children: _statusOptions
-                        .map((s) => ChoiceChip(
-                              label: Text(statusLabel(s)),
-                              selected: status == s,
-                              onSelected: (selected) => setSheetState(
-                                  () => status = selected ? s : null),
-                            ))
-                        .toList(),
-                  ),
-                  const SizedBox(height: 24),
-                  Row(
+                ),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(24, 12, 24, 16),
+                  child: Row(
                     children: [
                       Expanded(
                         child: OutlinedButton(
+                          style: OutlinedButton.styleFrom(
+                            foregroundColor: theme.primaryText,
+                            side: BorderSide(color: theme.alternate),
+                            minimumSize: const Size.fromHeight(50),
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(14)),
+                          ),
                           onPressed: () => setSheetState(() {
                             genre = null;
                             minRating = 0;
@@ -336,6 +418,9 @@ class _CatalogBrowserState extends State<CatalogBrowser> {
                         child: FilledButton(
                           style: FilledButton.styleFrom(
                             backgroundColor: theme.primary,
+                            minimumSize: const Size.fromHeight(50),
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(14)),
                           ),
                           onPressed: () => Navigator.pop(context, true),
                           child: const Text('Appliquer'),
@@ -343,8 +428,8 @@ class _CatalogBrowserState extends State<CatalogBrowser> {
                       ),
                     ],
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
         ),
@@ -359,6 +444,44 @@ class _CatalogBrowserState extends State<CatalogBrowser> {
     }
   }
 
+  Widget _sheetTitle(FlutterFlowTheme theme, IconData icon, String text) =>
+      Padding(
+        padding: const EdgeInsets.only(bottom: 12),
+        child: Row(
+          children: [
+            Icon(icon, size: 18, color: theme.primary),
+            const SizedBox(width: 8),
+            Text(text,
+                style: theme.titleSmall.copyWith(fontWeight: FontWeight.w700)),
+          ],
+        ),
+      );
+
+  /// Pastille de choix : contour discret, remplie en doré si sélectionnée.
+  Widget _choice(FlutterFlowTheme theme, String label, bool selected,
+          VoidCallback onTap) =>
+      Material(
+        color: selected ? theme.primary : theme.primaryBackground,
+        shape: StadiumBorder(
+          side: BorderSide(
+              color: selected ? theme.primary : theme.alternate, width: 1),
+        ),
+        child: InkWell(
+          customBorder: const StadiumBorder(),
+          onTap: onTap,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+            child: Text(
+              label,
+              style: theme.bodyMedium.copyWith(
+                color: selected ? Colors.white : theme.primaryText,
+                fontWeight: selected ? FontWeight.w600 : FontWeight.w500,
+              ),
+            ),
+          ),
+        ),
+      );
+
   @override
   Widget build(BuildContext context) {
     final theme = FlutterFlowTheme.of(context);
@@ -368,89 +491,171 @@ class _CatalogBrowserState extends State<CatalogBrowser> {
       child: Column(
         children: [
           _buildSearchBar(theme),
-          _buildTypeAndSortRow(theme),
+          _buildTypeSelector(theme),
+          _buildSortRow(theme),
           Expanded(child: _buildResults(theme)),
         ],
       ),
     );
   }
 
-  Widget _buildSearchBar(FlutterFlowTheme theme) => Padding(
-        padding: const EdgeInsets.fromLTRB(12, 8, 12, 4),
-        child: Row(
-          children: [
-            Expanded(
-              child: TextField(
-                controller: _searchController,
-                onChanged: _onSearchChanged,
-                textInputAction: TextInputAction.search,
-                decoration: InputDecoration(
-                  hintText: 'Rechercher un film, une série…',
-                  prefixIcon: const Icon(Icons.search),
-                  suffixIcon: ValueListenableBuilder<TextEditingValue>(
-                    valueListenable: _searchController,
-                    builder: (_, value, __) => value.text.isEmpty
-                        ? const SizedBox.shrink()
-                        : IconButton(
-                            icon: const Icon(Icons.close),
-                            onPressed: () {
-                              _searchController.clear();
-                              _onSearchChanged('');
-                            },
-                          ),
-                  ),
-                  filled: true,
-                  fillColor: theme.secondaryBackground,
-                  contentPadding: const EdgeInsets.symmetric(vertical: 0),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: BorderSide.none,
+  Widget _buildSearchBar(FlutterFlowTheme theme) {
+    final active = _activeFilterCount > 0;
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
+      child: Row(
+        children: [
+          Expanded(
+            child: TextField(
+              controller: _searchController,
+              onChanged: _onSearchChanged,
+              textInputAction: TextInputAction.search,
+              style: theme.bodyMedium,
+              decoration: InputDecoration(
+                hintText: 'Rechercher un film, une série…',
+                hintStyle:
+                    theme.bodyMedium.copyWith(color: theme.secondaryText),
+                prefixIcon:
+                    Icon(Icons.search_rounded, color: theme.secondaryText),
+                suffixIcon: ValueListenableBuilder<TextEditingValue>(
+                  valueListenable: _searchController,
+                  builder: (_, value, __) => value.text.isEmpty
+                      ? const SizedBox.shrink()
+                      : IconButton(
+                          icon: Icon(Icons.close_rounded,
+                              color: theme.secondaryText),
+                          onPressed: () {
+                            _searchController.clear();
+                            _onSearchChanged('');
+                          },
+                        ),
+                ),
+                filled: true,
+                fillColor: theme.secondaryBackground,
+                contentPadding: const EdgeInsets.symmetric(vertical: 14),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(16),
+                  borderSide: BorderSide(color: theme.alternate),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(16),
+                  borderSide: BorderSide(color: theme.primary, width: 1.5),
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(width: 10),
+          Badge(
+            isLabelVisible: active,
+            label: Text('$_activeFilterCount'),
+            backgroundColor: theme.tertiary,
+            child: Material(
+              color: active ? theme.primary : theme.secondaryBackground,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+                side:
+                    BorderSide(color: active ? theme.primary : theme.alternate),
+              ),
+              child: InkWell(
+                borderRadius: BorderRadius.circular(16),
+                onTap: _openFilters,
+                child: Tooltip(
+                  message: 'Filtres',
+                  child: SizedBox(
+                    width: 52,
+                    height: 52,
+                    child: Icon(Icons.tune_rounded,
+                        color: active ? Colors.white : theme.primaryText),
                   ),
                 ),
               ),
             ),
-            const SizedBox(width: 8),
-            Badge(
-              isLabelVisible: _activeFilterCount > 0,
-              label: Text('$_activeFilterCount'),
-              backgroundColor: theme.primary,
-              child: IconButton.filledTonal(
-                tooltip: 'Filtres',
-                onPressed: _openFilters,
-                icon: const Icon(Icons.tune),
-              ),
-            ),
-          ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// Sélecteur segmenté Tous / Films / Séries.
+  Widget _buildTypeSelector(FlutterFlowTheme theme) => Padding(
+        padding: const EdgeInsets.fromLTRB(16, 4, 16, 4),
+        child: Container(
+          padding: const EdgeInsets.all(4),
+          decoration: BoxDecoration(
+            color: theme.secondaryBackground,
+            borderRadius: BorderRadius.circular(14),
+            border: Border.all(color: theme.alternate),
+          ),
+          child: Row(
+            children: [
+              for (final type in const [null, 'movie', 'series'])
+                Expanded(
+                  child: GestureDetector(
+                    behavior: HitTestBehavior.opaque,
+                    onTap: () {
+                      if (_mediaType != type) {
+                        _mediaType = type;
+                        _reload();
+                      }
+                    },
+                    child: AnimatedContainer(
+                      duration: const Duration(milliseconds: 200),
+                      padding: const EdgeInsets.symmetric(vertical: 9),
+                      decoration: BoxDecoration(
+                        color: _mediaType == type
+                            ? theme.primary
+                            : Colors.transparent,
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      alignment: Alignment.center,
+                      child: Text(
+                        switch (type) {
+                          'movie' => 'Films',
+                          'series' => 'Séries',
+                          _ => 'Tous',
+                        },
+                        style: theme.bodyMedium.copyWith(
+                          color: _mediaType == type
+                              ? Colors.white
+                              : theme.secondaryText,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+            ],
+          ),
         ),
       );
 
-  Widget _buildTypeAndSortRow(FlutterFlowTheme theme) {
-    final hasAnyFilter = _activeFilterCount > 0 ||
-        _query.isNotEmpty ||
-        _sort != 'popularity';
-    return SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+  Widget _buildSortRow(FlutterFlowTheme theme) {
+    final hasAnyFilter =
+        _activeFilterCount > 0 || _query.isNotEmpty || _sort != 'popularity';
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 6, 8, 0),
       child: Row(
         children: [
-          for (final type in const [null, 'movie', 'series'])
-            Padding(
-              padding: const EdgeInsets.only(right: 8),
-              child: ChoiceChip(
-                label: Text(type == null ? 'Tous' : mediaTypeLabel(type)),
-                selected: _mediaType == type,
-                selectedColor: theme.primary.withValues(alpha: 0.2),
-                onSelected: (_) {
-                  if (_mediaType != type) {
-                    _mediaType = type;
-                    _reload();
-                  }
-                },
-              ),
+          Expanded(
+            child: Text(
+              _items.isEmpty
+                  ? ''
+                  : '${_items.length}${_hasMore ? '+' : ''} titre'
+                      '${_items.length > 1 ? 's' : ''}',
+              style: theme.labelMedium.copyWith(color: theme.secondaryText),
+            ),
+          ),
+          if (hasAnyFilter)
+            TextButton(
+              onPressed: _clearFilters,
+              style: TextButton.styleFrom(foregroundColor: theme.tertiary),
+              child: const Text('Effacer'),
             ),
           PopupMenuButton<String>(
             tooltip: 'Trier',
             initialValue: _sort,
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
             onSelected: (value) {
               if (value != _sort) {
                 _sort = value;
@@ -463,17 +668,26 @@ class _CatalogBrowserState extends State<CatalogBrowser> {
                       child: Text(e.value.label),
                     ))
                 .toList(),
-            child: Chip(
-              avatar: const Icon(Icons.sort, size: 18),
-              label: Text(_sortOptions[_sort]!.label),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Icons.swap_vert_rounded, size: 18, color: theme.primary),
+                  const SizedBox(width: 4),
+                  Text(
+                    _sortOptions[_sort]!.label,
+                    style: theme.labelLarge.copyWith(
+                      color: theme.primaryText,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  Icon(Icons.expand_more_rounded,
+                      size: 18, color: theme.secondaryText),
+                ],
+              ),
             ),
           ),
-          if (hasAnyFilter)
-            TextButton.icon(
-              onPressed: _clearFilters,
-              icon: const Icon(Icons.filter_alt_off, size: 18),
-              label: const Text('Effacer les filtres'),
-            ),
         ],
       ),
     );
@@ -481,34 +695,45 @@ class _CatalogBrowserState extends State<CatalogBrowser> {
 
   Widget _buildResults(FlutterFlowTheme theme) {
     if (_items.isEmpty && _loading) {
-      return const Center(child: CircularProgressIndicator());
+      return const SingleChildScrollView(
+        physics: NeverScrollableScrollPhysics(),
+        child: CineSkeleton(variant: 'grid', itemCount: 9),
+      );
     }
     if (_items.isEmpty && _error != null) {
-      return _message(theme, Icons.wifi_off, _error!, retry: true);
+      return _message(
+        theme,
+        Icons.wifi_off_rounded,
+        _error!,
+        'Vérifiez votre connexion puis réessayez.',
+        retry: true,
+      );
     }
     if (_items.isEmpty && !_hasMore) {
       return _message(
         theme,
-        Icons.search_off,
+        Icons.search_off_rounded,
+        _query.isEmpty ? 'Aucun résultat' : 'Aucun résultat pour « $_query »',
         _query.isEmpty
             ? 'Aucun contenu ne correspond à ces filtres.'
-            : 'Aucun résultat pour « $_query ».',
+            : 'Essayez un autre mot-clé ou retirez des filtres.',
       );
     }
 
     return RefreshIndicator(
+      color: theme.primary,
       onRefresh: () async => _reload(),
       child: CustomScrollView(
         controller: _scrollController,
         physics: const AlwaysScrollableScrollPhysics(),
         slivers: [
           SliverPadding(
-            padding: const EdgeInsets.all(12),
+            padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
             sliver: SliverGrid(
               gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
                 maxCrossAxisExtent: 180,
-                mainAxisSpacing: 16,
-                crossAxisSpacing: 12,
+                mainAxisSpacing: 20,
+                crossAxisSpacing: 14,
                 childAspectRatio: 0.52,
               ),
               delegate: SliverChildBuilderDelegate(
@@ -541,29 +766,43 @@ class _CatalogBrowserState extends State<CatalogBrowser> {
 
   Widget _buildFooter(FlutterFlowTheme theme) {
     if (_loading) {
-      return const Padding(
-        padding: EdgeInsets.all(24),
-        child: Center(child: CircularProgressIndicator()),
+      return Padding(
+        padding: const EdgeInsets.all(24),
+        child: Center(
+          child: SizedBox(
+            width: 28,
+            height: 28,
+            child: CircularProgressIndicator(
+                strokeWidth: 2.5, color: theme.primary),
+          ),
+        ),
       );
     }
     if (_error != null) {
       return Center(
         child: TextButton.icon(
           onPressed: _loadMore,
-          icon: const Icon(Icons.refresh),
+          style: TextButton.styleFrom(foregroundColor: theme.primary),
+          icon: const Icon(Icons.refresh_rounded),
           label: const Text('Erreur de chargement — réessayer'),
         ),
       );
     }
     if (!_hasMore) {
       return Padding(
-        padding: const EdgeInsets.all(24),
-        child: Center(
-          child: Text(
-            '${_items.length} résultat${_items.length > 1 ? 's' : ''} — '
-            'vous avez tout vu !',
-            style: theme.bodySmall.copyWith(color: theme.secondaryText),
-          ),
+        padding: const EdgeInsets.fromLTRB(24, 8, 24, 32),
+        child: Row(
+          children: [
+            Expanded(child: Divider(color: theme.alternate)),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 12),
+              child: Text(
+                'Vous avez tout vu',
+                style: theme.bodySmall.copyWith(color: theme.secondaryText),
+              ),
+            ),
+            Expanded(child: Divider(color: theme.alternate)),
+          ],
         ),
       );
     }
@@ -573,25 +812,57 @@ class _CatalogBrowserState extends State<CatalogBrowser> {
   Widget _message(
     FlutterFlowTheme theme,
     IconData icon,
+    String title,
     String text, {
     bool retry = false,
   }) =>
       Center(
-        child: Padding(
+        child: SingleChildScrollView(
           padding: const EdgeInsets.all(32),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(icon, size: 56, color: theme.secondaryText),
-              const SizedBox(height: 12),
-              Text(text, textAlign: TextAlign.center, style: theme.bodyMedium),
-              const SizedBox(height: 12),
+              Container(
+                width: 88,
+                height: 88,
+                decoration: BoxDecoration(
+                  color: theme.primary.withValues(alpha: 0.12),
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(icon, size: 40, color: theme.primary),
+              ),
+              const SizedBox(height: 20),
+              Text(title,
+                  textAlign: TextAlign.center,
+                  style:
+                      theme.titleMedium.copyWith(fontWeight: FontWeight.w700)),
+              const SizedBox(height: 6),
+              Text(text,
+                  textAlign: TextAlign.center,
+                  style: theme.bodyMedium.copyWith(color: theme.secondaryText)),
+              const SizedBox(height: 20),
               if (retry)
-                FilledButton(onPressed: _reload, child: const Text('Réessayer'))
+                FilledButton.icon(
+                  onPressed: _reload,
+                  icon: const Icon(Icons.refresh_rounded),
+                  label: const Text('Réessayer'),
+                  style: FilledButton.styleFrom(
+                    backgroundColor: theme.primary,
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(14)),
+                  ),
+                )
               else
-                TextButton(
+                OutlinedButton.icon(
                   onPressed: _clearFilters,
-                  child: const Text('Effacer les filtres'),
+                  icon: const Icon(Icons.filter_alt_off_rounded),
+                  label: const Text('Effacer les filtres'),
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: theme.primary,
+                    side: BorderSide(color: theme.primary),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(14)),
+                  ),
                 ),
             ],
           ),
