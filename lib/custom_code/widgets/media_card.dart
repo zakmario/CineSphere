@@ -11,8 +11,9 @@ import 'package:flutter/material.dart';
 
 import 'package:cached_network_image/cached_network_image.dart';
 
-/// Carte réutilisable d'un film ou d'une série : affiche, badge de type,
-/// note colorée, titre et année (ou compte à rebours si à venir).
+/// Carte réutilisable d'un film ou d'une série : affiche arrondie avec
+/// ombre douce, badge de type, note sur pastille sombre, titre et année
+/// (ou compte à rebours si à venir). Légère réduction au toucher.
 class MediaCard extends StatefulWidget {
   const MediaCard({
     super.key,
@@ -40,11 +41,19 @@ class MediaCard extends StatefulWidget {
 }
 
 class _MediaCardState extends State<MediaCard> {
+  static const _radius = 16.0;
+  bool _pressed = false;
+
+  void _setPressed(bool value) {
+    if (widget.onTap != null && _pressed != value) {
+      setState(() => _pressed = value);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final title = widget.title;
     final posterUrl = widget.posterUrl;
-    final mediaType = widget.mediaType;
     final rating = widget.rating;
     final releaseDate = widget.releaseDate;
     final onTap = widget.onTap;
@@ -58,84 +67,131 @@ class _MediaCardState extends State<MediaCard> {
     return SizedBox(
       width: widget.width,
       height: widget.height,
-      child: InkWell(
-        borderRadius: BorderRadius.circular(12),
+      child: GestureDetector(
+        onTapDown: (_) => _setPressed(true),
+        onTapUp: (_) => _setPressed(false),
+        onTapCancel: () => _setPressed(false),
         onTap: onTap == null ? null : () => onTap(),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Expanded(
-              child: Stack(
-                fit: StackFit.expand,
-                children: [
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(12),
-                    child: posterUrl == null || posterUrl.isEmpty
-                        ? _placeholder(theme)
-                        : CachedNetworkImage(
-                            imageUrl: posterUrl,
-                            fit: BoxFit.cover,
-                            placeholder: (_, __) => _placeholder(theme),
-                            errorWidget: (_, __, ___) => _placeholder(theme),
+        child: AnimatedScale(
+          scale: _pressed ? 0.96 : 1,
+          duration: const Duration(milliseconds: 120),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                child: DecoratedBox(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(_radius),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: 0.18),
+                        blurRadius: 14,
+                        offset: const Offset(0, 6),
+                      ),
+                    ],
+                  ),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(_radius),
+                    child: Stack(
+                      fit: StackFit.expand,
+                      children: [
+                        posterUrl == null || posterUrl.isEmpty
+                            ? _placeholder(theme)
+                            : CachedNetworkImage(
+                                imageUrl: posterUrl,
+                                fit: BoxFit.cover,
+                                fadeInDuration:
+                                    const Duration(milliseconds: 250),
+                                placeholder: (_, __) => _placeholder(theme),
+                                errorWidget: (_, __, ___) =>
+                                    _placeholder(theme),
+                              ),
+                        // Dégradé en haut pour la lisibilité des badges.
+                        const DecoratedBox(
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              begin: Alignment.topCenter,
+                              end: Alignment.center,
+                              colors: [Color(0x66000000), Color(0x00000000)],
+                            ),
                           ),
-                  ),
-                  Positioned(
-                    top: 6,
-                    left: 6,
-                    child: _badge(
-                      mediaTypeLabel(mediaType),
-                      Colors.black.withValues(alpha: 0.65),
+                        ),
+                        Positioned(
+                          top: 8,
+                          left: 8,
+                          child: _badge(
+                            mediaTypeLabel(widget.mediaType),
+                            Colors.white,
+                            Colors.black.withValues(alpha: 0.55),
+                          ),
+                        ),
+                        Positioned(
+                          top: 8,
+                          right: 8,
+                          child: _badge(
+                            '★ ${ratingLabel(rating)}',
+                            ratingColor(rating),
+                            Colors.black.withValues(alpha: 0.72),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                  Positioned(
-                    top: 6,
-                    right: 6,
-                    child: _badge(
-                      '★ ${ratingLabel(rating)}',
-                      ratingColor(rating),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 6),
-            Text(
-              title,
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-              style: theme.bodyMedium.copyWith(fontWeight: FontWeight.w600),
-            ),
-            if (subtitle.isNotEmpty)
-              Text(
-                subtitle,
-                style: theme.bodySmall.copyWith(
-                  color: upcoming ? theme.primary : theme.secondaryText,
                 ),
               ),
-          ],
+              const SizedBox(height: 8),
+              Text(
+                title,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                style: theme.bodyMedium.copyWith(
+                  fontWeight: FontWeight.w600,
+                  height: 1.25,
+                ),
+              ),
+              if (subtitle.isNotEmpty)
+                Padding(
+                  padding: const EdgeInsets.only(top: 2),
+                  child: Text(
+                    subtitle,
+                    style: theme.bodySmall.copyWith(
+                      color: upcoming ? theme.primary : theme.secondaryText,
+                      fontWeight: upcoming ? FontWeight.w600 : FontWeight.w400,
+                    ),
+                  ),
+                ),
+            ],
+          ),
         ),
       ),
     );
   }
 
   Widget _placeholder(FlutterFlowTheme theme) => Container(
-        color: theme.alternate,
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [theme.alternate, theme.accent4],
+          ),
+        ),
         alignment: Alignment.center,
         child: Icon(Icons.movie_outlined, color: theme.secondaryText, size: 36),
       );
 
-  Widget _badge(String text, Color color) => Container(
-        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+  Widget _badge(String text, Color textColor, Color background) => Container(
+        padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
         decoration: BoxDecoration(
-          color: color,
-          borderRadius: BorderRadius.circular(6),
+          color: background,
+          borderRadius: BorderRadius.circular(20),
         ),
         child: Text(
           text,
-          style: const TextStyle(
-            color: Colors.white,
+          style: TextStyle(
+            color: textColor,
             fontSize: 11,
             fontWeight: FontWeight.w700,
+            letterSpacing: 0.2,
           ),
         ),
       );
